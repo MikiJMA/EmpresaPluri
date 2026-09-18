@@ -1,0 +1,70 @@
+name: plurione-docker
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: pluri_admin
+      POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD:?Ejecuta scripts/docker.ps1 iniciar}
+      POSTGRES_DB: pluri_credito
+      PLURI_APP_PASSWORD: ${POSTGRES_APP_PASSWORD:?Ejecuta scripts/docker.ps1 iniciar}
+    volumes:
+      - datos_postgresql:/var/lib/postgresql/data
+      - ./inicializar_postgresql.sql:/docker-entrypoint-initdb.d/001_usuario.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pluri_admin -d pluri_credito"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+  migraciones:
+    build:
+      context: ../..
+      dockerfile: infraestructura/contenedores_docker/backend.Dockerfile
+    environment:
+      DATABASE_URL: postgresql://pluri_app:${POSTGRES_APP_PASSWORD:?Falta POSTGRES_APP_PASSWORD}@postgres:5432/pluri_credito
+    command: ["python", "-m", "backend.app.persistencia_postgresql.migrar"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+
+  backend:
+    build:
+      context: ../..
+      dockerfile: infraestructura/contenedores_docker/backend.Dockerfile
+    environment:
+      DATABASE_URL: postgresql://pluri_app:${POSTGRES_APP_PASSWORD:?Falta POSTGRES_APP_PASSWORD}@postgres:5432/pluri_credito
+      CORS_ORIGINS: http://127.0.0.1:${WEB_PORT:-8080},http://localhost:${WEB_PORT:-8080}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migraciones:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; from backend.app.persistencia_postgresql.conexion import conectar; urllib.request.urlopen('http://127.0.0.1:8000/', timeout=3); c=conectar(); c.execute('SELECT 1 FROM evaluaciones LIMIT 0'); c.close()"]
+      interval: 10s
+      timeout: 8s
+      retries: 10
+      start_period: 10s
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ../..
+      dockerfile: infraestructura/contenedores_docker/frontend.Dockerfile
+    ports:
+      - "127.0.0.1:${WEB_PORT:-8080}:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  datos_postgresql:
