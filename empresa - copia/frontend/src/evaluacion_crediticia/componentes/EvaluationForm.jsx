@@ -2,6 +2,8 @@
 const financialFields = [
   { name: 'ingresos_mensuales', label: 'Ingresos mensuales', placeholder: '30,000.00', min: '0.01' },
   { name: 'gastos_mensuales', label: 'Gastos mensuales', placeholder: '10,000.00', min: '0' },
+  { name: 'deuda_actual', label: 'Deuda actual total', placeholder: 'Ej. 50,000.00', min: '0' },
+  { name: 'pagos_mensuales_creditos', label: 'Pagos mensuales de créditos', placeholder: 'Ej. 2,500.00', min: '0' },
 ]
 
 export default function EvaluationForm({ form, busy, error, change, submit }) {
@@ -23,6 +25,11 @@ export default function EvaluationForm({ form, busy, error, change, submit }) {
               </div>
             ))}
           </div>
+          <div className="field-group score-field">
+            <label htmlFor="dias_atraso_actual">Días de atraso actual <span>*</span></label>
+            <input id="dias_atraso_actual" name="dias_atraso_actual" type="number" min="0" max="36500" step="1" placeholder="0 si estás al corriente" value={form.dias_atraso_actual} onChange={change} required aria-describedby="credit-help" />
+          </div>
+          <p id="credit-help" className="form-footnote">Deuda: saldo pendiente total. Pagos: suma mensual de tus créditos. Atraso: días del pago vencido más antiguo aún pendiente; 0 si estás al corriente. Captura 0 en deuda y pagos si no tienes créditos. Los gastos mensuales deben incluir los pagos de créditos. Estos tres datos se guardan, pero aún no modifican el riesgo demo.</p>
           <div className="field-group score-field">
             <label htmlFor="score_buro_actual">Score capturado <span>*</span><small>Escala demo: 0–1000</small></label>
             <input id="score_buro_actual" name="score_buro_actual" type="number" min="0" max="1000" step="1" placeholder="Ej. 700" value={form.score_buro_actual} onChange={change} required />

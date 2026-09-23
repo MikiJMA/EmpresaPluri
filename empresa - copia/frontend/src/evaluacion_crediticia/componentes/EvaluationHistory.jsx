@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
 import { consultarHistorial } from '../servicios/creditApi'
 import '../../styles/History.css'
+import EvaluationDetail from './EvaluationDetail'
 
 export default function EvaluationHistory({ revision }) {
   const [offset, setOffset] = useState(0)
+  const [selected, setSelected] = useState(null)
   const [refresh, setRefresh] = useState(0)
   const [data, setData] = useState({ items: [], hay_mas: false })
   const [error, setError] = useState('')
@@ -30,11 +32,12 @@ export default function EvaluationHistory({ revision }) {
         <>
           {data.items.length ? <div className="history-scroll"><table>
             <caption className="sr-history">Evaluaciones guardadas en PostgreSQL</caption>
-            <thead><tr><th>Fecha</th><th>Solicitante</th><th>Margen disponible</th><th>Riesgo</th></tr></thead>
+            <thead><tr><th>Fecha</th><th>Solicitante</th><th>Margen disponible</th><th>Riesgo</th><th>Revisión</th></tr></thead>
             <tbody>{data.items.map(item => <tr key={item.id}>
               <td>{new Date(item.fecha).toLocaleString('es-MX')}</td><td>{item.rfc}</td>
               <td>{new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(item.margen_libre)}</td>
               <td>{item.nivel_riesgo_preliminar}</td>
+              <td><button type="button" disabled={!!selected} onClick={() => setSelected(item.id)}>Ver detalle</button></td>
             </tr>)}</tbody>
           </table></div> : <p>Aún no hay evaluaciones en esta página.</p>}
           <nav className="history-pages" aria-label="Páginas del historial">
@@ -44,6 +47,7 @@ export default function EvaluationHistory({ revision }) {
           </nav>
         </>
       )}
+      {selected && <EvaluationDetail key={selected} id={selected} close={() => setSelected(null)} />}
     </section>
   )
 }

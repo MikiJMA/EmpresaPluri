@@ -1,0 +1,9 @@
+.evaluation-detail { margin-top:24px; padding-top:24px; border-top:1px solid #dce4de; overflow-wrap:anywhere; }
+.evaluation-detail button { width:auto; }
+.evaluation-detail label { margin-top:16px; }
+.evaluation-detail select,.evaluation-detail textarea { width:100%; border:1px solid #dce4de; border-radius:8px; padding:12px; color:#284737; background:#fcfdfb; font:inherit; }
+.evaluation-detail textarea { min-height:100px; resize:vertical; }
+.detail-fields { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
+.detail-fields dt { font-size:12px; }.detail-fields dd { margin:6px 0; }
+.evaluation-detail li p { white-space:pre-wrap; }
+@media(max-width:600px) { .detail-fields { grid-template-columns:1fr; } }

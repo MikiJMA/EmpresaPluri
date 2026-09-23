@@ -1,5 +1,25 @@
 # Reporte QA — prototipo 0.1
 
+## Detalle y revisión manual
+
+- 15 pruebas backend aprobadas con PostgreSQL real, incluyendo estado inicial pendiente, guardado de revisiones, reintento idempotente, conflicto de versión/clave, historial conservado, validación de campos, 404 y evaluación original sin cambios.
+- ESLint y Vite aprobados. Migración aditiva aplicada en Docker.
+- Chrome: apertura del detalle, ausencia de datos antiguos, guardado de revisión ficticia, persistencia tras recargar, cierre del panel y vista móvil sin desbordamiento ni errores JavaScript. Se conserva una evaluación PRUEBA-REVISION con sufijo temporal para evidencia.
+- Pendientes: identidad verificada, permisos y auditoría de producción. Estados de revisión exclusivamente demostrativos.
+
+## Dashboard local
+
+- 14 pruebas backend aprobadas con PostgreSQL: resumen vacío, totales sobre 12 registros (sin límite de página), tres riesgos, promedio de deuda excluyendo ausencias e incluyendo cero, fechas inclusivas UTC, límite de medianoche y filtros combinados e inválidos.
+- ESLint y Vite aprobados. Chrome: concordancia del total con API, filtro por riesgo, vacío, rango inválido, limpiar, fallo 503 y recuperación. Capturas escritorio/móvil revisadas; sin desbordamiento horizontal ni errores JavaScript.
+- Dashboard React operativo; Power BI, alertas y predicción permanecen pendientes.
+
+## Campos crediticios — 22 de septiembre de 2026
+
+- 13 pruebas aprobadas dentro de Docker con PostgreSQL real: compatibilidad de solicitudes anteriores, importes no negativos, límites técnicos, días enteros, persistencia de los tres campos y conflicto al cambiar días con la misma clave de reintento.
+- ESLint y Vite aprobados con dependencias locales; imágenes reconstruidas usando el frontend precompilado por el bloqueo de certificados npm documentado.
+- Prueba Chrome en 8080: rechazo de días fraccionarios, captura y guardado de deuda/pagos/atraso, lectura exacta mediante detalle, historial después de recargar y ausencia de errores JavaScript. Se conserva un escenario ficticio PRUEBA-CAMPOS con sufijo temporal.
+- Reglas demo sin modificaciones; estos campos no acreditan un modelo predictivo ni el análisis completo del historial de pagos.
+
 ## Verificación Docker del 17 de septiembre de 2026
 
 - Construcción de imágenes completada; ESLint y Vite aprobados durante la construcción.

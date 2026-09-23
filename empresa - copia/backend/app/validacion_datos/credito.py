@@ -8,3 +8,7 @@ class SolicitudCredito(BaseModel):
     ingresos_mensuales: float = Field(gt=0, le=1_000_000_000)
     gastos_mensuales: float = Field(ge=0, le=1_000_000_000)
     score_buro_actual: int = Field(ge=0, le=1000, strict=True)
+    # Opcionales en API para conservar solicitudes antiguas; ausencia no significa cero.
+    deuda_actual: float | None = Field(default=None, ge=0, le=1_000_000_000)
+    pagos_mensuales_creditos: float | None = Field(default=None, ge=0, le=1_000_000_000)
+    dias_atraso_actual: int | None = Field(default=None, ge=0, le=36500, strict=True)

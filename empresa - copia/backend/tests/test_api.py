@@ -55,6 +55,19 @@ class EvaluationTests(unittest.TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertNotIn('access-control-allow-origin', response.headers)
 
+    def test_datos_crediticios_validos_no_cambian_reglas(self):
+        for valor in (0, 100):
+            payload = self.payload(deuda_actual=valor, pagos_mensuales_creditos=valor, dias_atraso_actual=valor)
+            response = client.post('/api/v1/evaluar', json=payload)
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.json()['margen_libre'], 20000)
+            self.assertEqual(response.json()['nivel_riesgo_preliminar'], 'Bajo')
+
+    def test_datos_crediticios_invalidos(self):
+        for field, value in [('deuda_actual', -1), ('deuda_actual', 1000000001), ('deuda_actual', 'Infinity'), ('pagos_mensuales_creditos', -1), ('pagos_mensuales_creditos', 1000000001), ('dias_atraso_actual', -1), ('dias_atraso_actual', 1.5), ('dias_atraso_actual', True), ('dias_atraso_actual', 36501)]:
+            with self.subTest(field=field, value=value):
+                self.assertEqual(client.post('/api/v1/evaluar', json=self.payload(**{field: value})).status_code, 422)
+
 
 if __name__ == '__main__':
     unittest.main()

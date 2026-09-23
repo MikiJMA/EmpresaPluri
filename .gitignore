@@ -1,0 +1,13 @@
+# Archivos locales del workspace; no publicar evidencias ni secretos.
+/tmp/
+/output/
+**/.env
+**/.env.*
+!**/.env.example
+**/.local/
+**/.venv/
+**/.venv-roto/
+**/node_modules/
+**/dist/
+**/__pycache__/
+*.pyc

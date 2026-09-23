@@ -8,6 +8,12 @@ Python, FastAPI, React.js, Azure OpenAI Service, Azure Machine Learning, Azure A
 
 ## Estado real
 
+Detalle y revisión manual demo: desde el historial, Ver detalle permite consultar los datos capturados y guardar estado Pendiente/Aprobada/Rechazada, responsable declarado y observaciones. Cada cambio conserva fecha del servidor y versión en la tabla revisiones (migración 002), sin modificar el riesgo original. No existe autenticación: el responsable no es una identidad verificada y los estados no autorizan créditos reales.
+
+Dashboard React implementado: total de evaluaciones, margen promedio, deuda promedio con cobertura de datos y distribución por riesgo demo. Filtros propios por fecha (días inclusivos UTC) y riesgo; el historial inferior permanece independiente. API: GET /api/v1/dashboard?desde=2026-09-01&hasta=2026-09-30&riesgo=Bajo. Resume todos los registros coincidentes en PostgreSQL, no una página. No sustituye la integración pendiente con Power BI.
+
+El formulario captura también deuda actual total (MXN), suma de pagos mensuales de créditos (MXN) y días de atraso del pago vencido más antiguo aún pendiente. Son obligatorios en la interfaz y admiten cero; los gastos incluyen los pagos de créditos. Se validan y conservan en el JSON de la solicitud en PostgreSQL, sin cambiar las reglas demo. La API admite solicitudes antiguas que omitan estos campos; ausencia no equivale a cero. No se requiere modificar ni borrar la tabla existente.
+
 Prototipo local React + FastAPI con persistencia PostgreSQL. Permite capturar un escenario ficticio, validar entradas, explicar las reglas y consultar evaluaciones guardadas. No incluye todavía autenticación, modelo predictivo, servicios Azure ni integración financiera. No utilizar con solicitudes reales ni exponer públicamente.
 
 ## Arranque con Docker
@@ -21,6 +27,8 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\docker.ps1 ini
 Abrir http://127.0.0.1:8080/. Incluye frontend, backend, PostgreSQL y migraciones automáticas. Los datos quedan en un volumen Docker separado de la base local; no se migran registros entre ambos entornos. Para detener conservando datos, cambiar `iniciar` por `detener`. Consultar [operación de Docker](infraestructura/contenedores_docker/README.md).
 
 ## PostgreSQL local y arranque sin Docker
+
+Para abrir una instalación Docker ya construida sin volver a descargar ni compilar, usar `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\docker.ps1 abrir`. Espera los servicios y abre el navegador. Requiere Docker Desktop activo e imágenes existentes; después de modificar código, ejecutar `iniciar` para reconstruir.
 
 Desde la carpeta interior, preparar la base una sola vez tras instalar backend/requirements.txt:
 

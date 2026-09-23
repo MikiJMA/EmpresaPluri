@@ -93,3 +93,57 @@ class PostgreSQLTests(unittest.TestCase):
                 conn.execute('DELETE FROM evaluaciones')
                 raise RuntimeError('Forzar rollback de prueba')
         self.assertEqual(len(client.get('/api/v1/evaluaciones').json()['items']), 3)
+
+    def test_nuevos_campos_persisten_y_conflicto(self):
+        payload = {**PAYLOAD, 'deuda_actual': 50000.50, 'pagos_mensuales_creditos': 2500, 'dias_atraso_actual': 15}
+        key = str(uuid4())
+        headers = {'Idempotency-Key': key}
+        self.assertEqual(client.post('/api/v1/evaluar', json=payload, headers=headers).status_code, 200)
+        self.assertEqual(client.get('/api/v1/evaluaciones/' + key).json()['solicitud'], payload)
+        self.assertEqual(client.post('/api/v1/evaluar', json=payload, headers=headers).status_code, 200)
+        self.assertEqual(client.post('/api/v1/evaluar', json={**payload, 'dias_atraso_actual': 16}, headers=headers).status_code, 409)
+
+    def test_dashboard_totales_filtros_y_ausencias(self):
+        empty = client.get('/api/v1/dashboard').json()
+        self.assertEqual(empty['total'], 0)
+        self.assertIsNone(empty['deuda_promedio'])
+        for n in range(12):
+            payload = {**PAYLOAD, 'ingresos_mensuales': [30000, 20000, 11000][n % 3]}
+            if n < 2:
+                payload['deuda_actual'] = n * 100
+            response = client.post('/api/v1/evaluar', json=payload)
+            self.assertEqual(response.status_code, 200)
+            with psycopg.connect(os.environ['DATABASE_URL']) as conn:
+                conn.execute('UPDATE evaluaciones SET fecha = %s WHERE id = %s', ('2026-09-22T23:59:59Z' if n < 6 else '2026-09-23T00:00:00Z', response.json()['id']))
+        data = client.get('/api/v1/dashboard').json()
+        self.assertEqual(data['total'], 12)
+        self.assertEqual([data[k] for k in ['bajo', 'medio', 'alto']], [4, 4, 4])
+        self.assertEqual(float(data['deuda_promedio']), 50)
+        self.assertEqual(data['con_deuda_capturada'], 2)
+        self.assertEqual(client.get('/api/v1/dashboard?riesgo=Alto').json()['total'], 4)
+        filtered = client.get('/api/v1/dashboard?desde=2026-09-22&hasta=2026-09-22').json()
+        self.assertEqual(filtered['total'], 6)
+        self.assertEqual(client.get('/api/v1/dashboard?desde=2026-09-22&hasta=2026-09-22&riesgo=Bajo').json()['total'], 2)
+        for query in ['riesgo=Otro', 'desde=incorrecto', 'desde=2026-09-23&hasta=2026-09-22']:
+            self.assertEqual(client.get('/api/v1/dashboard?' + query).status_code, 422)
+
+    def test_revision_manual_historial_reintentos_y_conflictos(self):
+        saved = client.post('/api/v1/evaluar', json=PAYLOAD).json()
+        url = '/api/v1/evaluaciones/' + saved['id']
+        self.assertEqual(client.get(url).json()['version_revision'], 0)
+        payload = dict(id=str(uuid4()), version_anterior=0, estado='Aprobada', responsable='Analista demo', observaciones='Revisión ficticia')
+        first = client.post(url + '/revisiones', json=payload)
+        self.assertEqual(first.status_code, 200)
+        self.assertEqual(client.post(url + '/revisiones', json=payload).json(), first.json())
+        self.assertEqual(client.post(url + '/revisiones', json={**payload, 'observaciones': 'Otra'}).status_code, 409)
+        self.assertEqual(client.post(url + '/revisiones', json={**payload, 'id': str(uuid4())}).status_code, 409)
+        second = {**payload, 'id': str(uuid4()), 'version_anterior': 1, 'estado': 'Rechazada'}
+        self.assertEqual(client.post(url + '/revisiones', json=second).status_code, 200)
+        detail = client.get(url).json()
+        self.assertEqual(detail['estado_revision'], 'Rechazada')
+        self.assertEqual(len(detail['revisiones']), 2)
+        self.assertEqual(detail['solicitud'], PAYLOAD)
+        self.assertEqual(detail['nivel_riesgo_preliminar'], saved['nivel_riesgo_preliminar'])
+        for change in [{'estado': 'Otro'}, {'responsable': '   '}, {'observaciones': ''}, {'observaciones': 'x' * 2001}, {'version_anterior': -1}]:
+            self.assertEqual(client.post(url + '/revisiones', json={**payload, **change}).status_code, 422)
+        self.assertEqual(client.post('/api/v1/evaluaciones/' + str(uuid4()) + '/revisiones', json=payload).status_code, 404)

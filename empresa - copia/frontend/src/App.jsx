@@ -4,8 +4,9 @@ import { evaluarCredito } from './evaluacion_crediticia/servicios/creditApi'
 import EvaluationForm from './evaluacion_crediticia/componentes/EvaluationForm'
 import EvaluationResult from './evaluacion_crediticia/componentes/EvaluationResult'
 import EvaluationHistory from './evaluacion_crediticia/componentes/EvaluationHistory'
+import Dashboard from './dashboard/Dashboard'
 
-const initial = { rfc: '', ingresos_mensuales: '', gastos_mensuales: '', score_buro_actual: '' }
+const initial = { rfc: '', ingresos_mensuales: '', gastos_mensuales: '', score_buro_actual: '', deuda_actual: '', pagos_mensuales_creditos: '', dias_atraso_actual: '' }
 
 export default function App() {
   const [form, setForm] = useState(initial)
@@ -54,6 +55,7 @@ export default function App() {
         <EvaluationForm form={form} busy={busy} error={error} change={change} submit={submit} />
         <EvaluationResult result={result} busy={busy} />
       </div>
+      <Dashboard revision={revision} />
       <EvaluationHistory revision={revision} />
       <footer><span>© PluriOne S.A. de C.V. · Proyecto de estadía</span><span>Evaluación orientativa · Revisión humana requerida</span></footer>
       </div>

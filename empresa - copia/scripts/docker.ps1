@@ -1,4 +1,4 @@
-param([ValidateSet('iniciar','detener','estado','logs','pruebas')][string]$Accion = 'iniciar')
+param([ValidateSet('iniciar','abrir','detener','estado','logs','pruebas')][string]$Accion = 'iniciar')
 $ErrorActionPreference = 'Stop'
 $project = Split-Path -Parent $PSScriptRoot
 $composeDir = Join-Path $project 'infraestructura\contenedores_docker'
@@ -29,6 +29,7 @@ if (-not (Test-Path -LiteralPath $envFile)) {
 }
 $composeArgs = @('compose', '--project-directory', $composeDir, '--env-file', $envFile, '-f', (Join-Path $composeDir 'docker-compose.yml'))
 switch ($Accion) {
+    'abrir' { & $dockerExe @composeArgs up -d --no-build --pull never --wait --wait-timeout 180 }
     'iniciar' { & $dockerExe @composeArgs up -d --build --wait --wait-timeout 180 }
     'detener' { & $dockerExe @composeArgs down }
     'estado' { & $dockerExe @composeArgs ps -a }
@@ -37,3 +38,15 @@ switch ($Accion) {
 }
 if ($LASTEXITCODE -ne 0) { throw 'Docker Compose no completo la accion. Consulta los mensajes anteriores.' }
 if ($Accion -eq 'iniciar') { Write-Host 'Proyecto iniciado. Puerto predeterminado: http://127.0.0.1:8080/ (WEB_PORT en .env).' }
+if ($Accion -eq 'abrir') {
+    $webPort = '8080'
+    foreach ($line in Get-Content -LiteralPath $envFile) {
+        if ($line -match '^\s*WEB_PORT\s*=\s*(\d+)\s*$') { $webPort = $Matches[1] }
+    }
+    if ($env:WEB_PORT) { $webPort = $env:WEB_PORT }
+    if ($webPort -notmatch '^\d+$' -or [int]$webPort -lt 1 -or [int]$webPort -gt 65535) { throw 'WEB_PORT debe ser un puerto valido.' }
+    $url = "http://127.0.0.1:$webPort/"
+    $null = Invoke-WebRequest -Uri $url -UseBasicParsing -TimeoutSec 15
+    Write-Host "Pagina disponible: $url"
+    Start-Process $url
+}
