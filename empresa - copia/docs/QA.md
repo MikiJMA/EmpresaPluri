@@ -1,5 +1,9 @@
 # Reporte QA — prototipo 0.1
 
+## GitHub Actions — 23 de septiembre de 2026
+
+Workflow publicado en la raíz Git. Ejecución https://github.com/MikiJMA/EmpresaPluri/actions/runs/35911875318 del commit d3cd93d finalizada con success en ambos trabajos: backend (PostgreSQL temporal, migraciones repetidas y suite unittest) y frontend (npm ci, ESLint y Vite). La instalación limpia de npm pasó en GitHub; esto no confirma la corrección del certificado de la red local. No hay despliegue automático ni uso de credenciales de producción.
+
 ## Detalle y revisión manual
 
 - 15 pruebas backend aprobadas con PostgreSQL real, incluyendo estado inicial pendiente, guardado de revisiones, reintento idempotente, conflicto de versión/clave, historial conservado, validación de campos, 404 y evaluación original sin cambios.

@@ -13,7 +13,7 @@ Por indicación del alumno, el sistema final debe utilizar todas las tecnología
 | PostgreSQL | Persistencia en backend/app/persistencia_postgresql | Implementado localmente: evaluaciones e historial; pruebas reales aprobadas |
 | Power BI | Reportes en analitica/reportes_power_bi | Pendiente |
 | Docker | Contenedores en infraestructura/contenedores_docker | Implementado y probado localmente: React/Nginx, FastAPI, PostgreSQL y migraciones con Compose |
-| GitHub Actions | Automatización en .github/workflows/ci.yml de la raíz Git (carpeta exterior) | Workflow preparado; pendiente de publicar y validar ejecución en GitHub |
+| GitHub Actions | Automatización en .github/workflows/ci.yml de la raíz Git (carpeta exterior) | Implementado: backend/PostgreSQL y frontend aprobados en GitHub, ejecución 35911875318 |
 | Microsoft Entra ID | Identidad y roles en backend/app/autenticacion_entra_id | Pendiente |
 | APIs financieras | Consulta de fuentes en backend/app/integraciones/datos_financieros | Pendiente |
 | Scrum | Planificación y seguimiento en gestion_proyecto/scrum | Propuesta; ejecución por documentar |
