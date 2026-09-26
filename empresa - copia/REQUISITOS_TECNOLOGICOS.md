@@ -8,10 +8,10 @@ Por indicación del alumno, el sistema final debe utilizar todas las tecnología
 | FastAPI | API HTTP en backend/app/rutas_api | Implementado |
 | React.js | Interfaz en frontend/src | Implementado |
 | Azure OpenAI Service | Explicaciones en backend/app/integraciones/explicaciones_azure_openai | Pendiente |
-| Azure Machine Learning | Entrenamiento y evaluación en inteligencia_artificial/prediccion_azure_ml; consumo en backend/app/integraciones/prediccion_azure_ml | Pendiente |
+| Azure Machine Learning | Entrenamiento y evaluación en inteligencia_artificial/prediccion_azure_ml; consumo en backend/app/integraciones/prediccion_azure_ml | Candidato académico UCI entrenado y registrado; artefacto recuperado tras fallo de etiquetas de AutoML. Carga y evaluación local aislada verificadas: AUC prueba 0,775274, sensibilidad 32,01 %. Pendientes aptitud para población real, despliegue e integración con la aplicación; no aprobado para producción |
 | Azure AI Search | Recuperación de políticas en backend/app/integraciones/busqueda_azure_ai_search | Pendiente |
 | PostgreSQL | Persistencia en backend/app/persistencia_postgresql | Implementado localmente: evaluaciones e historial; pruebas reales aprobadas |
-| Power BI | Reportes en analitica/reportes_power_bi | Pendiente |
+| Power BI | Reportes en analitica/reportes_power_bi | Conexión local e importación comprobadas; dashboard PBIP/PBIR creado, pendiente de validación visual y métricas en Desktop; sin publicación cloud |
 | Docker | Contenedores en infraestructura/contenedores_docker | Implementado y probado localmente: React/Nginx, FastAPI, PostgreSQL y migraciones con Compose |
 | GitHub Actions | Automatización en .github/workflows/ci.yml de la raíz Git (carpeta exterior) | Implementado: backend/PostgreSQL y frontend aprobados en GitHub, ejecución 35911875318 |
 | Microsoft Entra ID | Identidad y roles en backend/app/autenticacion_entra_id | Pendiente |

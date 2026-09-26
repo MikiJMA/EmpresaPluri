@@ -3,6 +3,8 @@ name: plurione-docker
 services:
   postgres:
     image: postgres:17-alpine
+    ports:
+      - "127.0.0.1:55433:5432"
     environment:
       POSTGRES_USER: pluri_admin
       POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD:?Ejecuta scripts/docker.ps1 iniciar}

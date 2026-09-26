@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "PluriOne_Riesgo_Crediticio.pbix"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "b4c0430b-29b4-4785-bc6e-739f8e726526"
+  }
+}

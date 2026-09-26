@@ -1,0 +1,158 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "name": "detalle",
+  "position": {
+    "x": 24,
+    "y": 697,
+    "width": 1552,
+    "height": 279,
+    "z": 10,
+    "tabOrder": 10
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Consulta1"
+                    }
+                  },
+                  "Property": "evaluacion_id"
+                }
+              },
+              "queryRef": "Consulta1.evaluacion_id",
+              "nativeQueryRef": "evaluacion_id"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Consulta1"
+                    }
+                  },
+                  "Property": "fecha_utc"
+                }
+              },
+              "queryRef": "Consulta1.fecha_utc",
+              "nativeQueryRef": "fecha_utc"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Consulta1"
+                    }
+                  },
+                  "Property": "riesgo_demo"
+                }
+              },
+              "queryRef": "Consulta1.riesgo_demo",
+              "nativeQueryRef": "riesgo_demo"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Consulta1"
+                    }
+                  },
+                  "Property": "estado_revision"
+                }
+              },
+              "queryRef": "Consulta1.estado_revision",
+              "nativeQueryRef": "estado_revision"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Consulta1"
+                    }
+                  },
+                  "Property": "ingresos_mensuales"
+                }
+              },
+              "queryRef": "Consulta1.ingresos_mensuales",
+              "nativeQueryRef": "ingresos_mensuales"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Consulta1"
+                    }
+                  },
+                  "Property": "gastos_mensuales"
+                }
+              },
+              "queryRef": "Consulta1.gastos_mensuales",
+              "nativeQueryRef": "gastos_mensuales"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Consulta1"
+                    }
+                  },
+                  "Property": "margen_libre"
+                }
+              },
+              "queryRef": "Consulta1.margen_libre",
+              "nativeQueryRef": "margen_libre"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Consulta1"
+                    }
+                  },
+                  "Property": "deuda_actual"
+                }
+              },
+              "queryRef": "Consulta1.deuda_actual",
+              "nativeQueryRef": "deuda_actual"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Detalle · fechas UTC · ausente no equivale a cero'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

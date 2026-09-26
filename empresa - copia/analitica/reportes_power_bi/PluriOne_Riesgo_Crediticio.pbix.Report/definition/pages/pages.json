@@ -1,0 +1,8 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/pagesMetadata/1.1.0/schema.json",
+  "pageOrder": [
+    "plurione_dashboard",
+    "e9d763172e16b60b3026"
+  ],
+  "activePageName": "plurione_dashboard"
+}

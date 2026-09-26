@@ -43,7 +43,7 @@ El Dockerfile alternativo solo incluye dist y nginx.conf. El comando abrir reuti
 
 El primer inicio genera contraseñas aleatorias en el archivo privado .env de esta carpeta. No compartirlo ni publicarlo. Conservarlo: cambiar esas contraseñas en el archivo no cambia las de una base ya inicializada. La aplicación usa un usuario sin privilegios de superusuario; el administrador se reserva para inicializar PostgreSQL. .dockerignore excluye archivos .env y dependencias locales de las imágenes.
 
-WEB_PORT permite cambiar el puerto publicado si 8080 está ocupado. Solo se publica en 127.0.0.1; PostgreSQL y backend no publican puertos al equipo. Las solicitudes del navegador usan el mismo origen mediante Nginx.
+WEB_PORT permite cambiar el puerto web si 8080 está ocupado. Solo se publica en 127.0.0.1. PostgreSQL ahora publica 127.0.0.1:55433 para Power BI Desktop; el backend no publica puertos al equipo. Las solicitudes del navegador usan el mismo origen mediante Nginx. Ver analitica/reportes_power_bi para preparar el usuario lector.
 
 Esta base es independiente de la instalación nativa de PostgreSQL y de .local/postgresql/datos. No se copiaron ni borraron registros locales. La versión de desarrollo en 5173 sigue siendo independiente de Docker en 8080.
 

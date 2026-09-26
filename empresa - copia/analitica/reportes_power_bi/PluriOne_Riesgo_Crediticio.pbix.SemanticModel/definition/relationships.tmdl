@@ -1,0 +1,5 @@
+relationship e76d7b9c-f2c2-4835-8d65-7479aa02ce1c
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Consulta1.fecha_utc
+	toColumn: LocalDateTable_2368cfec-2721-454b-82f9-26e5e67ec810.Date
+

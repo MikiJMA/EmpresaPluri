@@ -1,0 +1,146 @@
+table Consulta1
+	lineageTag: 207a6f65-672d-4cbf-9cc0-99ac461e8610
+
+	measure 'Total evaluaciones' = COUNTROWS('Consulta1')
+		formatString: 0
+		lineageTag: bb1602a3-dc5d-4cf8-a2dc-07f8bd421871
+
+	measure 'Margen promedio' = AVERAGE('Consulta1'[margen_libre])
+		formatString: #,0.00
+
+	measure 'Deuda promedio' = AVERAGE('Consulta1'[deuda_actual])
+		formatString: #,0.00
+
+	measure 'Evaluaciones con deuda' = COUNT('Consulta1'[deuda_actual])
+		formatString: 0
+
+	measure 'Cobertura de deuda' = DIVIDE([Evaluaciones con deuda], [Total evaluaciones])
+		formatString: 0.0%
+
+	measure 'Ingresos promedio' = AVERAGE('Consulta1'[ingresos_mensuales])
+		formatString: #,0.00
+
+	column evaluacion_id
+		dataType: string
+		lineageTag: 544f8fb8-3846-427f-ac75-6e45a3b40a91
+		summarizeBy: none
+		sourceColumn: evaluacion_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column fecha_utc
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: b87863c4-790c-4ecb-8801-48fa32214811
+		summarizeBy: none
+		sourceColumn: fecha_utc
+
+		variation Variación
+			isDefault
+			relationship: e76d7b9c-f2c2-4835-8d65-7479aa02ce1c
+			defaultHierarchy: LocalDateTable_2368cfec-2721-454b-82f9-26e5e67ec810.'Jerarquía de fechas'
+
+		annotation SummarizationSetBy = Automatic
+
+	column ingresos_mensuales
+		dataType: double
+		lineageTag: 304bb453-7bc2-466e-8cbe-0f38386c0456
+		summarizeBy: sum
+		sourceColumn: ingresos_mensuales
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column gastos_mensuales
+		dataType: double
+		lineageTag: 2c3871e5-35ce-4c86-b042-b2602e99b615
+		summarizeBy: sum
+		sourceColumn: gastos_mensuales
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column deuda_actual
+		dataType: double
+		lineageTag: fc25e880-9772-47e3-b351-fca9d02e1f82
+		summarizeBy: sum
+		sourceColumn: deuda_actual
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column pagos_mensuales_creditos
+		dataType: double
+		lineageTag: 86d6dcdc-4ad4-43ed-96fc-a8e2ace4fb95
+		summarizeBy: sum
+		sourceColumn: pagos_mensuales_creditos
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column dias_atraso_actual
+		dataType: int64
+		formatString: 0
+		lineageTag: 34308530-40d7-4454-b66b-d2ed1be8fd97
+		summarizeBy: sum
+		sourceColumn: dias_atraso_actual
+
+		annotation SummarizationSetBy = Automatic
+
+	column score_capturado
+		dataType: int64
+		formatString: 0
+		lineageTag: 3b7f21aa-91c7-4f97-935d-cc9383b91a75
+		summarizeBy: sum
+		sourceColumn: score_capturado
+
+		annotation SummarizationSetBy = Automatic
+
+	column margen_libre
+		dataType: double
+		lineageTag: 2ff2160f-7361-4ea0-94c4-9bf1e9929bb6
+		summarizeBy: sum
+		sourceColumn: margen_libre
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column riesgo_demo
+		dataType: string
+		lineageTag: cb470f91-170b-47ec-b146-5240500ebf01
+		summarizeBy: none
+		sourceColumn: riesgo_demo
+
+		annotation SummarizationSetBy = Automatic
+
+	column version_modelo
+		dataType: string
+		lineageTag: 4d2b6e8c-560e-439d-9b65-89cd3ea026f3
+		summarizeBy: none
+		sourceColumn: version_modelo
+
+		annotation SummarizationSetBy = Automatic
+
+	column estado_revision
+		dataType: string
+		lineageTag: e2ae1703-915e-49c6-8192-6419ff86f111
+		summarizeBy: none
+		sourceColumn: estado_revision
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Consulta1 = m
+		mode: import
+		source =
+				let
+				    Origen = Value.NativeQuery(PostgreSQL.Database("127.0.0.1:55433", "pluri_credito"), "SELECT * FROM reportes.evaluaciones_powerbi#(lf)", null, [EnableFolding=true])
+				in
+				    Origen
+
+	annotation PBI_ResultType = Table
+

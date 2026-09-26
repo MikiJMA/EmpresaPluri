@@ -1,0 +1,62 @@
+{
+  "source": "https://archive.ics.uci.edu/static/public/350/data.csv",
+  "citation": "Yeh, I. (2009). Default of Credit Card Clients. UCI Machine Learning Repository. https://doi.org/10.24432/C55S3H",
+  "license": "CC BY 4.0; https://creativecommons.org/licenses/by/4.0/",
+  "source_sha256": "45bcf4df62ff2e237a74eb155cabfb4bbbc171219a0637daef44fdad07503dd0",
+  "seed": "plurione-uci350-v1",
+  "split": "SHA256 of retained predictors; grouped approximate 80/20; not temporal or stratified",
+  "rows": 30000,
+  "predictors": [
+    "LIMIT_BAL",
+    "PAY_0",
+    "PAY_2",
+    "PAY_3",
+    "PAY_4",
+    "PAY_5",
+    "PAY_6",
+    "BILL_AMT1",
+    "BILL_AMT2",
+    "BILL_AMT3",
+    "BILL_AMT4",
+    "BILL_AMT5",
+    "BILL_AMT6",
+    "PAY_AMT1",
+    "PAY_AMT2",
+    "PAY_AMT3",
+    "PAY_AMT4",
+    "PAY_AMT5",
+    "PAY_AMT6"
+  ],
+  "target": "incumplimiento_mes_siguiente",
+  "excluded": [
+    "ID",
+    "SEX",
+    "EDUCATION",
+    "MARRIAGE",
+    "AGE"
+  ],
+  "unique_predictor_groups": 29183,
+  "groups_with_multiple_rows": 134,
+  "groups_with_conflicting_labels": 85,
+  "cross_partition_predictor_overlap": 0,
+  "partitions": {
+    "entrenamiento": {
+      "rows": 24045,
+      "class_counts": {
+        "0": 18668,
+        "1": 5377
+      },
+      "default_fraction": 0.22362237471407778,
+      "sha256": "0fb503f50bf89640d1e12ad7387e22f0daada4eccc57fa1d58337b5279c6d8ab"
+    },
+    "prueba": {
+      "rows": 5955,
+      "class_counts": {
+        "0": 4696,
+        "1": 1259
+      },
+      "default_fraction": 0.2114189756507137,
+      "sha256": "d7cf431db3eb63400d72a5cfca20d679396013ccc18ff5c902ff71215b01fb72"
+    }
+  }
+}

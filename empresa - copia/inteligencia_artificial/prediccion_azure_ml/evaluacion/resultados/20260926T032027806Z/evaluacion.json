@@ -1,0 +1,75 @@
+{
+  "created_utc": "2026-09-26T03:20:35.815404+00:00",
+  "model": "plurione-uci-voting-candidato:1",
+  "source_run": "uci-incumplimiento-automl-1_4",
+  "zip_sha256": "649b9c1489bcdb2e826cdf6fa4dd809db5d6a369600c6b4b8a442a25896ee9ee",
+  "model_sha256": "b7d18b9419c7a1184f07a01c7a774f291d795d7d679eaa46e7a4db9325e84f58",
+  "data_sha256": {
+    "train": "d3f2caae94533112d2c0a58241fdb9e1641d6d2ad9cef10635c727ccde6f5b79",
+    "validation": "212b599be2da5989d2762d2b7bc7516bfbb8f56990d988b6f80a7afd49684891",
+    "test": "d7cf431db3eb63400d72a5cfca20d679396013ccc18ff5c902ff71215b01fb72"
+  },
+  "predictor_overlap": 0,
+  "python": "3.10.19",
+  "versions": {
+    "mlflow-skinny": "2.15.1",
+    "scikit-learn": "1.5.1",
+    "numpy": "1.23.5",
+    "pandas": "1.5.3",
+    "azureml-automl-runtime": "1.61.0"
+  },
+  "method": "Frozen artifact; native predict and predict_proba; no fit or threshold search. Validation reproduction before independent test.",
+  "limitations": [
+    "Academic UCI data, Taiwan 2005; not representative of PluriOne applicants.",
+    "Grouped random split, not a temporal evaluation.",
+    "No production approval or integration with current app inputs.",
+    "No fairness or prospective calibration validation."
+  ],
+  "mlflow_smoke_test": "passed, 5 rows",
+  "class_order": [
+    false,
+    true
+  ],
+  "validation": {
+    "rows": 6136,
+    "positive_cases": 1341,
+    "roc_auc": 0.7862940594190289,
+    "average_precision": 0.5419899981281716,
+    "accuracy": 0.8173076923076923,
+    "balanced_accuracy": 0.6349387528489081,
+    "precision_positive": 0.6791530944625407,
+    "recall_positive": 0.31096196868008946,
+    "specificity": 0.9589155370177268,
+    "f1_positive": 0.4265984654731458,
+    "brier_score": 0.13499104837222653,
+    "log_loss": 0.42979155687060056,
+    "confusion_matrix": {
+      "tn": 4598,
+      "fp": 197,
+      "fn": 924,
+      "tp": 417
+    },
+    "baseline_always_no_default_accuracy": 0.7814537157757496
+  },
+  "test": {
+    "rows": 5955,
+    "positive_cases": 1259,
+    "roc_auc": 0.7752742435046879,
+    "average_precision": 0.5483516581872142,
+    "accuracy": 0.8255247691015953,
+    "balanced_accuracy": 0.6405629890681471,
+    "precision_positive": 0.6877133105802048,
+    "recall_positive": 0.3200953137410643,
+    "specificity": 0.96103066439523,
+    "f1_positive": 0.43685636856368565,
+    "brier_score": 0.1319716374275344,
+    "log_loss": 0.42396919295002905,
+    "confusion_matrix": {
+      "tn": 4513,
+      "fp": 183,
+      "fn": 856,
+      "tp": 403
+    },
+    "baseline_always_no_default_accuracy": 0.7885810243492863
+  }
+}
