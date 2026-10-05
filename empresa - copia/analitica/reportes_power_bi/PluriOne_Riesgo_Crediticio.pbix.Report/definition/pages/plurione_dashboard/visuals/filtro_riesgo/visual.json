@@ -4,9 +4,9 @@
   "position": {
     "x": 24,
     "y": 511,
-    "width": 360,
-    "height": 160,
     "z": 6,
+    "height": 160,
+    "width": 360,
     "tabOrder": 6
   },
   "visual": {
@@ -27,11 +27,19 @@
                 }
               },
               "queryRef": "Consulta1.riesgo_demo",
-              "nativeQueryRef": "riesgo_demo"
+              "nativeQueryRef": "riesgo_demo",
+              "active": true
             }
           ]
         }
       }
+    },
+    "objects": {
+      "general": [
+        {
+          "properties": {}
+        }
+      ]
     },
     "visualContainerObjects": {
       "title": [
@@ -56,5 +64,23 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "ca9716c377070e9c7004",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Consulta1"
+              }
+            },
+            "Property": "riesgo_demo"
+          }
+        },
+        "type": "Categorical"
+      }
+    ]
   }
 }

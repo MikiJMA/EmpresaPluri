@@ -1,7 +1,7 @@
 # Modelos predictivos — Python y Azure Machine Learning
 
 Función: preparar datos, entrenar, evaluar y versionar modelos de riesgo.
-Estado: candidato académico UCI entrenado en Azure, recuperado y registrado como `plurione-uci-voting-candidato:1`; carga y evaluación local verificadas. No hay despliegue ni integración predictiva con la aplicación. Ver [evaluación, métricas y límites](evaluacion/README.md).
+Estado al 04/10/2026: candidato académico UCI entrenado en Azure, recuperado y registrado como `plurione-uci-voting-candidato:1`; carga y evaluación local verificadas. Laboratorio separado con consulta real autenticada comprobada. La etiqueta local no verifica el modelo servido; una lectura independiente en Studio comprobó modelo registrado:1, aprovisionamiento correcto y tráfico directo 100 %. Comparación binaria pendiente. No se integra en el scoring principal ni se acredita aptitud para créditos reales. Ver [evaluación y límites](evaluacion/README.md), [prueba integral](../../docs/evidencias/2026-10-04/prueba-e2e.md) y [seguimiento técnico](../../docs/evidencias/2026-10-04/cierre-tecnico.md).
 
 ## Experimento académico UCI
 

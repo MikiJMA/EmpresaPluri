@@ -1,5 +1,7 @@
 # Plan del proyecto — borrador para revisión con asesores
 
+Estado técnico actualizado el 04/10/2026 según [QA](QA.md). Se conserva el cronograma propuesto de 500 horas; no acredita horas trabajadas, aprobación de alcance ni ceremonias Scrum. Ver [índice de entrega](ENTREGA_DEMO.md).
+
 ## Identificación
 
 Título: Proyecto de Desarrollo de un Sistema Inteligente de Análisis de Riesgo Crediticio.
@@ -23,23 +25,25 @@ Desarrollar un sistema que analice información financiera y crediticia, present
 
 Se esperan beneficios en consistencia de evaluación y seguimiento del riesgo; la reducción del incumplimiento debe medirse en una implementación real y no se presume demostrada.
 
-El alcance final incluye historial crediticio, pagos, ingresos, endeudamiento y variables económicas. El prototipo actual solo recibe RFC, ingresos, gastos y score capturado. Las reglas existentes son una referencia educativa, no una política aprobada por PluriOne.
+El alcance final incluye historial crediticio, pagos, ingresos, endeudamiento y variables económicas. La demo captura identificador, ingresos, gastos, score, deuda, pagos y atraso. Los tres últimos se validan y conservan, pero no modifican el riesgo demo. Los indicadores económicos públicos también son informativos. No hay historial crediticio privado conectado ni un modelo validado para la población objetivo. Las reglas existentes son una referencia educativa, no una política aprobada por PluriOne.
 
 ## Requerimientos iniciales
 
 | ID | Requerimiento | Criterio de aceptación | Estado |
 |---|---|---|---|
 | RF01 | Capturar y validar escenario | Rechazar ingresos no positivos, gastos negativos, identificador vacío y score fuera de escala demo | Implementado |
-| RF02 | Explicar evaluación | Mostrar margen, regla y versión | Implementado con reglas demo |
+| RF02 | Explicar evaluación | Mostrar margen, regla y versión | Reglas demo y explicación automática Azure OpenAI con guía Search comprobadas; texto sujeto a revisión humana |
 | RF03 | Guardar solicitudes y evaluaciones | Consultar historial persistente con fecha y versión, sin duplicar solicitudes por reintento | Implementado localmente en PostgreSQL; reintentos con Idempotency-Key |
-| RF04 | Analizar pagos y deuda | Diccionario de variables y validaciones acordadas con asesor | Pendiente |
-| RF05 | Predecir incumplimiento | Modelo entrenado, comparación con baseline y reporte de validación | Pendiente |
-| RF06 | Dashboard y alertas | Filtros por fecha/riesgo, métricas conciliadas y alertas trazables | Pendiente |
-| RF07 | Revisión humana | Registrar dictamen, responsable y motivo sin sustituirlo por salida de IA | Pendiente |
-| RF08 | Roles y auditoría | Analista y administrador con permisos comprobados y acceso auditado | Pendiente |
-| RF09 | Integraciones | Contratos de API, autorización de datos y manejo de indisponibilidad | Pendiente |
+| RF04 | Analizar pagos y deuda | Diccionario de variables y validaciones acordadas con asesor | Parcial: captura, validación técnica y persistencia; análisis crediticio y aceptación del diccionario pendientes |
+| RF05 | Predecir incumplimiento | Modelo entrenado, comparación con baseline y reporte de validación | Experimento UCI evaluado y consulta remota separada operativos; versión registrada remota verificada por metadatos independientes. Comparación binaria, representatividad y aptitud para crédito real pendientes |
+| RF06 | Dashboard y alertas | Filtros por fecha/riesgo, métricas conciliadas y alertas trazables | Dashboard React y Power BI Desktop comprobados; alertas trazables pendientes |
+| RF07 | Revisión humana | Registrar dictamen, responsable y motivo sin sustituirlo por salida de IA | Implementado en demo con identidad Entra, versiones y motivo; no aprobación real de crédito |
+| RF08 | Roles y auditoría | Analista y administrador con permisos comprobados y acceso auditado | Autenticación, ámbito y roles implementados; ambos roles comparten acceso. Administración diferenciada y auditoría operativa completa pendientes |
+| RF09 | Integraciones | Contratos de API, autorización de datos y manejo de indisponibilidad | Azure OpenAI, Search, ML y APIs públicas comprobados en demo; políticas oficiales, fuentes crediticias privadas y controles de producción pendientes |
 
 Requerimientos no funcionales propuestos: secretos fuera del código; acceso restringido; cifrado en tránsito en despliegue; no registrar RFC o expedientes completos en logs; restauración comprobada de respaldo; validación de entradas en servidor; pruebas de rendimiento con volumen acordado. Los objetivos numéricos de latencia, concurrencia y recuperación se fijarán con el asesor.
+
+Seguimiento del 04/10/2026: respaldo manual y ensayo de restauración en un contenedor aislado conciliaron tres tablas sin sobrescribir la base original. No incluye roles globales/ACL ni cifrado del dump; no acredita recuperación productiva completa. [Evidencia](evidencias/2026-10-04/cierre-tecnico.md).
 
 ## Propuesta técnica y arquitectura objetivo
 
@@ -50,6 +54,8 @@ Power BI consume vistas de información agregada con permisos. Los adaptadores d
 Entidades propuestas: solicitante, solicitud, observación financiera, historial de pagos, evaluación, versión de modelo, alerta, revisión humana y evento de auditoría. Cada evaluación conserva versión, fecha de corte, variables utilizadas y factores explicativos. Definir retención y eliminación antes de almacenar datos reales.
 
 Estado actual: React llama POST /api/v1/evaluar de FastAPI. GET / informa salud. /docs expone OpenAPI. PostgreSQL guarda las entradas y el resultado con fecha, versión e ID; GET /api/v1/evaluaciones consulta el historial y GET /api/v1/evaluaciones/{id} devuelve el detalle. La interfaz conserva el historial al recargar. Sin configuración se permite una evaluación identificada expresamente como no guardada. infraestructura/contenedores_docker/docker-compose.yml ejecuta frontend, backend, PostgreSQL y migraciones; se verificaron guardado e historial mediante navegador y persistencia tras reiniciar la base. El despliegue productivo permanece pendiente.
+
+Las rutas de negocio requieren Entra; health/configuración pública y OpenAPI no equivalen a acceso a datos. El servidor fija el responsable de nuevas revisiones desde la identidad verificada. Search recupera guías académicas, OpenAI explica una evaluación guardada y ML recibe las 19 variables UCI por una ruta separada. Banxico/Banco Mundial no reciben datos de solicitantes. Las comprobaciones del 04/10/2026 constan en [prueba integral](evidencias/2026-10-04/prueba-e2e.md); no certifican el sistema objetivo completo.
 
 ## Estrategia de modelos
 
@@ -80,7 +86,9 @@ Bloques secuenciales orientativos. Fechas pendientes de inicio y disponibilidad 
 
 Scrum: iteraciones de dos semanas ajustadas al calendario acordado; planificación, seguimiento breve, revisión con demostración y retrospectiva. No se asignan responsabilidades empresariales adicionales sin acuerdo.
 
-## Backlog en orden de implementación
+## Secuencia de implementación propuesta originalmente
+
+La lista siguiente describe la secuencia del plan, no tareas todas pendientes ni sprints ejecutados. El estado verificable y la prioridad de cierre se mantienen en [BACKLOG_CIERRE.md](../gestion_proyecto/scrum/BACKLOG_CIERRE.md).
 
 1. Base local operativa y validada: entrada de React, formulario, errores y API demo.
 2. PostgreSQL con migraciones, solicitudes, evaluaciones e historial; pruebas de persistencia.

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { consultarHistorial } from '../servicios/creditApi'
 import '../../styles/History.css'
 import EvaluationDetail from './EvaluationDetail'
+import TablaHistorial from './TablaHistorial'
 
 export default function EvaluationHistory({ revision }) {
   const [offset, setOffset] = useState(0)
@@ -30,16 +31,7 @@ export default function EvaluationHistory({ revision }) {
       </div>
       {loading ? <p role="status">Cargando historial…</p> : error ? <p role="alert" className="error">{error}</p> : (
         <>
-          {data.items.length ? <div className="history-scroll"><table>
-            <caption className="sr-history">Evaluaciones guardadas en PostgreSQL</caption>
-            <thead><tr><th>Fecha</th><th>Solicitante</th><th>Margen disponible</th><th>Riesgo</th><th>Revisión</th></tr></thead>
-            <tbody>{data.items.map(item => <tr key={item.id}>
-              <td>{new Date(item.fecha).toLocaleString('es-MX')}</td><td>{item.rfc}</td>
-              <td>{new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(item.margen_libre)}</td>
-              <td>{item.nivel_riesgo_preliminar}</td>
-              <td><button type="button" disabled={!!selected} onClick={() => setSelected(item.id)}>Ver detalle</button></td>
-            </tr>)}</tbody>
-          </table></div> : <p>Aún no hay evaluaciones en esta página.</p>}
+          {data.items.length ? <TablaHistorial items={data.items} selected={selected} onSelected={setSelected} /> : <p>Aún no hay evaluaciones en esta página.</p>}
           <nav className="history-pages" aria-label="Páginas del historial">
             <button type="button" disabled={offset === 0} onClick={() => cambiarPagina(Math.max(0, offset - 10))}>Anterior</button>
             <span>Página {Math.floor(offset / 10) + 1}</span>

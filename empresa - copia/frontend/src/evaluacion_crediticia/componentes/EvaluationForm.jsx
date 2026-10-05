@@ -9,7 +9,7 @@ const financialFields = [
 export default function EvaluationForm({ form, busy, error, change, submit }) {
   return (
     <section className="card form-card">
-      <div className="card-heading"><span className="section-number">01</span><div><h2>Nueva evaluación</h2><p>Completa los datos de tu escenario.</p></div></div>
+      <div className="card-heading"><div><h2>Datos del solicitante</h2><p>Nuevo escenario · Todos los campos son obligatorios</p></div><span className="enterprise-panel-tag">MXN</span></div>
       <form onSubmit={submit}>
         <fieldset disabled={busy}>
           <div className="field-group">
@@ -29,12 +29,13 @@ export default function EvaluationForm({ form, busy, error, change, submit }) {
             <label htmlFor="dias_atraso_actual">Días de atraso actual <span>*</span></label>
             <input id="dias_atraso_actual" name="dias_atraso_actual" type="number" min="0" max="36500" step="1" placeholder="0 si estás al corriente" value={form.dias_atraso_actual} onChange={change} required aria-describedby="credit-help" />
           </div>
-          <p id="credit-help" className="form-footnote">Deuda: saldo pendiente total. Pagos: suma mensual de tus créditos. Atraso: días del pago vencido más antiguo aún pendiente; 0 si estás al corriente. Captura 0 en deuda y pagos si no tienes créditos. Los gastos mensuales deben incluir los pagos de créditos. Estos tres datos se guardan, pero aún no modifican el riesgo demo.</p>
+          <details className="enterprise-field-help"><summary>Cómo capturar deuda, pagos y atraso</summary><p id="credit-help" className="form-footnote">Deuda: saldo pendiente total. Pagos: suma mensual de tus créditos. Atraso: días del pago vencido más antiguo aún pendiente; 0 si estás al corriente. Captura 0 en deuda y pagos si no tienes créditos. Los gastos mensuales deben incluir los pagos de créditos. Estos tres datos se guardan, pero aún no modifican el riesgo demo.</p></details>
           <div className="field-group score-field">
             <label htmlFor="score_buro_actual">Score capturado <span>*</span><small>Escala demo: 0–1000</small></label>
             <input id="score_buro_actual" name="score_buro_actual" type="number" min="0" max="1000" step="1" placeholder="Ej. 700" value={form.score_buro_actual} onChange={change} required />
           </div>
           <button type="submit"><span>{busy ? 'Evaluando escenario…' : 'Evaluar escenario'}</span><span aria-hidden="true">{busy ? '◌' : '→'}</span></button>
+          <p className="form-footnote">Al guardar, se generará automáticamente una explicación con Azure OpenAI y Azure AI Search. Se enviarán ingresos, gastos, score y resultado, sin RFC. Cada nueva evaluación puede generar consumo de pago. Usa solo datos ficticios.</p>
           <p className="form-footnote">Todos los campos son obligatorios.</p>
         </fieldset>
       </form>

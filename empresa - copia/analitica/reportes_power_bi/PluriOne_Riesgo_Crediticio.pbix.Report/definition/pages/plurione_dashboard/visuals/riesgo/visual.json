@@ -4,9 +4,9 @@
   "position": {
     "x": 24,
     "y": 185,
-    "width": 760,
-    "height": 300,
     "z": 4,
+    "height": 300,
+    "width": 760,
     "tabOrder": 4
   },
   "visual": {
@@ -27,7 +27,8 @@
                 }
               },
               "queryRef": "Consulta1.riesgo_demo",
-              "nativeQueryRef": "riesgo_demo"
+              "nativeQueryRef": "riesgo_demo",
+              "active": true
             }
           ]
         },

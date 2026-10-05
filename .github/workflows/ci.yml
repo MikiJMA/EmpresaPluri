@@ -1,4 +1,4 @@
-name: Validacion PluriOne
+name: Validacion NexoCredit
 
 on:
   push:
@@ -52,6 +52,12 @@ jobs:
           python -m backend.app.persistencia_postgresql.migrar
       - name: Pruebas API y PostgreSQL real
         run: python -m unittest discover -s backend/tests -v
+      - name: Pruebas de lanzadores sin secretos ni Docker
+        shell: pwsh
+        run: |
+          ./scripts/tests/docker-url.test.ps1
+          ./scripts/tests/banxico-config.test.ps1
+          ./scripts/tests/programacion-aislada.test.ps1
 
   frontend:
     runs-on: ubuntu-latest
@@ -69,6 +75,10 @@ jobs:
           cache: npm
           cache-dependency-path: empresa - copia/frontend/package-lock.json
       - run: npm ci
+      - name: Dependencias sin vulnerabilidades altas conocidas
+        run: npm audit --audit-level=high
+      - name: Pruebas unitarias frontend
+        run: npm test
       - run: npm run lint
       - run: npm run build
         env:

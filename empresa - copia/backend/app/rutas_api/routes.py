@@ -9,15 +9,17 @@ from backend.app.validacion_datos.credito import SolicitudCredito
 from backend.app.validacion_datos.revision import RevisionManual
 from backend.app.evaluacion_crediticia.scoring import evaluar_credito
 from backend.app.persistencia_postgresql.repositorio import obtener_repositorio, ConflictoSolicitud
+from backend.app.autenticacion_entra_id.seguridad import usuario_actual
 
 router = APIRouter()
 
 
 @router.post('/api/v1/evaluaciones/{identificador}/revisiones')
-def revisar(identificador: UUID, revision: RevisionManual, repositorio=Depends(obtener_repositorio)):
+def revisar(identificador: UUID, revision: RevisionManual, repositorio=Depends(obtener_repositorio), user=Depends(usuario_actual)):
     if repositorio is None:
         raise HTTPException(503, 'PostgreSQL todavía no está configurado.')
     try:
+        revision = revision.model_copy(update={'responsable': user['responsable']})
         result = repositorio.revisar(identificador, revision)
     except ConflictoSolicitud:
         raise HTTPException(409, 'La revisión cambió o la clave ya fue utilizada. Cierra y vuelve a abrir el detalle antes de revisar.') from None
@@ -40,11 +42,6 @@ def dashboard(desde: date | None = None, hasta: date | None = None,
         return repositorio.resumen(desde, hasta, riesgo)
     except DatabaseError:
         raise HTTPException(503, 'No se pudo cargar el dashboard. Verifica PostgreSQL.') from None
-
-
-@router.get("/")
-def health_check():
-    return {"estado": "API operativa", "modo": "demostracion", "version": "0.1.0"}
 
 
 @router.post("/api/v1/evaluar")

@@ -4,9 +4,9 @@
   "position": {
     "x": 808,
     "y": 185,
-    "width": 768,
-    "height": 300,
     "z": 5,
+    "height": 300,
+    "width": 768,
     "tabOrder": 5
   },
   "visual": {
@@ -27,7 +27,8 @@
                 }
               },
               "queryRef": "Consulta1.estado_revision",
-              "nativeQueryRef": "estado_revision"
+              "nativeQueryRef": "estado_revision",
+              "active": true
             }
           ]
         },

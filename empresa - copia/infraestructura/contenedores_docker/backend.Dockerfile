@@ -5,6 +5,7 @@ COPY backend/requirements.txt backend/requirements.txt
 RUN pip install --no-cache-dir -r backend/requirements.txt \
     && useradd --create-home --uid 10001 pluri
 COPY --chown=pluri:pluri backend backend
+COPY --chown=pluri:pluri scripts/cargar_documentos_search.py scripts/respaldo_postgresql.py scripts/
 USER pluri
 EXPOSE 8000
 CMD ["python", "-m", "uvicorn", "backend.app.main:app", "--host", "0.0.0.0", "--port", "8000"]

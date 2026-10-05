@@ -2,20 +2,22 @@
 
 Por indicación del alumno, el sistema final debe utilizar todas las tecnologías siguientes. Este requisito sustituye la interpretación anterior de que eran opcionales. Crear una carpeta no significa que su integración esté implementada.
 
+Estado documental actualizado el 04/10/2026 con las comprobaciones registradas en [QA](docs/QA.md) y en la [prueba integral](docs/evidencias/2026-10-04/prueba-e2e.md). «Implementado en demo» no significa aprobado para producción. Índice de entrega: [ENTREGA_DEMO.md](docs/ENTREGA_DEMO.md).
+
 | Tecnología | Función y ubicación | Estado actual |
 |---|---|---|
 | Python | Lógica del servidor en backend/app | Implementado |
 | FastAPI | API HTTP en backend/app/rutas_api | Implementado |
-| React.js | Interfaz en frontend/src | Implementado |
-| Azure OpenAI Service | Explicaciones en backend/app/integraciones/explicaciones_azure_openai | Pendiente |
-| Azure Machine Learning | Entrenamiento y evaluación en inteligencia_artificial/prediccion_azure_ml; consumo en backend/app/integraciones/prediccion_azure_ml | Candidato académico UCI entrenado y registrado; artefacto recuperado tras fallo de etiquetas de AutoML. Carga y evaluación local aislada verificadas: AUC prueba 0,775274, sensibilidad 32,01 %. Pendientes aptitud para población real, despliegue e integración con la aplicación; no aprobado para producción |
-| Azure AI Search | Recuperación de políticas en backend/app/integraciones/busqueda_azure_ai_search | Pendiente |
-| PostgreSQL | Persistencia en backend/app/persistencia_postgresql | Implementado localmente: evaluaciones e historial; pruebas reales aprobadas |
-| Power BI | Reportes en analitica/reportes_power_bi | Conexión local e importación comprobadas; dashboard PBIP/PBIR creado, pendiente de validación visual y métricas en Desktop; sin publicación cloud |
+| React.js | Interfaz en frontend/src | Implementado; marca demostrativa NexoCredit y 48 pruebas frontend aprobadas localmente |
+| Azure OpenAI Service | Explicaciones en backend/app/integraciones/explicaciones_azure_openai | Implementado en demo: explicación automática de una evaluación guardada, con gpt-5-mini-1 y guía DEM-02 recuperada por Search. Consulta real autenticada comprobada el 04/10/2026. Sin RFC enviado ni cambio del riesgo; requiere revisión humana y puede generar consumo |
+| Azure Machine Learning | Entrenamiento y evaluación en inteligencia_artificial/prediccion_azure_ml; consumo en backend/app/integraciones/prediccion_azure_ml | Candidato académico UCI entrenado y registrado; AUC 0,775274 y sensibilidad 32,01 % en prueba local aislada. Consulta real desde formulario UCI de 19 entradas y lectura independiente de metadatos comprobadas el 04/10/2026: modelo registrado servido plurione-uci-voting-candidato:1, aprovisionamiento correcto, tráfico directo 100 %. La etiqueta local no verifica esa identidad. Comparación binaria pendiente; separado del scoring demo y no aprobado para producción |
+| Azure AI Search | Recuperación documental en backend/app/integraciones/busqueda_azure_ai_search | Implementado en demo: catálogo de 2 guías y 14 secciones, búsqueda textual y recuperación de DEM-02 para la explicación. Consultas reales autenticadas comprobadas el 04/10/2026. Son guías académicas, no políticas oficiales ni expedientes privados |
+| PostgreSQL | Persistencia en backend/app/persistencia_postgresql | Implementado localmente: evaluaciones e historial; pruebas reales aprobadas. Respaldo manual y restauración aislada de 3 tablas conciliados el 04/10/2026; sin sobrescribir la base original. Dump privado sin cifrado, sin roles globales/ACL; no recuperación productiva completa |
+| Power BI | Reportes en analitica/reportes_power_bi | Demostración local terminada y guardada en Desktop el 30/09/2026: actualización PostgreSQL comprobada, 11 visuales, filtros probados y 96 comparaciones SQL–DAX sin diferencias. Sin publicación cloud ni gateway; no es validación de crédito real |
 | Docker | Contenedores en infraestructura/contenedores_docker | Implementado y probado localmente: React/Nginx, FastAPI, PostgreSQL y migraciones con Compose |
-| GitHub Actions | Automatización en .github/workflows/ci.yml de la raíz Git (carpeta exterior) | Implementado: backend/PostgreSQL y frontend aprobados en GitHub, ejecución 35911875318 |
-| Microsoft Entra ID | Identidad y roles en backend/app/autenticacion_entra_id | Pendiente |
-| APIs financieras | Consulta de fuentes en backend/app/integraciones/datos_financieros | Pendiente |
-| Scrum | Planificación y seguimiento en gestion_proyecto/scrum | Propuesta; ejecución por documentar |
+| GitHub Actions | Automatización en .github/workflows/ci.yml de la raíz Git (carpeta exterior) | Workflow actualizado: backend/PostgreSQL real, migraciones repetibles, lanzadores PowerShell, tests unitarios frontend, npm audit, lint y build. Ejecución histórica 35911875318 aprobada el 23/09/2026 para d3cd93d; nueva ejecución del cierre actual pendiente de resultado identificado por commit |
+| Microsoft Entra ID | Identidad y roles en backend/app/autenticacion_entra_id | Implementado en demo: MSAL en React y validación de JWT, firma, audiencia, emisor, tenant, cliente, ámbito y rol en FastAPI. Sesión real y rechazo 401 sin token comprobados el 04/10/2026. Analista y Administrador acceden al mismo conjunto de rutas; no existe administración diferenciada ni auditoría operativa completa |
+| APIs financieras | Consulta de fuentes en backend/app/integraciones/datos_financieros; pantalla en frontend/src/datos_financieros | Banxico FIX/tasa y Banco Mundial inflación/PIB conectados; ambos proveedores disponibles en la prueba autenticada del 04/10/2026. Fechas, unidades, procedencia y caché visibles. Sustituye el fallo del token documentado el 03/10/2026. Sin historial crediticio privado ni cambios al riesgo demo |
+| Scrum | Planificación y seguimiento en gestion_proyecto/scrum | Backlog de cierre y evidencias organizados. Ejecución de sprints, reuniones, responsables, horas, revisión y retrospectiva aún no acreditadas; deben registrarse cuando ocurran |
 
-Las carpetas pendientes contienen instrucciones de responsabilidad y criterios de finalización, no servicios simulados ni conexiones activas.
+Pendientes de cierre y producción separados en [backlog de cierre](gestion_proyecto/scrum/BACKLOG_CIERRE.md). Las pruebas simuladas no sustituyen la evidencia de consultas reales ni la validación crediticia del modelo.

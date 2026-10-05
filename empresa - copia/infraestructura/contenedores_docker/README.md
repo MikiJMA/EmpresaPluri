@@ -11,7 +11,7 @@ Abrir Docker Desktop y esperar a que el motor esté activo. Desde la carpeta int
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\docker.ps1 iniciar
 ```
 
-Abrir http://127.0.0.1:8080/; documentación de API en http://127.0.0.1:8080/docs. El comando construye las imágenes y espera los controles de salud. Volver a ejecutarlo después de cambiar código. La primera construcción requiere Internet.
+Abrir [http://localhost:8080/](http://localhost:8080/) e iniciar sesión con Microsoft; documentación de API en http://localhost:8080/docs. La configuración Entra actual requiere ese origen exacto y el lanzador lo conserva. El comando construye las imágenes y espera los controles de salud. Volver a ejecutarlo después de cambiar código. La primera construcción requiere Internet.
 
 Otras acciones:
 
@@ -26,7 +26,21 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\docker.ps1 det
 
 Detener elimina los contenedores, pero conserva el volumen plurione-docker_datos_postgresql. No utilizar down -v ni eliminar el volumen si se necesitan los datos. El volumen no sustituye un respaldo.
 
+Desde la raíz interior, `Probar programacion.cmd` ejecuta las suites completas en una base temporal aislada, sin puertos publicados ni datos de trabajo. `Respaldar PostgreSQL.cmd` crea el respaldo privado manual y `Probar restauracion PostgreSQL.cmd` ensaya su recuperación en un contenedor temporal; no sobrescribe la base original. El ensayo del 04/10/2026 aprobó la conciliación de tres tablas. Dump sin cifrado ni roles globales/ACL; no automatiza retención ni acredita recuperación de producción. [Evidencia técnica](../../docs/evidencias/2026-10-04/cierre-tecnico.md).
+
 ## Configuración y separación de datos
+
+### Conexión Banxico y PostgreSQL detenido — 03/10/2026
+
+`Conectar Banxico.cmd` guarda el token privado sin mostrarlo y conserva las demás variables. Ahora enciende PostgreSQL primero (`--no-recreate`) y espera su salud; después recrea solo el backend (`--no-deps --force-recreate`) para aplicar la configuración. Usa las imágenes existentes (`--no-build --pull never`); no borra volúmenes, modifica registros ni ejecuta migraciones. Los mensajes de progreso de Docker en stderr no se confunden con fallos en PowerShell 5.1: se comprueba el código de salida y se muestran errores propios sin contenido privado.
+
+Si el token ya quedó guardado pero el backend no pasó la comprobación de salud, ejecutar desde la raíz interior:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\configurar-banxico.ps1 -UsarTokenGuardado
+```
+
+El 03/10/2026 se confirmó PostgreSQL detenido, backend HTTP 200 pero sin acceso a la base. Se recuperaron ambos controles de salud conservando el contenedor/volumen PostgreSQL y el token; Banxico rechazó por separado aquel token. El 04/10/2026 ambos proveedores financieros estuvieron disponibles en la aplicación autenticada. Guardar configuración no confirma acceso al proveedor. Ver [contrato financiero](../../backend/app/integraciones/datos_financieros/README.md) y [prueba posterior](../../docs/evidencias/2026-10-04/prueba-e2e.md).
 
 ### Alternativa ante bloqueo de certificados npm (22 de septiembre de 2026)
 
@@ -47,4 +61,4 @@ WEB_PORT permite cambiar el puerto web si 8080 está ocupado. Solo se publica en
 
 Esta base es independiente de la instalación nativa de PostgreSQL y de .local/postgresql/datos. No se copiaron ni borraron registros locales. La versión de desarrollo en 5173 sigue siendo independiente de Docker en 8080.
 
-Es un entorno de demostración sin autenticación, TLS ni respaldos automáticos. Usar datos ficticios y no exponerlo públicamente. Dependencias Python e imágenes base aún requieren fijación de versiones/digests para reproducibilidad estricta de producción.
+Es un entorno de demostración con autenticación Entra, pero sin TLS local ni respaldos automáticos comprobados. Usar datos ficticios y no exponerlo públicamente. Dependencias Python e imágenes base aún requieren fijación de versiones/digests para reproducibilidad estricta de producción. El volumen persistente no acredita restauración de un respaldo.

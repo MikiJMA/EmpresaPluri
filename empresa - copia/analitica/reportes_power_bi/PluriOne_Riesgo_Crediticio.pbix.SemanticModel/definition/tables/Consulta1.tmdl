@@ -1,24 +1,29 @@
 table Consulta1
 	lineageTag: 207a6f65-672d-4cbf-9cc0-99ac461e8610
 
-	measure 'Total evaluaciones' = COUNTROWS('Consulta1')
+	measure 'Total evaluaciones' = COALESCE(COUNTROWS('Consulta1'), 0)
 		formatString: 0
 		lineageTag: bb1602a3-dc5d-4cf8-a2dc-07f8bd421871
 
 	measure 'Margen promedio' = AVERAGE('Consulta1'[margen_libre])
 		formatString: #,0.00
+		lineageTag: 2b01886f-d3ed-4401-a1e1-f508bf6413c0
 
 	measure 'Deuda promedio' = AVERAGE('Consulta1'[deuda_actual])
 		formatString: #,0.00
+		lineageTag: 564a9bc9-34cd-4c47-a9ff-8d3e11523e49
 
-	measure 'Evaluaciones con deuda' = COUNT('Consulta1'[deuda_actual])
+	measure 'Evaluaciones con deuda' = COALESCE(COUNT('Consulta1'[deuda_actual]), 0)
 		formatString: 0
+		lineageTag: 1abb9f85-88f9-4f93-a2f2-262ce294b4ad
 
 	measure 'Cobertura de deuda' = DIVIDE([Evaluaciones con deuda], [Total evaluaciones])
 		formatString: 0.0%
+		lineageTag: a4415196-1a60-48e7-8595-48d7ae2caa73
 
 	measure 'Ingresos promedio' = AVERAGE('Consulta1'[ingresos_mensuales])
 		formatString: #,0.00
+		lineageTag: d2fd6ae2-725c-4175-b12e-0357272174b3
 
 	column evaluacion_id
 		dataType: string

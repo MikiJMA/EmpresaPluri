@@ -12,3 +12,4 @@
 docs
 output
 tmp
+backend/app/integraciones/prediccion_azure_ml/model.pkl

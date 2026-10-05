@@ -9,6 +9,7 @@ from psycopg import sql
 from psycopg.conninfo import make_conninfo
 from fastapi.testclient import TestClient
 from backend.app.main import app
+from backend.app.autenticacion_entra_id.seguridad import usuario_actual
 from backend.app.persistencia_postgresql.conexion import database_url
 from backend.app.persistencia_postgresql.migrar import migrar
 from backend.app.persistencia_postgresql.repositorio import obtener_repositorio, RepositorioEvaluaciones
@@ -18,6 +19,9 @@ client = TestClient(app)
 
 
 class DisponibilidadTests(unittest.TestCase):
+    def setUp(self):
+        app.dependency_overrides[usuario_actual] = lambda: {'responsable': 'Prueba aislada', 'roles': ['Analista']}
+
     def tearDown(self):
         app.dependency_overrides.clear()
 
@@ -44,6 +48,7 @@ class DisponibilidadTests(unittest.TestCase):
 @unittest.skipUnless(os.getenv('RUN_POSTGRES_TESTS') == '1', 'Activar RUN_POSTGRES_TESTS=1 para probar PostgreSQL real.')
 class PostgreSQLTests(unittest.TestCase):
     def setUp(self):
+        app.dependency_overrides[usuario_actual] = lambda: {'responsable': 'Analista prueba', 'roles': ['Analista']}
         self.url = database_url()
         self.schema = 'test_' + uuid4().hex
         with psycopg.connect(self.url) as conn:

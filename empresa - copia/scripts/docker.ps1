@@ -1,5 +1,13 @@
 param([ValidateSet('iniciar','abrir','detener','estado','logs','pruebas')][string]$Accion = 'iniciar')
 $ErrorActionPreference = 'Stop'
+
+function Get-PluriOneWebUrl([string]$Port = '8080') {
+    if ($Port -notmatch '^\d+$' -or [int]$Port -lt 1 -or [int]$Port -gt 65535) {
+        throw 'WEB_PORT debe ser un puerto valido.'
+    }
+    return "http://localhost:$Port/"
+}
+
 $project = Split-Path -Parent $PSScriptRoot
 $composeDir = Join-Path $project 'infraestructura\contenedores_docker'
 $envFile = Join-Path $composeDir '.env'
@@ -34,18 +42,18 @@ switch ($Accion) {
     'detener' { & $dockerExe @composeArgs down }
     'estado' { & $dockerExe @composeArgs ps -a }
     'logs' { & $dockerExe @composeArgs logs --tail 100 }
-    'pruebas' { & $dockerExe @composeArgs exec -T -e RUN_POSTGRES_TESTS=1 backend python -m unittest discover -s backend/tests -v }
+    'pruebas' { & (Join-Path $PSScriptRoot 'probar-programacion.ps1') }
 }
 if ($LASTEXITCODE -ne 0) { throw 'Docker Compose no completo la accion. Consulta los mensajes anteriores.' }
-if ($Accion -eq 'iniciar') { Write-Host 'Proyecto iniciado. Puerto predeterminado: http://127.0.0.1:8080/ (WEB_PORT en .env).' }
+if ($Accion -eq 'iniciar') { Write-Host 'Proyecto iniciado. Acceso Microsoft: http://localhost:8080/ (WEB_PORT en .env).' }
 if ($Accion -eq 'abrir') {
     $webPort = '8080'
     foreach ($line in Get-Content -LiteralPath $envFile) {
         if ($line -match '^\s*WEB_PORT\s*=\s*(\d+)\s*$') { $webPort = $Matches[1] }
     }
     if ($env:WEB_PORT) { $webPort = $env:WEB_PORT }
-    if ($webPort -notmatch '^\d+$' -or [int]$webPort -lt 1 -or [int]$webPort -gt 65535) { throw 'WEB_PORT debe ser un puerto valido.' }
-    $url = "http://127.0.0.1:$webPort/"
+    $url = Get-PluriOneWebUrl $webPort
+    if ($webPort -ne '8080') { Write-Warning 'El retorno Entra actual requiere localhost:8080. Otro puerto necesita configuracion de acceso acorde.' }
     $null = Invoke-WebRequest -Uri $url -UseBasicParsing -TimeoutSec 15
     Write-Host "Pagina disponible: $url"
     Start-Process $url

@@ -4,9 +4,9 @@
   "position": {
     "x": 408,
     "y": 511,
-    "width": 360,
-    "height": 160,
     "z": 7,
+    "height": 160,
+    "width": 360,
     "tabOrder": 7
   },
   "visual": {
@@ -27,11 +27,19 @@
                 }
               },
               "queryRef": "Consulta1.estado_revision",
-              "nativeQueryRef": "estado_revision"
+              "nativeQueryRef": "estado_revision",
+              "active": true
             }
           ]
         }
       }
+    },
+    "objects": {
+      "general": [
+        {
+          "properties": {}
+        }
+      ]
     },
     "visualContainerObjects": {
       "title": [
@@ -56,5 +64,23 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "99b25f037124d24908d0",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Consulta1"
+              }
+            },
+            "Property": "estado_revision"
+          }
+        },
+        "type": "Categorical"
+      }
+    ]
   }
 }

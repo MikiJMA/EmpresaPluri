@@ -33,7 +33,7 @@ sus reglas de clasificación. El orden de clases queda documentado en el JSON.
 Taiwán de 2005, particiones aleatorias agrupadas, sin validación temporal ni evidencia
 de representatividad para clientes de PluriOne. No se evaluó equidad ni calibración
 prospectiva. Las 19 entradas UCI no equivalen a las entradas actuales de la aplicación.
-No se conectó el modelo al formulario ni se desplegó un servicio.
+Al momento de esta evaluación local no se conectó el modelo al formulario ni se desplegó un servicio. Actualización posterior del 04/10/2026: consulta remota desde el laboratorio UCI separado comprobada; una lectura independiente de metadatos Studio comprobó el modelo registrado servido `plurione-uci-voting-candidato:1` y tráfico directo 100 %. No se comparó el binario remoto con las huellas locales. No cambia las métricas ni límites de la evaluación. Ver [prueba integral](../../../docs/evidencias/2026-10-04/prueba-e2e.md) y [seguimiento técnico](../../../docs/evidencias/2026-10-04/cierre-tecnico.md).
 
 ## Evidencias y origen del fallo
 

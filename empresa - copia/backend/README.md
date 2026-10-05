@@ -13,7 +13,13 @@ FastAPI y reglas de evaluación. Ejecutar desde la raíz de empresa:
 - tests/: pruebas de API y reglas.
 - requirements.txt: dependencias de Python.
 - app/persistencia_postgresql/: conexión, repositorio y migraciones PostgreSQL.
+- app/autenticacion_entra_id/: validación de acceso delegado Microsoft, ámbito y roles; fija identidad de nuevas revisiones.
+- app/integraciones/: clientes Azure OpenAI, Azure ML, Azure AI Search y APIs financieras, separados por función.
 - .env.postgresql: configuración privada de persistencia cargada automáticamente.
 - .env: archivo local conservado de la ubicación anterior; no se carga automáticamente. Las variables actuales se toman del entorno del proceso.
 
 El entorno virtual compartido está en ../.venv. Consultar ../README.md para instalación.
+
+Estado documentado al 04/10/2026: 57 pruebas backend/PostgreSQL aprobadas y consultas externas reales comprobadas en la demo autenticada. Ver [QA](../docs/QA.md). Las respuestas simuladas de los tests no certifican disponibilidad cloud ni aptitud del modelo para crédito real. La configuración Entra actual retorna a localhost:8080; no hay acceso público a rutas de negocio sin token.
+
+Comprobación posterior al cambio de marca, 04/10/2026 (hora de México): 69 pruebas backend aprobadas con PostgreSQL temporal aislado mediante `scripts/probar-programacion.ps1`, sin omisiones. La API y los mensajes de acceso presentan NexoCredit; los identificadores públicos Entra, roles, ámbito y retorno autorizado se conservan. Se reconstruyeron únicamente backend y frontend de la demo; PostgreSQL no se recreó. No se ejecutó CI remota ni se publicó esta modificación.

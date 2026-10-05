@@ -1,6 +1,7 @@
 import unittest
 from fastapi.testclient import TestClient
 from backend.app.main import app
+from backend.app.autenticacion_entra_id.seguridad import usuario_actual
 from backend.app.persistencia_postgresql.repositorio import obtener_repositorio
 
 client = TestClient(app)
@@ -8,6 +9,7 @@ client = TestClient(app)
 
 class EvaluationTests(unittest.TestCase):
     def setUp(self):
+        app.dependency_overrides[usuario_actual] = lambda: {'responsable': 'Prueba aislada', 'roles': ['Analista']}
         # Las pruebas de reglas no escriben en la base de uso local.
         app.dependency_overrides[obtener_repositorio] = lambda: None
 
