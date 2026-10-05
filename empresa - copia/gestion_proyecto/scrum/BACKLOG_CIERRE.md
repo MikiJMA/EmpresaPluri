@@ -12,7 +12,7 @@ Corte: 04/10/2026. Inventario del estado observado y propuesta de trabajo siguie
 | D04 | Candidato UCI evaluado y laboratorio ML remoto con aviso corregido | [Evaluación local](../../inteligencia_artificial/prediccion_azure_ml/evaluacion/README.md) y [seguimiento técnico](../../docs/evidencias/2026-10-04/cierre-tecnico.md) | Parte de RF05; metadatos modelo:1/tráfico 100 % verificados; comparación binaria y aptitud crediticia pendientes |
 | D05 | Indicadores públicos Banxico/Banco Mundial | [Prueba integral](../../docs/evidencias/2026-10-04/prueba-e2e.md) | Parte de RF09; no historial crediticio privado |
 | D06 | Power BI Desktop, filtros y conciliación SQL–DAX | [Manual Power BI](../../analitica/reportes_power_bi/README.md) | Parte de RF06; sin alertas ni publicación |
-| D07 | Workflow CI y ejecución remota histórica aprobada | [QA GitHub Actions](../../docs/QA.md#github-actions--23-de-septiembre-de-2026) | Solo commit histórico; nueva CI actual pendiente |
+| D07 | Workflow CI y nueva ejecución remota aprobada | [CI del cierre](../../docs/evidencias/2026-10-04/github-actions.md) | Commit de código 19223ae; 69 backend/48 frontend, migraciones, lanzadores, audit, lint y build aprobados; sin despliegue |
 
 «Demostrado» significa evidencia técnica local/histórica, no historia aceptada en un sprint ni requisito completo del sistema final.
 
@@ -21,7 +21,7 @@ Corte: 04/10/2026. Inventario del estado observado y propuesta de trabajo siguie
 | ID / prioridad propuesta | Trabajo | Estado | Condición de cierre |
 |---|---|---|---|
 | C01 / alta | Actualizar manuales y organizar entrega | Preparado para revisión documental | Enlaces y coherencia comprobados; observaciones del asesor registradas posteriormente |
-| C02 / alta | Validar código actual en GitHub Actions e incluir tests unitarios frontend | Workflow actualizado; publicación autorizada, resultado CI pendiente | Ejecución identificada por commit y enlace con ambos trabajos aprobados y suite frontend ejecutada |
+| C02 / alta | Validar código actual en GitHub Actions e incluir tests unitarios frontend | Cerrado técnicamente para commit de código 19223ae | [Ejecución 37247212787](../../docs/evidencias/2026-10-04/github-actions.md), ambos trabajos aprobados; unitarios frontend ejecutados; no acredita futuros cambios |
 | C03 / alta | Verificar identidad del modelo remoto | Parcial: metadatos modelo:1 y tráfico 100 % verificados | [Lectura independiente](../../docs/evidencias/2026-10-04/cierre-tecnico.md) aprobada; comparación binaria con el artefacto local pendiente. No basta modelo_configurado |
 | C04 / alta | Respaldo y ensayo de restauración | Cerrado técnicamente en demo local | [Ensayo aislado](../../docs/evidencias/2026-10-04/cierre-tecnico.md): tres tablas conciliadas sin sobrescribir la base de trabajo; no recuperación productiva completa |
 | C05 / alta | Planificación, revisión y retrospectiva Scrum reales | Sin ejecución acreditada | Confirmar responsables, calendario y objetivo; registrar tareas y evidencias; documentar eventos después de realizarlos, sin inventar horas ni fechas |

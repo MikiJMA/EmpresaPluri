@@ -20,6 +20,6 @@ Comandos desde la raíz interior, con Docker Desktop activo e imágenes construi
 
 - `Probar programacion.cmd`: suites completas con PostgreSQL efímero aislado; no usar la base de trabajo para estas pruebas.
 - `Respaldar PostgreSQL.cmd`: respaldo manual privado de la base Docker de demostración.
-- `Probar restauracion PostgreSQL.cmd`: selecciona un respaldo local y verifica su restauración en un contenedor temporal, nunca en la base original.
+- `Probar restauracion PostgreSQL.cmd`: crea un respaldo nuevo y verifica su restauración en un contenedor temporal, nunca en la base original. Para ensayar uno existente: `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\respaldo-postgresql.ps1 -Accion probar -Respaldo '<carpeta privada del respaldo>'`.
 
-La publicación y CI remota del commit actual se registrarán por separado cuando finalicen. Pasar estas pruebas no completa Scrum, capacitación, aceptación, validación crediticia ni operación de producción.
+Seguimiento posterior: [publicación y CI remota del commit de código](github-actions.md), ambos trabajos aprobados con conteos 69/48. Pasar estas pruebas no completa Scrum, capacitación, aceptación, validación crediticia ni operación de producción.

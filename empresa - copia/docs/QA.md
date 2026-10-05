@@ -6,6 +6,8 @@ Las secciones posteriores son registros históricos con su fecha: las menciones 
 
 ## Revisión documental — 4 de octubre de 2026
 
+Publicación posterior autorizada: rama `codex/cierre-nexocredit-demo`, sin cambiar `main`. [CI real del cierre](evidencias/2026-10-04/github-actions.md) aprobada para el commit de código `19223ae`: 69 backend y 48 frontend, sin omisiones; migraciones, lanzadores, audit, lint y build aprobados. No constituye despliegue productivo.
+
 Seguimiento posterior de programación y marca: [cierre técnico NexoCredit](evidencias/2026-10-04/cierre-tecnico.md). 69 pruebas backend/PostgreSQL y 48 frontend aprobadas, 0 omitidas; lint/build y tres archivos de pruebas PowerShell aprobados. Respaldo/restauración aislada de tres tablas y metadatos remotos ML comprobados por separado, con sus límites. Los apartados siguientes conservan los conteos históricos; no describen nuevas ejecuciones CI.
 
 - README, matriz tecnológica, manual, plan y módulos actualizados según el código y la evidencia registrada. Entrega, índice de evidencias y backlog de cierre preparados; Scrum y aceptación siguen sin acreditarse.

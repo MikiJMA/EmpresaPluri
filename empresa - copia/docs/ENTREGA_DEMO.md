@@ -1,6 +1,6 @@
 # Entrega de demostración — NexoCredit
 
-Corte documental: 04/10/2026. Preparado a partir del código local y de comprobaciones registradas; no es un acta firmada ni aprobación del asesor. No acredita las 500 horas propuestas, ejecución de sprints ni disponibilidad permanente de Azure. La preparación inicial no publicó código ni creó recursos cloud. Seguimiento posterior: [cierre técnico NexoCredit](evidencias/2026-10-04/cierre-tecnico.md), suites 69 backend/48 frontend, respaldo/restauración aislada y metadatos ML; la CI se registrará por commit cuando termine.
+Corte documental: 04/10/2026. Preparado a partir del código local y de comprobaciones registradas; no es un acta firmada ni aprobación del asesor. No acredita las 500 horas propuestas, ejecución de sprints ni disponibilidad permanente de Azure. La preparación inicial no publicó código ni creó recursos cloud. Seguimiento posterior: [cierre técnico NexoCredit](evidencias/2026-10-04/cierre-tecnico.md), suites 69 backend/48 frontend, respaldo/restauración aislada y metadatos ML; [CI remota aprobada](evidencias/2026-10-04/github-actions.md) para commit de código 19223ae, publicado en rama de revisión sin cambiar main.
 
 ## Qué se puede demostrar
 
@@ -10,7 +10,7 @@ Corte documental: 04/10/2026. Preparado a partir del código local y de comproba
 - Laboratorio Azure ML separado: 19 entradas UCI en NTD, respuesta booleana y aviso correcto de la consulta de esa sesión. No persiste escenarios ni sustituye reglas demo.
 - Dashboard React con filtros, totales, promedios que distinguen ausencia de cero y distribución de riesgos. Indicadores públicos de Banxico y Banco Mundial con periodo, unidad, fuente y caché.
 - Power BI Desktop conectado a una vista de lectura limitada; 11 visuales y 96 comparaciones SQL–DAX comprobados el 30/09/2026. No publicado en cloud.
-- Docker local y workflow GitHub Actions existente. La ejecución remota aprobada documentada corresponde al 23/09/2026, no al árbol local actual.
+- Docker local y GitHub Actions: nueva ejecución 37247212787 aprobada para el commit de código 19223ae; 69 backend y 48 frontend sin omisiones, migraciones, lanzadores, audit, lint y build aprobados. La ejecución histórica del 23/09/2026 se conserva por separado.
 
 Las 13 tecnologías obligatorias y su estado individual se consultan en [REQUISITOS_TECNOLOGICOS.md](../REQUISITOS_TECNOLOGICOS.md). Scrum sigue sin ejecución acreditada: el backlog organizado no sustituye reuniones, revisión ni retrospectiva.
 
@@ -44,13 +44,14 @@ Este guion aún no acredita una sesión de capacitación ni aceptación.
 
 ## Qué no está cerrado
 
-- Nueva CI remota del código actual, hasta registrar resultado por commit. Los tests unitarios frontend ya están incluidos en el workflow.
 - Comparación binaria del modelo remoto con el artefacto académico; identidad registrada y versión verificadas mediante metadatos independientes el 04/10/2026, no por la etiqueta local.
 - Recuperación productiva completa; respaldo manual y restauración de tres tablas en destino aislado ya comprobados, sin sobrescribir la base de trabajo.
 - Evidencias reales de Scrum, capacitación y aceptación del alcance demo por el asesor.
 - Sistema crediticio final: datos representativos autorizados, políticas oficiales, historial crediticio privado, análisis efectivo de deuda/pagos, validación del modelo, alertas y seguridad/operación de producción.
 
 Una demo funcional no cierra estos requisitos del sistema final. El candidato UCI detectó 32,01 % de los incumplimientos en su conjunto de prueba; no es un modelo validado para clientes de PluriOne. No hay probabilidad calibrada ni autorización automática de crédito.
+
+CI del commit de código y el ensayo local de respaldo/restauración están cerrados técnicamente; sus límites y enlaces constan en el seguimiento. No equivalen a aceptación académica o empresarial.
 
 ## Manejo seguro de la entrega
 

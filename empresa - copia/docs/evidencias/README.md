@@ -16,6 +16,8 @@ No se guardaron capturas adicionales de cada pantalla. OpenAI, búsqueda documen
 
 Seguimiento: [cierre técnico y marca NexoCredit](2026-10-04/cierre-tecnico.md), con suites 69/48, respaldo/restauración aislada y lectura independiente de metadatos ML. Las capturas y archivos privados se conservan localmente, no en el repositorio público.
 
+[CI remota del cierre](2026-10-04/github-actions.md): ejecución 37247212787, commit de código 19223ae, ambos trabajos aprobados y conteos 69/48 comprobados en logs.
+
 ## Comprobaciones anteriores conservadas
 
 | Fecha | Fuente | Alcance verificado |
@@ -29,6 +31,6 @@ El workflow existente se encuentra en [.github/workflows/ci.yml de la raíz Git 
 
 ## Pendientes sin evidencia de cierre
 
-CI actual hasta registrar resultado por commit, comparación binaria del modelo remoto, recuperación productiva completa, pruebas de carga, aceptación, capacitación y ceremonias Scrum. La lectura de metadatos ML y el ensayo aislado de respaldo ya están comprobados. Estado y criterios en [BACKLOG_CIERRE.md](../../gestion_proyecto/scrum/BACKLOG_CIERRE.md).
+Comparación binaria del modelo remoto, recuperación productiva completa, pruebas de carga, aceptación, capacitación y ceremonias Scrum. CI del commit de código, lectura de metadatos ML y ensayo aislado de respaldo ya comprobados. Estado y criterios en [BACKLOG_CIERRE.md](../../gestion_proyecto/scrum/BACKLOG_CIERRE.md).
 
 No incluir secretos, expedientes reales ni copias de cachés o sesiones al compartir estas evidencias.
