@@ -58,6 +58,7 @@ jobs:
           ./scripts/tests/docker-url.test.ps1
           ./scripts/tests/banxico-config.test.ps1
           ./scripts/tests/programacion-aislada.test.ps1
+          ./scripts/tests/organizacion.test.ps1
 
   frontend:
     runs-on: ubuntu-latest

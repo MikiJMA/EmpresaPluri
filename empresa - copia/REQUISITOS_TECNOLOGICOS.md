@@ -2,7 +2,7 @@
 
 Por indicación del alumno, el sistema final debe utilizar todas las tecnologías siguientes. Este requisito sustituye la interpretación anterior de que eran opcionales. Crear una carpeta no significa que su integración esté implementada.
 
-Estado documental actualizado el 04/10/2026 con las comprobaciones registradas en [QA](docs/QA.md) y en la [prueba integral](docs/evidencias/2026-10-04/prueba-e2e.md). «Implementado en demo» no significa aprobado para producción. Índice de entrega: [ENTREGA_DEMO.md](docs/ENTREGA_DEMO.md).
+Estado documental actualizado el 04/10/2026 con las comprobaciones registradas en [QA](docs/calidad/QA.md) y en la [prueba integral](docs/evidencias/2026-10-04/prueba-e2e.md). «Implementado en demo» no significa aprobado para producción. Índice de entrega: [ENTREGA_DEMO.md](docs/entrega/ENTREGA_DEMO.md).
 
 | Tecnología | Función y ubicación | Estado actual |
 |---|---|---|

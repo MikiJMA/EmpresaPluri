@@ -26,13 +26,13 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\docker.ps1 det
 
 Detener elimina los contenedores, pero conserva el volumen plurione-docker_datos_postgresql. No utilizar down -v ni eliminar el volumen si se necesitan los datos. El volumen no sustituye un respaldo.
 
-Desde la raíz interior, `Probar programacion.cmd` ejecuta las suites completas en una base temporal aislada, sin puertos publicados ni datos de trabajo. `Respaldar PostgreSQL.cmd` crea el respaldo privado manual y `Probar restauracion PostgreSQL.cmd` ensaya su recuperación en un contenedor temporal; no sobrescribe la base original. El ensayo del 04/10/2026 aprobó la conciliación de tres tablas. Dump sin cifrado ni roles globales/ACL; no automatiza retención ni acredita recuperación de producción. [Evidencia técnica](../../docs/evidencias/2026-10-04/cierre-tecnico.md).
+Desde la raíz interior, `operacion/pruebas/Probar programacion.cmd` ejecuta las suites completas en una base temporal aislada, sin puertos publicados ni datos de trabajo. `operacion/respaldos/Respaldar PostgreSQL.cmd` crea el respaldo privado manual y `operacion/respaldos/Probar restauracion PostgreSQL.cmd` ensaya su recuperación en un contenedor temporal; no sobrescribe la base original. El ensayo del 04/10/2026 aprobó la conciliación de tres tablas. Dump sin cifrado ni roles globales/ACL; no automatiza retención ni acredita recuperación de producción. [Evidencia técnica](../../docs/evidencias/2026-10-04/cierre-tecnico.md).
 
 ## Configuración y separación de datos
 
 ### Conexión Banxico y PostgreSQL detenido — 03/10/2026
 
-`Conectar Banxico.cmd` guarda el token privado sin mostrarlo y conserva las demás variables. Ahora enciende PostgreSQL primero (`--no-recreate`) y espera su salud; después recrea solo el backend (`--no-deps --force-recreate`) para aplicar la configuración. Usa las imágenes existentes (`--no-build --pull never`); no borra volúmenes, modifica registros ni ejecuta migraciones. Los mensajes de progreso de Docker en stderr no se confunden con fallos en PowerShell 5.1: se comprueba el código de salida y se muestran errores propios sin contenido privado.
+`operacion/integraciones/Conectar Banxico.cmd` guarda el token privado sin mostrarlo y conserva las demás variables. Ahora enciende PostgreSQL primero (`--no-recreate`) y espera su salud; después recrea solo el backend (`--no-deps --force-recreate`) para aplicar la configuración. Usa las imágenes existentes (`--no-build --pull never`); no borra volúmenes, modifica registros ni ejecuta migraciones. Los mensajes de progreso de Docker en stderr no se confunden con fallos en PowerShell 5.1: se comprueba el código de salida y se muestran errores propios sin contenido privado.
 
 Si el token ya quedó guardado pero el backend no pasó la comprobación de salud, ejecutar desde la raíz interior:
 

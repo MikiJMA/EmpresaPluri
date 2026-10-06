@@ -1,4 +1,6 @@
-# Integración continua — GitHub Actions
+# GitHub Actions — integración continua
+
+Este archivo es documentación. El único workflow ejecutable del repositorio está en la raíz Git exterior: [.github/workflows/ci.yml](../../../.github/workflows/ci.yml). Se retiró la carpeta interior de documentación .github para evitar confundirla con la automatización activa.
 
 Función: automatizar pruebas Python, lint y compilación React.
 Estado: publicado y verificado en la raíz Git, ../../../.github/workflows/ci.yml. Este directorio interior no es donde GitHub descubre los workflows. Backend y frontend finalizaron correctamente en https://github.com/MikiJMA/EmpresaPluri/actions/runs/35911875318 (commit d3cd93d).

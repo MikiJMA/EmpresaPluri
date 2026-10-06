@@ -1,6 +1,6 @@
 # Plan del proyecto — borrador para revisión con asesores
 
-Estado técnico actualizado el 04/10/2026 según [QA](QA.md). Se conserva el cronograma propuesto de 500 horas; no acredita horas trabajadas, aprobación de alcance ni ceremonias Scrum. Ver [índice de entrega](ENTREGA_DEMO.md).
+Estado técnico actualizado el 04/10/2026 según [QA](../calidad/QA.md). Se conserva el cronograma propuesto de 500 horas; no acredita horas trabajadas, aprobación de alcance ni ceremonias Scrum. Ver [índice de entrega](../entrega/ENTREGA_DEMO.md).
 
 ## Identificación
 
@@ -43,7 +43,7 @@ El alcance final incluye historial crediticio, pagos, ingresos, endeudamiento y 
 
 Requerimientos no funcionales propuestos: secretos fuera del código; acceso restringido; cifrado en tránsito en despliegue; no registrar RFC o expedientes completos en logs; restauración comprobada de respaldo; validación de entradas en servidor; pruebas de rendimiento con volumen acordado. Los objetivos numéricos de latencia, concurrencia y recuperación se fijarán con el asesor.
 
-Seguimiento del 04/10/2026: respaldo manual y ensayo de restauración en un contenedor aislado conciliaron tres tablas sin sobrescribir la base original. No incluye roles globales/ACL ni cifrado del dump; no acredita recuperación productiva completa. [Evidencia](evidencias/2026-10-04/cierre-tecnico.md).
+Seguimiento del 04/10/2026: respaldo manual y ensayo de restauración en un contenedor aislado conciliaron tres tablas sin sobrescribir la base original. No incluye roles globales/ACL ni cifrado del dump; no acredita recuperación productiva completa. [Evidencia](../evidencias/2026-10-04/cierre-tecnico.md).
 
 ## Propuesta técnica y arquitectura objetivo
 
@@ -55,7 +55,7 @@ Entidades propuestas: solicitante, solicitud, observación financiera, historial
 
 Estado actual: React llama POST /api/v1/evaluar de FastAPI. GET / informa salud. /docs expone OpenAPI. PostgreSQL guarda las entradas y el resultado con fecha, versión e ID; GET /api/v1/evaluaciones consulta el historial y GET /api/v1/evaluaciones/{id} devuelve el detalle. La interfaz conserva el historial al recargar. Sin configuración se permite una evaluación identificada expresamente como no guardada. infraestructura/contenedores_docker/docker-compose.yml ejecuta frontend, backend, PostgreSQL y migraciones; se verificaron guardado e historial mediante navegador y persistencia tras reiniciar la base. El despliegue productivo permanece pendiente.
 
-Las rutas de negocio requieren Entra; health/configuración pública y OpenAPI no equivalen a acceso a datos. El servidor fija el responsable de nuevas revisiones desde la identidad verificada. Search recupera guías académicas, OpenAI explica una evaluación guardada y ML recibe las 19 variables UCI por una ruta separada. Banxico/Banco Mundial no reciben datos de solicitantes. Las comprobaciones del 04/10/2026 constan en [prueba integral](evidencias/2026-10-04/prueba-e2e.md); no certifican el sistema objetivo completo.
+Las rutas de negocio requieren Entra; health/configuración pública y OpenAPI no equivalen a acceso a datos. El servidor fija el responsable de nuevas revisiones desde la identidad verificada. Search recupera guías académicas, OpenAI explica una evaluación guardada y ML recibe las 19 variables UCI por una ruta separada. Banxico/Banco Mundial no reciben datos de solicitantes. Las comprobaciones del 04/10/2026 constan en [prueba integral](../evidencias/2026-10-04/prueba-e2e.md); no certifican el sistema objetivo completo.
 
 ## Estrategia de modelos
 
@@ -88,7 +88,7 @@ Scrum: iteraciones de dos semanas ajustadas al calendario acordado; planificaci�
 
 ## Secuencia de implementación propuesta originalmente
 
-La lista siguiente describe la secuencia del plan, no tareas todas pendientes ni sprints ejecutados. El estado verificable y la prioridad de cierre se mantienen en [BACKLOG_CIERRE.md](../gestion_proyecto/scrum/BACKLOG_CIERRE.md).
+La lista siguiente describe la secuencia del plan, no tareas todas pendientes ni sprints ejecutados. El estado verificable y la prioridad de cierre se mantienen en [BACKLOG_CIERRE.md](../../gestion_proyecto/scrum/BACKLOG_CIERRE.md).
 
 1. Base local operativa y validada: entrada de React, formulario, errores y API demo.
 2. PostgreSQL con migraciones, solicitudes, evaluaciones e historial; pruebas de persistencia.

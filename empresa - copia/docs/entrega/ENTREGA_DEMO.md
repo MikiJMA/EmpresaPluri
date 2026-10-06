@@ -1,6 +1,6 @@
 # Entrega de demostración — NexoCredit
 
-Corte documental: 04/10/2026. Preparado a partir del código local y de comprobaciones registradas; no es un acta firmada ni aprobación del asesor. No acredita las 500 horas propuestas, ejecución de sprints ni disponibilidad permanente de Azure. La preparación inicial no publicó código ni creó recursos cloud. Seguimiento posterior: [cierre técnico NexoCredit](evidencias/2026-10-04/cierre-tecnico.md), suites 69 backend/48 frontend, respaldo/restauración aislada y metadatos ML; [CI remota aprobada](evidencias/2026-10-04/github-actions.md) para commit de código 19223ae, publicado en rama de revisión sin cambiar main.
+Corte documental: 04/10/2026. Preparado a partir del código local y de comprobaciones registradas; no es un acta firmada ni aprobación del asesor. No acredita las 500 horas propuestas, ejecución de sprints ni disponibilidad permanente de Azure. La preparación inicial no publicó código ni creó recursos cloud. Seguimiento posterior: [cierre técnico NexoCredit](../evidencias/2026-10-04/cierre-tecnico.md), suites 69 backend/48 frontend, respaldo/restauración aislada y metadatos ML; [CI remota aprobada](../evidencias/2026-10-04/github-actions.md) para commit de código 19223ae, publicado en rama de revisión sin cambiar main.
 
 ## Qué se puede demostrar
 
@@ -12,22 +12,22 @@ Corte documental: 04/10/2026. Preparado a partir del código local y de comproba
 - Power BI Desktop conectado a una vista de lectura limitada; 11 visuales y 96 comparaciones SQL–DAX comprobados el 30/09/2026. No publicado en cloud.
 - Docker local y GitHub Actions: nueva ejecución 37247212787 aprobada para el commit de código 19223ae; 69 backend y 48 frontend sin omisiones, migraciones, lanzadores, audit, lint y build aprobados. La ejecución histórica del 23/09/2026 se conserva por separado.
 
-Las 13 tecnologías obligatorias y su estado individual se consultan en [REQUISITOS_TECNOLOGICOS.md](../REQUISITOS_TECNOLOGICOS.md). Scrum sigue sin ejecución acreditada: el backlog organizado no sustituye reuniones, revisión ni retrospectiva.
+Las 13 tecnologías obligatorias y su estado individual se consultan en [REQUISITOS_TECNOLOGICOS.md](../../REQUISITOS_TECNOLOGICOS.md). Scrum sigue sin ejecución acreditada: el backlog organizado no sustituye reuniones, revisión ni retrospectiva.
 
 ## Carpeta de revisión
 
-1. [README principal](../README.md): arranque y límites.
-2. [Manual de operación](OPERACION.md): acceso, captura, consulta, errores y Power BI.
-3. [Plan y requisitos funcionales](PLAN_PROYECTO.md): alcance objetivo frente a implementación parcial/demo.
-4. [Índice de evidencias](evidencias/README.md): enlaces a pruebas, capturas y métricas.
-5. [QA](QA.md): resultados actuales y comprobaciones históricas con sus fechas.
-6. [Backlog de cierre](../gestion_proyecto/scrum/BACKLOG_CIERRE.md): acciones pendientes y condiciones de cierre, sin horas ni responsables inventados.
+1. [README principal](../../README.md): arranque y límites.
+2. [Manual de operación](../manuales/OPERACION.md): acceso, captura, consulta, errores y Power BI.
+3. [Plan y requisitos funcionales](../planificacion/PLAN_PROYECTO.md): alcance objetivo frente a implementación parcial/demo.
+4. [Índice de evidencias](../evidencias/README.md): enlaces a pruebas, capturas y métricas.
+5. [QA](../calidad/QA.md): resultados actuales y comprobaciones históricas con sus fechas.
+6. [Backlog de cierre](../../gestion_proyecto/scrum/BACKLOG_CIERRE.md): acciones pendientes y condiciones de cierre, sin horas ni responsables inventados.
 
 ## Resultados registrados, no una nueva ejecución
 
 El 04/10/2026 se aprobaron 57 pruebas backend, incluyendo 5 con PostgreSQL real y esquemas aislados. Las respuestas de proveedores en los tests son simuladas. Tras corregir el aviso ML se aprobaron 42 pruebas frontend, ESLint y Vite en una construcción Docker. Son suites separadas, no una sola ejecución combinada ni una nueva validación GitHub Actions.
 
-Las consultas reales autenticadas se documentan por separado en [prueba-e2e.md](evidencias/2026-10-04/prueba-e2e.md). La muestra web terminó con 7 evaluaciones: Bajo 5, Medio 1, Alto 1; margen promedio 17,857.14 MXN; deuda promedio informada 10,000.10 MXN sobre 5 capturas. Son resultados históricos de una muestra ficticia, no cifras permanentes. La muestra Power BI comprobada el 30/09/2026 tenía 5 evaluaciones y necesita actualizarse para reflejar nuevas filas.
+Las consultas reales autenticadas se documentan por separado en [prueba-e2e.md](../evidencias/2026-10-04/prueba-e2e.md). La muestra web terminó con 7 evaluaciones: Bajo 5, Medio 1, Alto 1; margen promedio 17,857.14 MXN; deuda promedio informada 10,000.10 MXN sobre 5 capturas. Son resultados históricos de una muestra ficticia, no cifras permanentes. La muestra Power BI comprobada el 30/09/2026 tenía 5 evaluaciones y necesita actualizarse para reflejar nuevas filas.
 
 ## Guion propuesto para revisión con el asesor
 

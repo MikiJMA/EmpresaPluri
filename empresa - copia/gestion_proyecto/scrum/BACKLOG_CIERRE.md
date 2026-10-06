@@ -7,7 +7,7 @@ Corte: 04/10/2026. Inventario del estado observado y propuesta de trabajo siguie
 | ID | Incremento demostrado | Evidencia | Alcance |
 |---|---|---|---|
 | D01 | React, FastAPI, PostgreSQL y Docker: captura, persistencia, historial, reintentos y filtros | [Prueba integral](../../docs/evidencias/2026-10-04/prueba-e2e.md) | RF01/RF03 y parte de RF04/RF06; reglas demo |
-| D02 | Acceso Entra y responsable autenticado de revisiones | [QA](../../docs/QA.md) y [contrato Entra](../../backend/app/autenticacion_entra_id/README.md) | RF07 y parte de RF08; no auditoría completa |
+| D02 | Acceso Entra y responsable autenticado de revisiones | [QA](../../docs/calidad/QA.md) y [contrato Entra](../../backend/app/autenticacion_entra_id/README.md) | RF07 y parte de RF08; no auditoría completa |
 | D03 | Explicación automática OpenAI con guía Search; catálogo/búsqueda | [Prueba integral](../../docs/evidencias/2026-10-04/prueba-e2e.md) | RF02 y parte de RF09; guías académicas, no políticas oficiales |
 | D04 | Candidato UCI evaluado y laboratorio ML remoto con aviso corregido | [Evaluación local](../../inteligencia_artificial/prediccion_azure_ml/evaluacion/README.md) y [seguimiento técnico](../../docs/evidencias/2026-10-04/cierre-tecnico.md) | Parte de RF05; metadatos modelo:1/tráfico 100 % verificados; comparación binaria y aptitud crediticia pendientes |
 | D05 | Indicadores públicos Banxico/Banco Mundial | [Prueba integral](../../docs/evidencias/2026-10-04/prueba-e2e.md) | Parte de RF09; no historial crediticio privado |
@@ -32,7 +32,7 @@ No se asignan responsables empresariales ni presupuesto desde este documento. La
 
 ## Sistema final: fuera del cierre técnico de la demo
 
-Datos autorizados representativos y definición de incumplimiento; validación temporal, calibración y segmentos del modelo; análisis efectivo de pagos/deuda e historial crediticio privado; políticas oficiales; alertas trazables; permisos diferenciados según alcance, auditoría, cuotas, TLS del despliegue, retención, carga, monitoreo y recuperación. Ver [plan](../../docs/PLAN_PROYECTO.md). No marcar RF04/RF05/RF06/RF08/RF09 como completos por una conexión de demostración.
+Datos autorizados representativos y definición de incumplimiento; validación temporal, calibración y segmentos del modelo; análisis efectivo de pagos/deuda e historial crediticio privado; políticas oficiales; alertas trazables; permisos diferenciados según alcance, auditoría, cuotas, TLS del despliegue, retención, carga, monitoreo y recuperación. Ver [plan](../../docs/planificacion/PLAN_PROYECTO.md). No marcar RF04/RF05/RF06/RF08/RF09 como completos por una conexión de demostración.
 
 ## Registro mínimo al iniciar un sprint real
 

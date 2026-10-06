@@ -20,7 +20,7 @@ def configurado():
 
 def explicar(registro):
     if not configurado():
-        raise HTTPException(503, 'Falta configurar Azure OpenAI. Ejecuta Conectar Azure OpenAI.cmd.')
+        raise HTTPException(503, 'Falta configurar Azure OpenAI. Ejecuta operacion/integraciones/Conectar Azure OpenAI.cmd.')
     if registro.get('version_modelo') != 'reglas-demo-v1':
         raise HTTPException(409, 'Esta versión de evaluación no admite explicación demo.')
     if not _slots.acquire(blocking=False):

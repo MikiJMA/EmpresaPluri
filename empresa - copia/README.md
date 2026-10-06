@@ -2,13 +2,15 @@
 
 NexoCredit es una marca demostrativa, no una razón social ni una aprobación empresarial. Los identificadores técnicos existentes se conservan para mantener las conexiones; la documentación histórica del proyecto no se altera retrospectivamente.
 
+Accesos de Windows: [operacion](operacion/README.md). Documentación: [índice](docs/README.md), [PRD](docs/producto/PRD_NEXOCREDIT.md) y [MVP](docs/producto/MVP_NEXOCREDIT.md). Para una vista limpia en VS Code, abrir [NexoCredit.code-workspace](../NexoCredit.code-workspace) desde la raíz exterior.
+
 ## Tecnologías obligatorias
 
 Python, FastAPI, React.js, Azure OpenAI Service, Azure Machine Learning, Azure AI Search, PostgreSQL, Power BI, Docker, GitHub Actions, Microsoft Entra ID, APIs financieras y Scrum. Consultar [función, ubicación y estado de cada tecnología](REQUISITOS_TECNOLOGICOS.md). El uso técnico de estas herramientas no acredita producción ni ejecución de Scrum por sí solo.
 
 ## Estado real
 
-Actualizado el 04/10/2026. Demo local autenticada comprobada de extremo a extremo. Tras el cierre técnico y cambio de marca: 69 pruebas backend/PostgreSQL y 48 frontend aprobadas, sin omisiones; lint, build y tres archivos de pruebas PowerShell aprobados. GitHub Actions confirmó esos mismos conteos en el commit de código `19223ae`, con ambos trabajos aprobados; [ejecución y SHA completo](docs/evidencias/2026-10-04/github-actions.md). Publicado en rama de revisión, sin cambiar main ni desplegar la aplicación. Las pruebas automáticas usan respuestas externas simuladas; las consultas Azure y financieras reales tienen evidencia separada. Ver [cierre técnico local](docs/evidencias/2026-10-04/cierre-tecnico.md), [entrega de demostración](docs/ENTREGA_DEMO.md) y [QA](docs/QA.md).
+Actualizado el 04/10/2026. Demo local autenticada comprobada de extremo a extremo. Tras el cierre técnico y cambio de marca: 69 pruebas backend/PostgreSQL y 48 frontend aprobadas, sin omisiones; lint, build y tres archivos de pruebas PowerShell aprobados. GitHub Actions confirmó esos mismos conteos en el commit de código `19223ae`, con ambos trabajos aprobados; [ejecución y SHA completo](docs/evidencias/2026-10-04/github-actions.md). Publicado en rama de revisión, sin cambiar main ni desplegar la aplicación. Las pruebas automáticas usan respuestas externas simuladas; las consultas Azure y financieras reales tienen evidencia separada. Ver [cierre técnico local](docs/evidencias/2026-10-04/cierre-tecnico.md), [entrega de demostración](docs/entrega/ENTREGA_DEMO.md) y [QA](docs/calidad/QA.md).
 
 Microsoft Entra ID: acceso mediante MSAL y protección de las rutas de negocio en FastAPI. Se comprueban firma, audiencia, emisor, tenant, cliente, ámbito y rol. Analista y Administrador tienen actualmente acceso al mismo conjunto de rutas; no hay funciones administrativas diferenciadas. La sesión real se probó y las rutas de negocio rechazan solicitudes sin token.
 
@@ -28,7 +30,7 @@ Prototipo local React + FastAPI con persistencia PostgreSQL. Permite capturar un
 
 «Indicadores financieros» consulta la ruta autenticada `GET /api/v1/datos-financieros/indicadores`. Banxico FIX/tasa y Banco Mundial inflación/PIB aparecen disponibles en la prueba real del 04/10/2026, con sus cuatro observaciones, periodos, unidades y enlaces de procedencia. Esto sustituye el fallo del token documentado el día anterior; no garantiza disponibilidad futura. No son datos en tiempo real, historial crediticio privado ni entradas que cambien el riesgo demo. No se envían evaluaciones a estas fuentes.
 
-`Conectar Banxico.cmd` permite guardar el token de forma privada, encender PostgreSQL si está detenido y recrear únicamente el backend. Para recuperar el arranque sin volver a pegar el token: `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\configurar-banxico.ps1 -UsarTokenGuardado`. No borra ni recrea el volumen de datos. Consultar [contrato, límites, configuración y pruebas de las APIs financieras](backend/app/integraciones/datos_financieros/README.md). Esta sección sustituye las menciones anteriores de integración financiera totalmente pendiente; no cambia el estado de otras tecnologías.
+`operacion/integraciones/Conectar Banxico.cmd` permite guardar el token de forma privada, encender PostgreSQL si está detenido y recrear únicamente el backend. Para recuperar el arranque sin volver a pegar el token: `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\configurar-banxico.ps1 -UsarTokenGuardado`. No borra ni recrea el volumen de datos. Consultar [contrato, límites, configuración y pruebas de las APIs financieras](backend/app/integraciones/datos_financieros/README.md). Esta sección sustituye las menciones anteriores de integración financiera totalmente pendiente; no cambia el estado de otras tecnologías.
 
 ## Arranque con Docker
 
@@ -86,7 +88,7 @@ La interfaz admite VITE_API_URL; consultar frontend/.env.example. Reiniciar Vite
 
 ## Verificación
 
-La suite completa aislada se ejecuta con `Probar programacion.cmd`: PostgreSQL temporal sin datos de trabajo y limpieza protegida de su propio contenedor. `Respaldar PostgreSQL.cmd` y `Probar restauracion PostgreSQL.cmd` permiten el respaldo manual privado y un ensayo aislado; el ensayo de tres tablas pasó el 04/10/2026. El dump no está cifrado ni incluye roles globales/ACL. No restaura sobre la base original ni acredita recuperación productiva completa.
+La suite completa aislada se ejecuta con `operacion/pruebas/Probar programacion.cmd`: PostgreSQL temporal sin datos de trabajo y limpieza protegida de su propio contenedor. `operacion/respaldos/Respaldar PostgreSQL.cmd` y `operacion/respaldos/Probar restauracion PostgreSQL.cmd` permiten el respaldo manual privado y un ensayo aislado; el ensayo de tres tablas pasó el 04/10/2026. El dump no está cifrado ni incluye roles globales/ACL. No restaura sobre la base original ni acredita recuperación productiva completa.
 
 ```powershell
 .\.venv\Scripts\python.exe -m unittest discover -s backend/tests -v
@@ -100,7 +102,7 @@ Ejemplo ficticio: AAAA010101AA1, ingreso 30000, gastos 10000, score 700. Resulta
 
 ## Entregables
 
-Empezar por [ENTREGA_DEMO.md](docs/ENTREGA_DEMO.md): alcance comprobado, evidencias, guion de revisión y pendientes. Consultar [plan](docs/PLAN_PROYECTO.md), [manual](docs/OPERACION.md), [QA](docs/QA.md), [índice de evidencias](docs/evidencias/README.md) y [backlog de cierre](gestion_proyecto/scrum/BACKLOG_CIERRE.md). El cronograma de 500 horas es propuesto, no horas acreditadas; no hay aceptación del asesor ni sprints certificados.
+Empezar por [ENTREGA_DEMO.md](docs/entrega/ENTREGA_DEMO.md): alcance comprobado, evidencias, guion de revisión y pendientes. Consultar [plan](docs/planificacion/PLAN_PROYECTO.md), [manual](docs/manuales/OPERACION.md), [QA](docs/calidad/QA.md), [índice de evidencias](docs/evidencias/README.md) y [backlog de cierre](gestion_proyecto/scrum/BACKLOG_CIERRE.md). El cronograma de 500 horas es propuesto, no horas acreditadas; no hay aceptación del asesor ni sprints certificados.
 
 ## Organización de carpetas
 
@@ -131,12 +133,26 @@ empresa - copia/                         Raíz del proyecto (carpeta interior)
 ├── analitica/reportes_power_bi/         Dashboard Power BI local verificado
 ├── infraestructura/contenedores_docker/ Dockerfiles, Compose, Nginx y base persistente
 ├── gestion_proyecto/scrum/             Backlog de cierre; sprints aún por acreditar
-├── docs/                               Plan, manuales, QA y archivo histórico
-├── scripts/                            Inicio de backend y frontend
+├── docs/                               Índice de documentación
+│   ├── producto/                       PRD y MVP separados
+│   ├── planificacion/                  Plan del proyecto
+│   ├── manuales/                       Operación y soporte
+│   ├── calidad/                        QA
+│   ├── entrega/                        Guion y alcance de entrega
+│   ├── desarrollo/                     Documentación de CI
+│   ├── evidencias/                     Registros fechados
+│   ├── estadia/                        Información académica
+│   └── archivo/                        Originales conservados
+├── operacion/                          Accesos .cmd para Windows
+│   ├── aplicacion/                     Abrir, actualizar y detener
+│   ├── integraciones/                  Conexiones Azure/Banxico y carga documental
+│   ├── pruebas/                        Suite aislada
+│   └── respaldos/                      Respaldo y ensayo de restauración
+├── scripts/                            Implementación Python/PowerShell y pruebas
 └── REQUISITOS_TECNOLOGICOS.md           Tecnologías obligatorias y estado
 ```
 
-El workflow está en `.github/workflows/ci.yml` de la raíz Git exterior, no dentro de esta carpeta. Las carpetas generadas y el archivo histórico pueden estar ocultos en VS Code; siguen en disco.
+El workflow está en `.github/workflows/ci.yml` de la raíz Git exterior, no dentro de esta carpeta. Las carpetas generadas, .local, .venv, .venv-roto y el archivo histórico se ocultan en VS Code; siguen en disco. No se movieron datos, secretos, entornos virtuales o proyectos Power BI privados. Ver el [mapa del espacio de trabajo](../README.md).
 
 ## Laboratorio UCI / Azure ML
 

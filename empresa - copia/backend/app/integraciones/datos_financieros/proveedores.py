@@ -43,7 +43,7 @@ def _leer_json(url, *, headers=None, params=None, banxico=False):
                 if banxico and response.status_code == 400:
                     # SIE también responde 400 al rechazar un token: no confundirlo con una caída.
                     # El cuerpo no se reenvía, ya que puede incluir información privada.
-                    raise ErrorProveedor('Banxico rechazó la solicitud. Revisa tu token de consulta y vuelve a guardarlo con «Conectar Banxico.cmd». No lo compartas en el chat.')
+                    raise ErrorProveedor('Banxico rechazó la solicitud. Revisa tu token de consulta y vuelve a guardarlo con «operacion/integraciones/Conectar Banxico.cmd». No lo compartas en el chat.')
                 if response.status_code != 200:
                     raise ErrorProveedor('El proveedor no está disponible. Intenta más tarde.')
                 if not response.headers.get('Content-Type', '').lower().startswith('application/json'):

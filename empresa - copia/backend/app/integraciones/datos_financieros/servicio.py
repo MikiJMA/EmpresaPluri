@@ -32,7 +32,7 @@ def _fuente(provider):
                   'consulta_utc': now.isoformat(), 'en_cache': False, 'indicadores': []}
         ttl = ERROR_CACHE_SECONDS
         if provider == 'banxico' and not re.fullmatch(r'[A-Za-z0-9]{64}', token):
-            result.update(estado='sin_configurar', mensaje='Falta un token válido de Banxico en el servidor. Usa «Conectar Banxico.cmd»; no lo pegues en el navegador ni en el chat.')
+            result.update(estado='sin_configurar', mensaje='Falta un token válido de Banxico en el servidor. Usa «operacion/integraciones/Conectar Banxico.cmd»; no lo pegues en el navegador ni en el chat.')
         else:
             try:
                 result['indicadores'] = consultar_banxico(token) if provider == 'banxico' else consultar_banco_mundial()

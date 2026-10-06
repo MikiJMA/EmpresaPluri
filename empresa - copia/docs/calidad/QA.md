@@ -2,13 +2,13 @@
 
 ## Cómo leer este reporte
 
-Las secciones posteriores son registros históricos con su fecha: las menciones antiguas de falta de Entra, Power BI, Banxico o conexión ML no describen el estado actual si una comprobación posterior las sustituye. Consultar [estado tecnológico actualizado](../REQUISITOS_TECNOLOGICOS.md), [entrega demo](ENTREGA_DEMO.md) e [índice de evidencias](evidencias/README.md). Esta organización documental no ejecuta de nuevo las pruebas, no acredita Scrum ni publica cambios remotos.
+Las secciones posteriores son registros históricos con su fecha: las menciones antiguas de falta de Entra, Power BI, Banxico o conexión ML no describen el estado actual si una comprobación posterior las sustituye. Consultar [estado tecnológico actualizado](../../REQUISITOS_TECNOLOGICOS.md), [entrega demo](../entrega/ENTREGA_DEMO.md) e [índice de evidencias](../evidencias/README.md). Esta organización documental no ejecuta de nuevo las pruebas, no acredita Scrum ni publica cambios remotos.
 
 ## Revisión documental — 4 de octubre de 2026
 
-Publicación posterior autorizada: rama `codex/cierre-nexocredit-demo`, sin cambiar `main`. [CI real del cierre](evidencias/2026-10-04/github-actions.md) aprobada para el commit de código `19223ae`: 69 backend y 48 frontend, sin omisiones; migraciones, lanzadores, audit, lint y build aprobados. No constituye despliegue productivo.
+Publicación posterior autorizada: rama `codex/cierre-nexocredit-demo`, sin cambiar `main`. [CI real del cierre](../evidencias/2026-10-04/github-actions.md) aprobada para el commit de código `19223ae`: 69 backend y 48 frontend, sin omisiones; migraciones, lanzadores, audit, lint y build aprobados. No constituye despliegue productivo.
 
-Seguimiento posterior de programación y marca: [cierre técnico NexoCredit](evidencias/2026-10-04/cierre-tecnico.md). 69 pruebas backend/PostgreSQL y 48 frontend aprobadas, 0 omitidas; lint/build y tres archivos de pruebas PowerShell aprobados. Respaldo/restauración aislada de tres tablas y metadatos remotos ML comprobados por separado, con sus límites. Los apartados siguientes conservan los conteos históricos; no describen nuevas ejecuciones CI.
+Seguimiento posterior de programación y marca: [cierre técnico NexoCredit](../evidencias/2026-10-04/cierre-tecnico.md). 69 pruebas backend/PostgreSQL y 48 frontend aprobadas, 0 omitidas; lint/build y tres archivos de pruebas PowerShell aprobados. Respaldo/restauración aislada de tres tablas y metadatos remotos ML comprobados por separado, con sus límites. Los apartados siguientes conservan los conteos históricos; no describen nuevas ejecuciones CI.
 
 - README, matriz tecnológica, manual, plan y módulos actualizados según el código y la evidencia registrada. Entrega, índice de evidencias y backlog de cierre preparados; Scrum y aceptación siguen sin acreditarse.
 - 21 documentos revisados mediante comprobación de 89 enlaces locales: destinos y anclas presentes, sin fallos. Git diff --check aprobado; sin coincidencias de las afirmaciones obsoletas revisadas en los documentos de estado actual.
@@ -20,13 +20,13 @@ Seguimiento posterior de programación y marca: [cierre técnico NexoCredit](evi
 - 42 pruebas frontend aprobadas en la construcción Docker, incluidas 8 nuevas de mensajes y contrato. ESLint y compilación Vite aprobados. El intento de ejecutar Node directamente en el host fue bloqueado por permisos de creación de procesos; la suite completa sí se ejecutó en Docker.
 - Se aplicó únicamente la imagen frontend. PostgreSQL y backend conservaron sus contenedores; no se modificaron datos ni secretos.
 - Comprobación autenticada en localhost con un ejemplo ficticio: se observó «Consultando Azure ML», seguido de «Conexión con Azure ML comprobada en esta sesión» y la clase «No incumplimiento». El dashboard conservó 7 evaluaciones y la consola no registró errores. Fallos y respuestas inválidas cubiertos por pruebas automáticas, no provocados contra el servicio real.
-- Captura local `evidencias/2026-10-04/azure-ml-estado-corregido.jpg`, excluida del repositorio público, y [seguimiento de la prueba integral](evidencias/2026-10-04/prueba-e2e.md#corrección-posterior-del-aviso-azure-ml).
+- Captura local `evidencias/2026-10-04/azure-ml-estado-corregido.jpg`, excluida del repositorio público, y [seguimiento de la prueba integral](../evidencias/2026-10-04/prueba-e2e.md#corrección-posterior-del-aviso-azure-ml).
 
 ## Prueba integral autenticada — 4 de octubre de 2026
 
 Flujo local comprobado en el navegador de Codex con sesión Entra iniciada por el usuario: validación, evaluación ficticia, explicación automática Azure OpenAI con guía Azure AI Search, historial, revisión manual, reenvío sin duplicados, persistencia tras recargar, filtros, búsqueda documental, indicadores Banxico/Banco Mundial y consulta real Azure ML desde la interfaz. 57 pruebas backend/PostgreSQL y 34 frontend aprobadas; lint y compilación aprobados. Se conserva un registro ficticio adicional, no una solicitud real.
 
-Consultar [evidencia, cifras y límites de la prueba](evidencias/2026-10-04/prueba-e2e.md). Sustituye las menciones históricas de Banxico rechazado y conexión ML sin probar; no verifica la versión remota del modelo ni acredita producción. La observación visual del mensaje «conexión pendiente» se corrigió posteriormente, como consta en el apartado anterior. No se ejecutó una nueva validación remota de GitHub Actions.
+Consultar [evidencia, cifras y límites de la prueba](../evidencias/2026-10-04/prueba-e2e.md). Sustituye las menciones históricas de Banxico rechazado y conexión ML sin probar; no verifica la versión remota del modelo ni acredita producción. La observación visual del mensaje «conexión pendiente» se corrigió posteriormente, como consta en el apartado anterior. No se ejecutó una nueva validación remota de GitHub Actions.
 
 ## APIs financieras y recuperación de arranque — 03 de octubre de 2026
 

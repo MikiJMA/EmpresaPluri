@@ -5,7 +5,7 @@ Estado: cliente, ruta autenticada y configurador implementados; respuesta real c
 
 Comprobación autenticada del 04/10/2026: guardado ficticio, explicación automática y referencia DEM-02 v1.0 observados en la aplicación. Evidencia en [prueba integral](../../../../docs/evidencias/2026-10-04/prueba-e2e.md). No certifica todas las respuestas futuras ni una política empresarial.
 
-Configuración Docker: ejecutar `Conectar Azure OpenAI.cmd` en la carpeta interior, con Docker Desktop abierto. Introducir la clave del recurso `julianvillegas191-9159-resource`, donde existe `gpt-5-mini-1`. Entrada oculta; el archivo privado `.env` queda sin cifrar en disco y excluido de Git. El script conserva PostgreSQL, ML y Search; recrea únicamente backend y reinicia frontend. No realiza una llamada de pago.
+Configuración Docker: ejecutar `operacion/integraciones/Conectar Azure OpenAI.cmd` desde la carpeta interior, con Docker Desktop abierto. Introducir la clave del recurso `julianvillegas191-9159-resource`, donde existe `gpt-5-mini-1`. Entrada oculta; el archivo privado `.env` queda sin cifrar en disco y excluido de Git. El script conserva PostgreSQL, ML y Search; recrea únicamente backend y reinicia frontend. No realiza una llamada de pago.
 
 Prueba manual: iniciar sesión y pulsar **Evaluar escenario** con datos ficticios. Al confirmar el guardado, aparece **Generando explicación con IA…** y después el texto, sin otro botón. El formulario avisa del envío y del consumo antes de evaluar. Si no se guarda, no se solicita IA; un error de generación no modifica el guardado ni el riesgo. No hay reintentos automáticos. Cada nueva evaluación puede generar consumo.
 

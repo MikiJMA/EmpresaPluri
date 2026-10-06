@@ -30,7 +30,7 @@ Caché por proveedor y proceso: una hora para respuestas válidas; un minuto par
 ## Configurar o recuperar Banxico en Windows
 
 1. En el sitio oficial del SIE, usar «Obtener token». No copiar la clave de ejemplo de la documentación ni compartir credenciales en el chat.
-2. Ejecutar `Conectar Banxico.cmd` en la raíz interior. Pegar el token en la consola de entrada oculta. Se guarda únicamente `BANXICO_API_TOKEN` en `infraestructura/contenedores_docker/.env`, conservando las demás variables; el archivo está excluido de Git, pero no cifrado en disco.
+2. Ejecutar `operacion/integraciones/Conectar Banxico.cmd` en la raíz interior. Pegar el token en la consola de entrada oculta. Se guarda únicamente `BANXICO_API_TOKEN` en `infraestructura/contenedores_docker/.env`, conservando las demás variables; el archivo está excluido de Git, pero no cifrado en disco.
 3. El configurador enciende PostgreSQL y espera su salud, sin recrearlo ni cambiar el volumen. Después recrea solo el backend para aplicar el token. No construye/descarga imágenes, ejecuta migraciones ni modifica registros. Si falla PostgreSQL, no continúa a recrear el backend.
 4. Recargar PluriOne y consultar el estado real de Banxico. Guardar el token no acredita que el proveedor lo acepte.
 

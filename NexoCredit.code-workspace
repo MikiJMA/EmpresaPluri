@@ -1,0 +1,28 @@
+{
+  "folders": [
+    { "name": "NexoCredit", "path": "empresa - copia" },
+    { "name": "GitHub Actions", "path": ".github" }
+  ],
+  "settings": {
+    "python.defaultInterpreterPath": "${workspaceFolder:NexoCredit}/.venv/Scripts/python.exe",
+    "python.terminal.activateEnvironment": true,
+    "files.exclude": {
+      "**/.venv": true,
+      "**/.venv-roto": true,
+      "**/.local": true,
+      "**/.tmp": true,
+      "**/__pycache__": true,
+      "**/node_modules": true,
+      "**/dist": true,
+      "**/docs/archivo": true
+    },
+    "search.exclude": {
+      "**/.venv": true,
+      "**/.venv-roto": true,
+      "**/.local": true,
+      "**/.tmp": true,
+      "**/node_modules": true,
+      "**/dist": true
+    }
+  }
+}

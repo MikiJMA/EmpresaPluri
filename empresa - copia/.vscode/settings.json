@@ -3,9 +3,20 @@
   "python.terminal.activateEnvironment": true,
   "files.exclude": {
     "**/dist": true,
-    ".venv": true,
-    "docs/archivo": true,
+    "**/.venv": true,
+    "**/.venv-roto": true,
+    "**/.local": true,
+    "**/.tmp": true,
+    "**/docs/archivo": true,
     "**/__pycache__": true,
     "**/node_modules": true
+  },
+  "search.exclude": {
+    "**/.venv": true,
+    "**/.venv-roto": true,
+    "**/.local": true,
+    "**/.tmp": true,
+    "**/node_modules": true,
+    "**/dist": true
   }
 }
