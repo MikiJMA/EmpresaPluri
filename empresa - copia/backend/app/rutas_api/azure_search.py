@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from pydantic import BaseModel, Field
 
-from backend.app.integraciones.busqueda_azure_ai_search.buscador import buscar, configurado, listar_documentos
+from backend.app.integraciones.proveedores import buscar_documentos as buscar, estado_documentos, listar_documentos
 
 router = APIRouter(prefix='/api/v1/azure-search', tags=['Documentos demo'])
 
@@ -12,7 +12,7 @@ class Consulta(BaseModel):
 
 @router.get('/estado')
 def estado():
-    return {'configurado': configurado()}
+    return estado_documentos()
 
 
 @router.post('/buscar')

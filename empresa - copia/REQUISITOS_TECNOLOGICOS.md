@@ -1,8 +1,20 @@
 # Tecnologías obligatorias del proyecto
 
+Corte de preparación del 14/10/2026: [entrega y verificaciones actuales](docs/evidencias/2026-10-14/entrega-demo.md). Suite local final 197 backend/PostgreSQL y 129 frontend aprobada; el código Azure/Entra y sus plantillas de configuración permanecen. Las alternativas locales no sustituyen requisitos ni una prueba histórica certifica conectividad o suscripción actual.
+
 Por indicación del alumno, el sistema final debe utilizar todas las tecnologías siguientes. Este requisito sustituye la interpretación anterior de que eran opcionales. Crear una carpeta no significa que su integración esté implementada.
 
 Estado documental actualizado el 04/10/2026 con las comprobaciones registradas en [QA](docs/calidad/QA.md) y en la [prueba integral](docs/evidencias/2026-10-04/prueba-e2e.md). «Implementado en demo» no significa aprobado para producción. Índice de entrega: [ENTREGA_DEMO.md](docs/entrega/ENTREGA_DEMO.md).
+
+Confirmación documental del 12/10/2026: Azure OpenAI, Azure Machine Learning, Azure AI Search y Microsoft Entra ID **permanecen implementados en la demo**, con la evidencia fechada anterior. Ollama, scikit-learn y documentos locales son opciones adicionales, no sustituyen estos requisitos ni borran sus keys. [Guía Azure y campos de configuración conservados](docs/manuales/AZURE_IMPLEMENTADO_Y_CONFIGURACION.md). No se realizó una nueva llamada cloud ni se comprobó vigencia de suscripción al redactar esta confirmación.
+
+## Incremento de reglas y visualización — 13/10/2026
+
+Python/FastAPI calculan las nuevas evaluaciones con `reglas-demo-v2`: score 0–499 corresponde a Alto, 500–679 a Medio y 680–1000 a Bajo. El margen fija un riesgo mínimo de Alto con ≤$7,000, Medio con >$7,000 y ≤$15,000, y Bajo con >$15,000. Se elige el mayor riesgo de score y margen, sin convertir la clasificación en probabilidad ni modificar el laboratorio UCI. PostgreSQL conserva las evaluaciones históricas `reglas-demo-v1` sin recalcularlas. [Contrato y ejemplos de las reglas](docs/manuales/REGLAS_RIESGO_DEMO.md).
+
+React presenta los resúmenes monetarios en pesos completos redondeados; no elimina los centavos de captura, cálculos, almacenamiento o detalles de pagos. El resultado usa los límites del margen calculado a dos decimales, no el número redondeado que se muestra en el resumen.
+
+Los documentos locales incluyen **3 guías / 15 secciones**, con guía 2.0 para resultados v2 y guía 1.0 para resultados históricos. **Azure AI Search conserva la evidencia histórica de 2 guías / 14 secciones** hasta cargar y comprobar la guía nueva: no se presenta el catálogo local ampliado como una carga cloud ya efectuada. No se realizaron nuevas consultas Azure por este incremento; las integraciones obligatorias, las evidencias anteriores y los campos privados de keys se mantienen. La tabla siguiente describe su línea base fechada; no acredita nuevos conteos de pruebas, despliegues o disponibilidad externa.
 
 | Tecnología | Función y ubicación | Estado actual |
 |---|---|---|
@@ -21,3 +33,23 @@ Estado documental actualizado el 04/10/2026 con las comprobaciones registradas e
 | Scrum | Planificación y seguimiento en gestion_proyecto/scrum | Backlog de cierre y evidencias organizados. Ejecución de sprints, reuniones, responsables, horas, revisión y retrospectiva aún no acreditadas; deben registrarse cuando ocurran |
 
 Pendientes de cierre y producción separados en [backlog de cierre](gestion_proyecto/scrum/BACKLOG_CIERRE.md). Las pruebas simuladas no sustituyen la evidencia de consultas reales ni la validación crediticia del modelo.
+
+## IA predictiva local adicional — 12/10/2026
+
+Python y scikit-learn entrenan y sirven un modelo logístico UCI local desde `inteligencia_artificial/prediccion_local` y `backend/app/integraciones/prediccion_local`. React muestra **Laboratorio IA**, 19 variables académicas, clase, proveedor y métricas reales; FastAPI protege rutas `/api/v1/ml/*` y alias anteriores. El modo local selecciona este modelo sin consumir Azure ni cargar AutoML. No sustituye la obligación Azure ML del sistema final, sus adaptadores o sus evidencias históricas; permite continuidad de la demo cuando Azure no esté disponible.
+
+165 backend/PostgreSQL y 120 frontend aprobadas, lint/build y cinco archivos PowerShell. Inferencia local real y exportación contrastada contra scikit-learn en 30.000 filas sin discrepancias. El modelo no transforma la evaluación principal en scoring predictivo, no se validó para México y no presenta una probabilidad calibrada. Auditoría npm actual bloqueada por certificado TLS; no hay nueva CI ni consulta Azure comprobada. [Manual](docs/manuales/LABORATORIO_IA_LOCAL.md), [métricas/procedencia](inteligencia_artificial/prediccion_local/README.md) y [evidencia](docs/evidencias/2026-10-12/ia-predictiva-local.md). La desactivación del ML local descrita a continuación corresponde al estado del 11/10/2026, previo a este incremento.
+
+## Alternativas adicionales del 11/10/2026
+
+Incremento de seguimiento: Python/FastAPI/React/PostgreSQL implementan planes, cuotas, pagos parciales, métricas descriptivas, alertas y eventos. La nueva auditoría global exige Administrador, conservando Entra y usuario local. Docker aplica 005 sin transformar el historial; Power BI conserva su vista/reporte de evaluaciones, no se añade una página del ledger. No se reemplaza el requisito Azure por Ollama ni se presenta Scrum documental como ceremonias realizadas. [Arquitectura vigente](docs/desarrollo/ARQUITECTURA_Y_DATOS.md) y [evidencia](docs/evidencias/2026-10-11/seguimiento-crediticio.md).
+
+Se conservan todas las integraciones Azure y Entra anteriores. Acceso local, Ollama y búsqueda textual local son alternativas explícitas de continuidad de la demo; no sustituyen el requisito tecnológico ni convierten las evidencias históricas en pruebas actuales. El código permite cambiar proveedores sin borrar credenciales Azure. El modo sin Azure deshabilita el laboratorio UCI porque todavía no hay un entorno local de inferencia AutoML integrado. No se simulan predicciones.
+
+La configuración privada Docker está en `infraestructura/contenedores_docker/.env`, con ejemplo público comentado `.env.example`; las llaves nunca van al frontend. Operación y alcance: [Acceso local y proveedores](docs/manuales/ACCESO_LOCAL_Y_PROVEEDORES.md).
+
+Comprobación posterior del 11/10/2026: 116 pruebas backend/PostgreSQL y 79 frontend aprobadas, lint/build y cinco archivos PowerShell. Banxico admite únicamente la tasa objetivo publicada hasta siete días después de la consulta, marcada como fecha futura y no confirmada como vigente; conserva el FIX de fecha válida. La revisión RFC/CURP es local, opcional y limitada a formato/fecha; la asociación registrada se consulta manualmente en SAT, no mediante una API oficial integrada. [Evidencia y límites](docs/evidencias/2026-10-11/banxico-responsable-rfc.md). No actualiza retrospectivamente los conteos ni las pruebas Azure de la tabla histórica, y no hay nueva CI remota.
+
+Corrección posterior de casos adversariales del 11/10/2026: 130 backend/PostgreSQL y 89 frontend aprobadas en la reconstrucción final; contratos de respuestas, recuperación React, validación estricta y límites de paginación/acceso. La migración 004 añade caché privada y cuotas de explicaciones compartidas entre procesos, manteniendo Azure/Ollama según selección explícita. Aplicación local saludable con los mismos 9/2/1 registros y restauración aislada de siete tablas comprobada. [Resultados y límites](docs/evidencias/2026-10-11/correcciones-ruptura.md). No demuestra nueva conectividad Azure ni aptitud para producción.
+
+Segunda ronda del 11/10/2026: **139 backend/PostgreSQL y 96 frontend** aprobadas, con regresiones de caracteres ocultos, coherencia de captura, calendario/detalle/dashboard, reserva durable de cuota y configuración TLS inválida. Backend/frontend Docker actualizados; PostgreSQL y sus 9 evaluaciones, 2 revisiones y 1 cuenta conservados. Sin nueva migración, consumo IA ni CI remota; se mantienen todas las tecnologías obligatorias y alternativas locales. [Evidencia](docs/evidencias/2026-10-11/correcciones-ruptura-ronda-2.md).

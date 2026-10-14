@@ -32,7 +32,7 @@ test('agrupa por fuente y versión y conserva todas las secciones ordenadas', ()
 })
 
 test('carga, fallo recuperable y catálogo vacío tienen mensajes visibles', () => {
-  assert.ok(render({ catalogo: { estado: 'cargando' } }).includes('Cargando las guías desde Azure AI Search'))
+  assert.ok(render({ catalogo: { estado: 'cargando' } }).includes('Cargando las guías desde el proveedor configurado'))
   const error = render({ catalogo: { estado: 'error', error: 'No hay conexión.' } })
   assert.ok(error.includes('role="alert"'))
   assert.ok(error.includes('Reintentar carga de guías'))
@@ -45,7 +45,7 @@ test('la búsqueda conserva el catálogo y maneja cero coincidencias', () => {
   assert.ok(html.includes('No se encontraron coincidencias'))
   assert.ok(html.includes('Guías disponibles'))
   assert.ok(html.includes('Contenido original'))
-  assert.ok(render({ busy: true }).includes('Buscando fragmentos en Azure AI Search'))
+  assert.ok(render({ busy: true }).includes('Buscando fragmentos en el proveedor configurado'))
 })
 
 test('contenido y errores se muestran como texto, nunca HTML ejecutable', () => {
@@ -81,4 +81,16 @@ test('cliente propaga errores y rechaza respuestas de formato inválido', async 
   await assert.rejects(denegado.listar(), /Acceso denegado/)
   const abortado = crearServicioDocumentos(async () => { throw new DOMException('Cancelada', 'AbortError') }, '/api')
   await assert.rejects(abortado.listar(), { name: 'AbortError' })
+})
+
+test('documentos locales indican procedencia sin afirmar una consulta Azure', async () => {
+  const html = render({ catalogo: { estado: 'lista', proveedor: 'local', fragmentos: [fragmento()] },
+    proveedorBusqueda: 'local', resultados: [fragmento()], busy: true })
+  assert.match(html, /Origen: archivos locales/)
+  assert.match(html, /sin Azure/)
+  assert.doesNotMatch(html, /Azure AI Search/)
+  const servicio = crearServicioDocumentos(async () => ({ ok: true,
+    json: async () => ({ resultados: [fragmento()], proveedor: 'local' }) }), '')
+  assert.equal((await servicio.listarConOrigen()).proveedor, 'local')
+  assert.equal((await servicio.buscarConOrigen('margen')).proveedor, 'local')
 })

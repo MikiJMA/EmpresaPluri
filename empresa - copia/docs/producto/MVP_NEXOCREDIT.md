@@ -4,8 +4,10 @@
 
 | Dato de control | Valor |
 |---|---|
-| Versión | 1.1 |
+| Versión | 1.4 |
+| Fecha de edición | 13/10/2026 |
 | Línea base técnica | 04/10/2026 |
+| Incremento actual | 13/10/2026: reglas-demo-v2 y resúmenes sin decimales; Azure y campos de keys conservados |
 | Estado | Propuesta de alcance y aceptación; núcleo técnico comprobado |
 | Documento complementario | [PRD — NexoCredit](PRD_NEXOCREDIT.md) |
 | Documento anterior | [PRD/MVP combinado, conservado](../archivo/PRD_MVP_NEXOCREDIT.md) |
@@ -13,6 +15,51 @@
 | Aceptación formal | Pendiente de revisión y registro |
 
 Este documento define qué debe contener la entrega mínima, cómo priorizarla y cómo verificarla. No autoriza nuevas llamadas de pago, cambios cloud, publicación, uso de datos reales ni instalación para el asesor. La prioridad de una función no determina si ya está implementada.
+
+### Adenda 1.4 — MoSCoW del cambio de reglas — 13/10/2026
+
+Esta adenda prevalece para nuevas evaluaciones sobre el contrato histórico `reglas-demo-v1`. No cambia los resultados guardados ni convierte los rangos ilustrativos en un score oficial.
+
+| Prioridad | Alcance del incremento | Criterio de aceptación |
+|---|---|---|
+| Must | `reglas-demo-v2`: score 0–499 Alto, 500–679 Medio, 680–1000 Bajo | Diferenciar 499/500 y 679/680; no permitir que un buen margen mejore un score Alto |
+| Must | Margen como riesgo mínimo: ≤$7,000 Alto, >$7,000 y ≤$15,000 Medio, >$15,000 Bajo | Resultado igual a la peor categoría de score y margen; calcular con centavos, no con el resumen redondeado |
+| Must | Conservar resultados anteriores v1 y su versión | Sin recalcular historial; un reenvío idempotente recupera el resultado original |
+| Must | Ayuda y explicación acordes con `version_modelo` | Guía 1.0 para v1 y 2.0 para v2; fallo explícito si no hay guía compatible, sin usar v1 para explicar v2 |
+| Must | Resúmenes monetarios en pesos completos | Redondeo visual, ausencia distinta de cero, centavos conservados en captura/cálculos/almacenamiento y detalles de pagos |
+| Must | Mantener todas las tecnologías Azure y sus campos de keys | Alternativas locales adicionales, sin borrar adaptadores, credenciales ni evidencias previas |
+| Should | Revisar legibilidad en escritorio y móvil | Rangos y advertencias comprensibles, sin depender de un desplegable para conocer la regla |
+| Won't en este incremento | Recalcular registros, validar crédito real o atribuir aceptación al asesor | Ninguna conversión de histórico, política oficial o firma inventada |
+
+Con margen de $20,000, score 200 → Alto, 500 → Medio y 700 → Bajo. Con score 900 y margen de $7,000 → Alto. Las categorías son de la demo y no expresan probabilidad de incumplimiento.
+
+El catálogo documental **local** incluye 3 guías / 15 secciones, con fuente `guia-demostracion-v2` / versión 2.0 para las nuevas explicaciones. Azure AI Search conserva la evidencia histórica de 2 guías / 14 secciones hasta cargar y comprobar esa guía. Esta adenda no efectúa nuevas consultas ni cargas cloud. Si se selecciona Azure Search para explicar v2 sin su guía nueva, la ausencia debe mostrarse como fallo, no como éxito basado en contenido v1.
+
+Los importes de tarjetas y resúmenes se redondean a pesos: `$18,333.33` → `$18,333`; los valores originales no cambian. La captura admite centavos; detalle y pagos conservan la precisión necesaria. El margen a dos decimales determina el riesgo aunque su representación se redondee. Las tasas y porcentajes no se convierten a pesos enteros.
+
+La matriz D01–D08 de la sección 7.2 queda como regresión histórica v1: D08 sigue siendo Medio para un registro v1, pero la misma solicitud **nueva** bajo v2 produce Alto. Deben verificarse ambos contratos por versión sin insertar fixtures en la base de trabajo. Esta nota no afirma nuevas suites, despliegue, conectividad externa o aceptación formal. [Manual y criterios completos de las reglas](../manuales/REGLAS_RIESGO_DEMO.md).
+
+### Conservación de Azure — 12/10/2026
+
+**Must:** mantener Azure OpenAI Service, Azure Machine Learning, Azure AI Search y Microsoft Entra ID como integraciones implementadas en la demo, con sus evidencias del 04/10/2026, adaptadores y campos de configuración. La continuidad local no elimina ninguna tecnología obligatoria. Criterio: poder seleccionar Azure explícitamente y completar sus nueve campos en el archivo privado del servidor sin introducir secretos en frontend/documentación, borrar credenciales o cambiar resultados anteriores. [Implementación y ubicación de keys](../manuales/AZURE_IMPLEMENTADO_Y_CONFIGURACION.md).
+
+El modelo scikit-learn local ya incluido es una alternativa académica adicional, no el mismo candidato AutoML ni un nuevo scoring validado para el formulario principal. Sus métricas y pruebas están [documentadas por separado](../manuales/LABORATORIO_IA_LOCAL.md). Esta edición no acredita una nueva llamada Azure, suscripción activa o aceptación formal.
+
+### Seguimiento de la entrega local
+
+Acceso local/Microsoft, Azure/Ollama/plantilla explícitos, documentos Azure/local, revisión RFC/CURP básica con SAT manual, caché/cuotas durables y seguimiento ficticio de planes/abonos/alertas están implementados. Las métricas de línea base posteriores conservan su evidencia separada; no se reetiquetan como CI nueva o aceptación.
+
+| Incremento MoSCoW | Función | Estado / aceptación técnica |
+|---|---|---|
+| Must — continuidad local | Usuario local y proveedores explícitos sin eliminar Azure | Implementado, sin cuenta/contraseña predeterminada ni ML local inventado |
+| Must — seguimiento | Plan de cuotas, pagos parciales y cálculos descriptivos | Implementado; decimal exacto, idempotencia y sobrepago probados |
+| Must — alertas | Vencidas, atención con motivo y resolución por saldo | Implementado al operar/recalcular, no scheduler permanente |
+| Must — trazabilidad del incremento | Eventos con responsable y lectura global administrativa | Implementado, no auditoría íntegra de toda la aplicación |
+| Should — rendimiento local | Medición reproducible acotada | Ejecutada en fixture pequeño; sin certificación de carga productiva |
+| Could — ampliación analítica del ledger | Nuevas páginas/medidas Power BI | No incluida: reporte existente conserva evaluaciones |
+| Won't — esta implementación | Crédito real, fuente Buró, políticas oficiales, notificación externa y cierre formal | No se simulan ni se activan por este incremento |
+
+Para operar/verificar: [seguimiento](../manuales/SEGUIMIENTO_CREDITICIO.md), [evidencia vigente](../evidencias/2026-10-11/seguimiento-crediticio.md), [arquitectura y datos](../desarrollo/ARQUITECTURA_Y_DATOS.md). Los criterios anteriores siguen como línea base, con prevalencia de esta actualización en acceso, caché y seguimiento. Capacitación/ceremonias/aceptación no se dan por realizadas.
 
 ## 1. Definición del MVP
 
@@ -102,7 +149,7 @@ M13 exige documentación básica y revisión formal realmente registrada. S05 se
 | C02 | Persistencia optativa de explicación | Solo tras definir privacidad, versión, retención y coste |
 | C03 | Gráficos complementarios | Comparaciones temporales que no alteren reglas |
 
-Estas mejoras están propuestas; este documento no las implementa. La explicación actual vive en memoria de pantalla y puede perderse tras recargar o cerrar sesión.
+Estas mejoras pertenecen a la propuesta histórica. C02 ya se implementó posteriormente como caché privada PostgreSQL de 24 h; su caducidad limita reutilización, no elimina el texto. C01/C03 no se declaran implementadas por esta actualización. Consultar los límites del incremento y su evidencia, sin convertirlo en aceptación formal.
 
 ### 4.4 Won't have this release
 
@@ -138,9 +185,9 @@ El formulario recoge RFC ficticio, ingresos, gastos, deuda, pagos, atraso y scor
 **Criterios de aceptación:**
 
 1. Se validan tipos, rangos, campos adicionales y valores no finitos.
-2. El resultado indica margen, Bajo/Medio/Alto, reglas-demo-v1 y advertencia.
-3. Se respetan los límites estrictos de 15,000 y 7,000.
-4. Deuda/pagos/atraso no modifican esa versión de reglas.
+2. El resultado nuevo indica margen, Bajo/Medio/Alto, `reglas-demo-v2` y advertencia; los anteriores conservan `reglas-demo-v1`.
+3. Se respetan los cortes de score 500/680 y de margen 7,000/15,000: el peor riesgo de las dos variables determina la categoría, conforme a la adenda 1.4.
+4. Deuda/pagos/atraso no modifican estas reglas demo.
 5. Los pagos no se restan dos veces de los ingresos.
 
 **Límite:** dinero con float/round actual; no se declara una implementación Decimal.
@@ -334,7 +381,9 @@ Para una nueva campaña integral se propone un conjunto versionado de veinte fix
 
 No se deben insertar esos fixtures en la base de trabajo sin acuerdo. Las pruebas automáticas deben usar destinos aislados. Las comparaciones manuales se documentan con un corte fijo.
 
-### 7.2 Matriz de límites deterministas
+### 7.2 Matriz histórica de límites deterministas — reglas-demo-v1
+
+Esta tabla conserva los resultados de la línea base v1. Para solicitudes nuevas v2 prevalece la adenda 1.4 del 13/10/2026; el caso D08 cambia a Alto sólo para una nueva evaluación, no para el registro histórico.
 
 | Caso | Ingresos | Gastos | Score | Margen esperado | Riesgo esperado |
 |---|---:|---:|---:|---:|---|

@@ -1,5 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
+import { readFile } from 'node:fs/promises'
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { cargarComponente } from './helpers/cargar-componente.mjs'
@@ -11,6 +12,22 @@ test('la nueva pantalla conserva los estados de acceso de Microsoft', async t =>
     busy: false, ready: true, error: '', wrongOrigin: false,
     onLogin: () => {}, onLogout: () => {}, ...overrides,
   }))
+
+  await t.test('adapta el diseño diagonal con marca vigente y controles accesibles en móvil', async () => {
+    const html = render({ local: { habilitado: true, cuentas_disponibles: true } })
+    assert.match(html, /<aside class="access-panel" aria-hidden="true">/)
+    assert.match(html, /class="access-waves"/)
+    assert.match(html, /Acceso seguro para analistas y administradores/)
+    assert.match(html, /Accede a tu espacio de análisis/)
+    assert.match(html, /<label for="local-usuario">/)
+    assert.match(html, /<label for="local-password">/)
+    assert.doesNotMatch(html, /PluriOne|<script|Inicia sesión con una cuenta local o Microsoft autorizada|Tus evaluaciones permanecen en PostgreSQL/)
+    const css = await readFile(new URL('../src/styles/Acceso.css', import.meta.url), 'utf8')
+    assert.match(css, /clip-path: polygon\(0 0, 100% 0, 88% 100%, 0 100%\)/)
+    assert.match(css, /@media \(max-width: 900px\)\s*\{\s*\.access-screen \.access-panel \{ display: none; \}/)
+    assert.doesNotMatch(css, /height: 100vh;\s*overflow: hidden|position: fixed/)
+    assert.match(css, /@media \(prefers-reduced-motion: reduce\)/)
+  })
 
   await t.test('lista para iniciar sesión sin campos de contraseñas ni tokens', () => {
     const html = render()
@@ -48,5 +65,31 @@ test('la nueva pantalla conserva los estados de acceso de Microsoft', async t =>
     assert.match(html, /role="alert"/)
     assert.match(html, /&lt;script&gt;/)
     assert.doesNotMatch(html, /<script/)
+  })
+
+  await t.test('acceso local habilitado muestra usuario y contraseña sin llaves cloud', () => {
+    const html = render({ local: { habilitado: true, cuentas_disponibles: true }, onLocalLogin: () => {} })
+    assert.match(html, /Usuario local/)
+    assert.match(html, /type="password"/)
+    assert.match(html, /autoComplete="current-password"/)
+    assert.match(html, /mínimo 6 caracteres/)
+    assert.match(html, /id="local-password"[^>]*minLength="6"[^>]*maxLength="128"/)
+    assert.match(html, /Entrar con cuenta local/)
+    assert.match(html, /Iniciar sesión con Microsoft/)
+    assert.doesNotMatch(html, /API_KEY|LOCAL_AUTH_SECRET|Bmx-Token/)
+  })
+
+  await t.test('el origen Microsoft no bloquea cuentas locales', () => {
+    const html = render({ wrongOrigin: true, local: { habilitado: true, cuentas_disponibles: true } })
+    assert.match(html, /Entrar con cuenta local/)
+    assert.doesNotMatch(html, /Iniciar sesión con Microsoft/)
+    assert.match(html, /localhost:8080/)
+  })
+
+  await t.test('sin cuentas informa cómo crear una y bloquea el formulario', () => {
+    const html = render({ local: { habilitado: true, cuentas_disponibles: false } })
+    assert.match(html, /Todavía no hay cuentas locales/)
+    assert.match(html, /Crear usuario local/)
+    assert.match(html, /id="local-password"[^>]*disabled=""/)
   })
 })

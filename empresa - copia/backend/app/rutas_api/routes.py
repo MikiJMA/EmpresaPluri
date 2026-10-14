@@ -58,7 +58,7 @@ def evaluar(solicitud: SolicitudCredito, repositorio=Depends(obtener_repositorio
 
 
 @router.get('/api/v1/evaluaciones')
-def historial(limite: int = Query(20, ge=1, le=100), offset: int = Query(0, ge=0), repositorio=Depends(obtener_repositorio)):
+def historial(limite: int = Query(20, ge=1, le=100), offset: int = Query(0, ge=0, le=1_000_000), repositorio=Depends(obtener_repositorio)):
     if repositorio is None:
         raise HTTPException(503, 'PostgreSQL todavía no está configurado.')
     try:

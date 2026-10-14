@@ -8,7 +8,45 @@ Accesos de Windows: [operacion](operacion/README.md). Documentación: [índice](
 
 Python, FastAPI, React.js, Azure OpenAI Service, Azure Machine Learning, Azure AI Search, PostgreSQL, Power BI, Docker, GitHub Actions, Microsoft Entra ID, APIs financieras y Scrum. Consultar [función, ubicación y estado de cada tecnología](REQUISITOS_TECNOLOGICOS.md). El uso técnico de estas herramientas no acredita producción ni ejecución de Scrum por sí solo.
 
+**Azure sí está implementado en la demo**: OpenAI, Machine Learning, AI Search y acceso Microsoft Entra conservan su código y evidencias reales del 04/10/2026. La alternativa local no los elimina. Los campos para sus keys se mantienen en el `.env` privado de Docker y en las plantillas sin secretos. [Implementación Azure y dónde colocar las llaves](docs/manuales/AZURE_IMPLEMENTADO_Y_CONFIGURACION.md). Esto no afirma vigencia de la suscripción o conectividad cloud actual.
+
 ## Estado real
+
+### Preparación de entrega — 14/10/2026
+
+Suite local final: **197 backend/PostgreSQL y 129 frontend**, sin omisiones, cinco archivos PowerShell, lint/build y auditoría npm con cero vulnerabilidades conocidas. Se añadió una prueba integral aislada, corrección Ollama comprobada en vivo y un generador de ZIP público con manifiesto SHA-256, sin base, cuentas o llaves. Restauración aislada del respaldo de doce tablas aprobada. Las comprobaciones del navegador, hallazgos y pendientes de Power BI/CI/ZIP están separados en la [evidencia de entrega](docs/evidencias/2026-10-14/entrega-demo.md); no se presenta como aceptación o publicación de la aplicación. [Guía de entrega e instalación](docs/entrega/ENTREGA_DEMO.md).
+
+### Reglas de riesgo y presentación monetaria — 13/10/2026
+
+Las nuevas evaluaciones usan **`reglas-demo-v2`**: score **0–499 → Alto**, **500–679 → Medio** y **680–1000 → Bajo**. El margen mensual impone un riesgo mínimo: **$7,000 o menos → Alto**, **más de $7,000 y hasta $15,000 → Medio**, **más de $15,000 → Bajo**. El resultado toma la categoría más riesgosa de ambas: un buen margen nunca mejora un score de riesgo Alto. Son rangos propios de la demo, no una escala oficial de Buró ni un modelo predictivo. [Reglas, ejemplos y conservación del historial](docs/manuales/REGLAS_RIESGO_DEMO.md).
+
+Los resúmenes monetarios de la interfaz se redondean a pesos completos, sin decimales: `$18,333.33` se presenta como `$18,333`. Esto sólo cambia la presentación; captura, cálculos y almacenamiento conservan los centavos. Los detalles de importes y pagos mantienen la precisión necesaria. El riesgo se calcula con el margen a dos decimales, no con su cifra visual redondeada.
+
+Las evaluaciones anteriores mantienen su resultado y versión `reglas-demo-v1`; no se recalculan, y sus explicaciones utilizan la guía histórica correspondiente. Las nuevas explicaciones requieren la guía de versión 2.0. El catálogo **local** incluye ahora **3 guías / 15 secciones**. La evidencia histórica de **Azure AI Search** sigue siendo **2 guías / 14 secciones** hasta cargar y comprobar la guía nueva en ese proveedor; este incremento no realiza consultas ni cargas cloud. Los adaptadores Azure y sus campos de keys permanecen. No se atribuyen a esta nota pruebas, despliegues, aceptación o disponibilidad externa no registrados.
+
+Comprobación del incremento del 13/10/2026: 175 pruebas backend/PostgreSQL y 129 frontend, lint/build y cinco archivos PowerShell aprobados. Docker actualizado con imágenes locales verificadas tras fallo DNS del registro, sin recrear PostgreSQL. Datos/esquema e identidad coinciden con el respaldo: nueve evaluaciones, dos revisiones y una cuenta conservadas. [Resultados, QA visual y límites](docs/evidencias/2026-10-13/reglas-v2-y-importes.md). Sin generación IA real, carga Azure o CI nueva.
+
+### IA predictiva local adicional — 12/10/2026
+
+**Laboratorio IA** incorpora un modelo entrenado localmente con scikit-learn, `nexocredit-uci-logistica-v1`, sin llave ni suscripción Azure. El modo local ahora lo activa explícitamente. No utiliza el pickle AutoML ni las entradas MXN del formulario principal: son 19 variables académicas UCI/NTD separadas, con clase binaria, origen, advertencias y métricas visibles. Las integraciones Azure siguen disponibles y las reglas principales no cambian. [Manual del laboratorio](docs/manuales/LABORATORIO_IA_LOCAL.md) y [entrenamiento reproducible](inteligencia_artificial/prediccion_local/README.md).
+
+Prueba independiente: AUC 0,71505, sensibilidad 60,92 %, precisión positiva 37,51 % y exactitud 70,28 %, menor que 78,86 % del clasificador siempre negativo. No aprobado para decisiones crediticias ni validado para México. 165 pruebas backend/PostgreSQL, 120 frontend, lint/build y cinco archivos PowerShell aprobados. Auditoría npm actual no completada por un certificado TLS, sin desactivar su validación. Docker saludable y las huellas/contenedor PostgreSQL coinciden con el respaldo previo. [Evidencia y límites del incremento](docs/evidencias/2026-10-12/ia-predictiva-local.md). No actualiza retrospectivamente las evidencias Azure o CI anteriores.
+
+### Alternativa local adicional — 11/10/2026
+
+Acceso local con usuario/contraseña y sesiones cortas, además de Microsoft Entra ID. Adaptadores Azure conservados; selección explícita de proveedor por función. Ollama usa un modelo instalado en el equipo y la búsqueda documental local recupera las mismas dos guías / 14 secciones. También existe una plantilla de reglas marcada como no generada por IA. El laboratorio ML local está deshabilitado: no se carga el pickle AutoML sin su entorno compatible. Las evaluaciones, revisiones, PostgreSQL, APIs financieras y Power BI mantienen sus responsabilidades. Ver [operación, ubicación de llaves y límites](docs/manuales/ACCESO_LOCAL_Y_PROVEEDORES.md). Las evidencias Azure del 04/10/2026 no prueban vigencia de la suscripción ni conectividad actual.
+
+Comprobación inicial del 11/10/2026: 109 pruebas backend/PostgreSQL y 64 frontend aprobadas tras ajustar el mínimo de contraseña local a seis caracteres, lint/build y cinco archivos PowerShell aprobados, generación real con `llama3.1:8b` y modo local aplicado en Docker conservando 9 evaluaciones y 2 revisiones. Ver [evidencia de ese cambio](docs/evidencias/2026-10-11/acceso-local-y-ollama.md).
+
+Comprobación posterior del 11/10/2026: 116 pruebas backend/PostgreSQL y 79 frontend aprobadas, lint/build, auditoría npm y cinco archivos PowerShell. Se corrigió el rechazo del FIX cuando Banxico publica la tasa con fecha futura, se presenta el nombre del responsable sin su identificador técnico y la guía del score queda abierta. Se añadió [revisión opcional de RFC/CURP](docs/manuales/REVISION_RFC_CURP.md), limitada a formato y fecha, con consulta oficial manual en SAT. No certifica identidad ni guarda CURP. Aplicación Docker saludable con 9 evaluaciones, 2 revisiones y una cuenta local creada por el usuario conservadas. No se ejecutó CI remota nueva. Ver [pruebas, consultas reales y límites](docs/evidencias/2026-10-11/banxico-responsable-rfc.md).
+
+Correcciones tras pruebas de ruptura del 11/10/2026: validación estricta de importes, errores 422 saneados, identificadores nuevos limitados sin exigir formato SAT a la demo, paginación acotada y contratos de respuestas/Error Boundary en React. Acceso con contadores separados de fallos/ráfagas y proxy explícito. Caché privada PostgreSQL de explicaciones, reutilización 24 horas y cuota de diez nuevas generaciones por cuenta/hora, sin enviar identidad al modelo. La explicación ya no reside únicamente en memoria de la pantalla. [Pruebas y límites de estas correcciones](docs/evidencias/2026-10-11/correcciones-ruptura.md).
+
+Segunda ronda corregida del 11/10/2026: observaciones visibles sin NUL/controles ocultos, fechas de calendario y contratos de datos coherentes, reserva durable de cuota antes de generar y errores TLS controlados. Las nuevas capturas rechazan pagos superiores a los gastos que los incluyen y atraso pendiente con deuda cero; no reescriben registros antiguos ni cambian el scoring. **139 pruebas backend/PostgreSQL y 96 frontend aprobadas**, lint/build, auditoría npm y cinco archivos PowerShell. Docker local actualizado sin recrear PostgreSQL, con los mismos 9 registros de evaluación, 2 revisiones y 1 cuenta. [Resultados y alcance](docs/evidencias/2026-10-11/correcciones-ruptura-ronda-2.md).
+
+Seguimiento implementado del 11/10/2026: nueva sección **Créditos y pagos**, con planes ficticios, cuotas, abonos parciales exactos, saldos/atraso/puntualidad y alertas persistidas/versionadas. Eventos transaccionales con responsable; auditoría global nueva sólo Administrador. No importa Buró, verifica depósitos, calcula intereses ni cambia `reglas-demo-v1`. Migración 005 aditiva: se conservan 9 evaluaciones, 2 revisiones y 1 cuenta, sin convertirlas automáticamente en créditos. [Manual](docs/manuales/SEGUIMIENTO_CREDITICIO.md), [arquitectura](docs/desarrollo/ARQUITECTURA_Y_DATOS.md), [pruebas y límites](docs/evidencias/2026-10-11/seguimiento-crediticio.md). No se involucró al asesor ni se certificaron capacitación o Scrum.
+
+### Estado histórico Azure y cierre técnico — 04/10/2026
 
 Actualizado el 04/10/2026. Demo local autenticada comprobada de extremo a extremo. Tras el cierre técnico y cambio de marca: 69 pruebas backend/PostgreSQL y 48 frontend aprobadas, sin omisiones; lint, build y tres archivos de pruebas PowerShell aprobados. GitHub Actions confirmó esos mismos conteos en el commit de código `19223ae`, con ambos trabajos aprobados; [ejecución y SHA completo](docs/evidencias/2026-10-04/github-actions.md). Publicado en rama de revisión, sin cambiar main ni desplegar la aplicación. Las pruebas automáticas usan respuestas externas simuladas; las consultas Azure y financieras reales tienen evidencia separada. Ver [cierre técnico local](docs/evidencias/2026-10-04/cierre-tecnico.md), [entrega de demostración](docs/entrega/ENTREGA_DEMO.md) y [QA](docs/calidad/QA.md).
 
@@ -40,7 +78,7 @@ Con Docker Desktop abierto, ejecutar desde la carpeta interior:
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\docker.ps1 iniciar
 ```
 
-Abrir [http://localhost:8080/](http://localhost:8080/) e iniciar sesión con una cuenta Microsoft autorizada. La configuración Entra actual requiere exactamente ese origen, no 127.0.0.1 ni otro puerto. Incluye frontend, backend, PostgreSQL y migraciones automáticas. Los datos quedan en un volumen Docker separado de la base local; no se migran registros entre ambos entornos. Para detener conservando datos, cambiar `iniciar` por `detener`. Consultar [operación de Docker](infraestructura/contenedores_docker/README.md).
+Abrir [http://localhost:8080/](http://localhost:8080/) e iniciar sesión con una cuenta Microsoft autorizada, o con una cuenta local si está habilitada y creada. Ver [creación de cuenta local](docs/manuales/ACCESO_LOCAL_Y_PROVEEDORES.md#crear-la-primera-cuenta-local). La configuración Entra actual requiere exactamente ese origen, no 127.0.0.1 ni otro puerto. Incluye frontend, backend, PostgreSQL y migraciones automáticas. Los datos quedan en un volumen Docker separado de la base local; no se migran registros entre ambos entornos. Para detener conservando datos, cambiar `iniciar` por `detener`. Consultar [operación de Docker](infraestructura/contenedores_docker/README.md).
 
 ## PostgreSQL local y arranque sin Docker
 
@@ -72,7 +110,7 @@ Desde la carpeta interior `empresa - copia`, que contiene `backend`, `frontend` 
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r backend/requirements.txt
-.\.venv\Scripts\python.exe -m uvicorn backend.app.main:app --reload --host 127.0.0.1 --port 8000
+.\.venv\Scripts\python.exe -m uvicorn backend.app.main:app --reload --host 127.0.0.1 --port 8000 --no-proxy-headers
 ```
 
 En otra terminal:
@@ -119,6 +157,7 @@ empresa - copia/                         Raíz del proyecto (carpeta interior)
 │   │   └── integraciones/              Adaptadores Azure y financieros activos en demo
 │   │       ├── explicaciones_azure_openai/
 │   │       ├── prediccion_azure_ml/
+│   │       ├── prediccion_local/        Inferencia UCI numérica local; no scoring principal
 │   │       ├── busqueda_azure_ai_search/
 │   │       └── datos_financieros/
 │   └── tests/                          Pruebas automatizadas
@@ -129,7 +168,8 @@ empresa - copia/                         Raíz del proyecto (carpeta interior)
 │       │   └── servicios/              Cliente HTTP
 │       └── styles/                     Estilos compartidos
 ├── inteligencia_artificial/
-│   └── prediccion_azure_ml/             Candidato UCI evaluado; no validado para crédito real
+│   ├── prediccion_azure_ml/             Candidato UCI evaluado; no validado para crédito real
+│   └── prediccion_local/                Baseline scikit-learn UCI; separado del formulario MXN
 ├── analitica/reportes_power_bi/         Dashboard Power BI local verificado
 ├── infraestructura/contenedores_docker/ Dockerfiles, Compose, Nginx y base persistente
 ├── gestion_proyecto/scrum/             Backlog de cierre; sprints aún por acreditar

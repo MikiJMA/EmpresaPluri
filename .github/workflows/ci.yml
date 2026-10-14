@@ -2,7 +2,7 @@ name: Validacion NexoCredit
 
 on:
   push:
-    branches: [main]
+    branches: [main, codex/cierre-nexocredit-demo]
   pull_request:
   workflow_dispatch:
 
@@ -59,6 +59,7 @@ jobs:
           ./scripts/tests/banxico-config.test.ps1
           ./scripts/tests/programacion-aislada.test.ps1
           ./scripts/tests/organizacion.test.ps1
+          ./scripts/tests/modo-local.test.ps1
 
   frontend:
     runs-on: ubuntu-latest

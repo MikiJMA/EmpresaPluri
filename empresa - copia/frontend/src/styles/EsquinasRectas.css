@@ -1,0 +1,16 @@
+/* Preferencia común del diseño: esquinas rectas en acceso y aplicación.
+   La prioridad es intencional: prevalece sobre los estilos de cada módulo. */
+.enterprise-app,
+.enterprise-app *,
+.enterprise-app *::before,
+.enterprise-app *::after,
+.access-screen,
+.access-screen *,
+.access-screen *::before,
+.access-screen *::after,
+.session-bar,
+.session-bar *,
+.session-bar *::before,
+.session-bar *::after {
+  border-radius: 0 !important;
+}

@@ -8,7 +8,7 @@
 .finance-refresh:hover { background: #f8fafc; }
 .finance-refresh:disabled { cursor: wait; opacity: .55; }
 .finance-panel :is(button, a):focus-visible { outline: 3px solid #818cf8; outline-offset: 3px; }
-.finance-providers { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.finance-providers { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; align-items: start; }
 .finance-provider { padding: 20px; border: 1px solid #e2e8f0; min-width: 0; }
 .finance-provider h3 { font-size: 14px; font-weight: 600; color: #0f172a; margin: 0; }
 .finance-status { font-size: 10px; padding: 5px 8px; background: #f1f5f9; color: #475569; }
@@ -23,6 +23,7 @@
 .finance-number small { display: block; font-size: 11px; font-weight: 400; letter-spacing: 0; color: #64748b; margin-top: 4px; }
 .finance-value > p:not(.finance-number) { font-size: 11px; color: #64748b; margin: 6px 0; }
 .finance-value a { display: inline-block; color: #1e3a8a; font-size: 10px; margin-top: 8px; overflow-wrap: anywhere; }
+.finance-value .finance-future-note { padding: 8px; border-radius: 6px; background: #fffbeb; color: #92400e; }
 .finance-provenance { border-top: 1px solid #e2e8f0; padding-top: 10px; margin-top: 18px; }
 .finance-provenance p { color: #64748b; font-size: 10px; line-height: 1.6; margin: 4px 0; }
 .finance-footnote { border-top: 1px solid #e2e8f0; padding-top: 14px; margin: 20px 0 0; }

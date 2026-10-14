@@ -20,7 +20,8 @@ export default function PanelFinanciero({ estado, data, error, reintentar }) {
           {provider.indicadores.length > 0 && <div className="finance-values">
             {provider.indicadores.map(item => <div className="finance-value" key={item.serie}>
               <h4>{item.nombre}</h4><p className="finance-number">{formatearValor(item.valor)}{item.valor !== null && <small>{item.unidad}</small>}</p>
-              <p>Periodo: <strong>{formatearPeriodo(item.periodo)}</strong></p>
+              <p>{item.fecha_futura ? 'Fecha futura reportada' : 'Periodo'}: <strong>{formatearPeriodo(item.periodo)}</strong></p>
+              {item.fecha_futura && <p className="finance-future-note">Valor publicado con fecha posterior a la consulta; no confirma la tasa vigente a esa fecha.</p>}
               <p>{item.frecuencia}</p>
               <a href={item.fuente_url} target="_blank" rel="noopener noreferrer">Fuente · {item.serie}<span className="finance-sr-only"> (abre en otra pestaña)</span> ↗</a>
             </div>)}

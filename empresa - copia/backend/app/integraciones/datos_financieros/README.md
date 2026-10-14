@@ -15,11 +15,13 @@ Estado al 04/10/2026: Banxico y Banco Mundial disponibles en la interfaz autenti
 
 - [Contrato SIE API de Banxico](https://www.banxico.org.mx/SieAPIRest/service/v1/), [datos oportunos](https://www.banxico.org.mx/SieAPIRest/service/v1/doc/consultaDatosSerieOp) y [límites](https://www.banxico.org.mx/SieAPIRest/service/v1/doc/limiteConsultas). Se usa TLS 1.3 con validación de certificados y el token en `Bmx-Token`, nunca en la URL.
 - [Contrato de indicadores del Banco Mundial](https://datahelpdesk.worldbank.org/knowledgebase/articles/898599-indicator-api-queries). Petición pública para MEX, `format=json`, `mrnev=1`, `source=2`. Año más reciente no significa dato del día: la consulta comprobada devolvió 2025 para ambas series.
-- API local: `GET /api/v1/datos-financieros/indicadores`. Requiere Microsoft Entra ID y los permisos/roles del resto de las rutas. Sin sesión devuelve 401; no existe una ruta pública alternativa.
+- API local: `GET /api/v1/datos-financieros/indicadores`. Requiere una sesión Microsoft Entra ID o una cuenta local habilitada, con los permisos/roles del resto de las rutas. Sin sesión devuelve 401; no existe una ruta pública alternativa.
 - React: `frontend/src/datos_financieros/`, sección «Indicadores financieros». Consulta automáticamente después de iniciar sesión; permite volver a consultar sin forzar llamadas externas.
 - Respuesta: `pais`, `aviso`, `cache_segundos` y `proveedores`. Cada fuente incluye estado (`disponible`, `parcial`, `sin_configurar`, `error`), mensaje propio, hora del intento/comprobación UTC, próxima renovación y observaciones con código, valor, unidad, frecuencia, periodo y enlace oficial. La hora de consulta no es la fecha del indicador.
 
 ## Privacidad, consumo y fallos
+
+Corrección del 11/10/2026: SIE oportuno devolvió una fecha posterior a la consulta para SF61745 y la validación anterior rechazaba también el FIX. Se permite únicamente esa serie hasta siete días posteriores, marcada `fecha_futura=true` y proveedor parcial. La interfaz muestra la fecha reportada y advierte que no confirma la tasa vigente a la fecha de consulta. FIX futuro, fechas más lejanas y datos inválidos siguen rechazados. No se inventan valores ni se usa este dato para el riesgo. Las tarjetas ya no se estiran a la altura de la otra fuente cuando una falla.
 
 Solo se envían los códigos de series/país acordados. No se envían RFC, evaluaciones ni información de clientes a estos proveedores. No se modifica el riesgo demo, el modelo ML, la explicación OpenAI ni la base de evaluaciones.
 
@@ -32,7 +34,7 @@ Caché por proveedor y proceso: una hora para respuestas válidas; un minuto par
 1. En el sitio oficial del SIE, usar «Obtener token». No copiar la clave de ejemplo de la documentación ni compartir credenciales en el chat.
 2. Ejecutar `operacion/integraciones/Conectar Banxico.cmd` en la raíz interior. Pegar el token en la consola de entrada oculta. Se guarda únicamente `BANXICO_API_TOKEN` en `infraestructura/contenedores_docker/.env`, conservando las demás variables; el archivo está excluido de Git, pero no cifrado en disco.
 3. El configurador enciende PostgreSQL y espera su salud, sin recrearlo ni cambiar el volumen. Después recrea solo el backend para aplicar el token. No construye/descarga imágenes, ejecuta migraciones ni modifica registros. Si falla PostgreSQL, no continúa a recrear el backend.
-4. Recargar PluriOne y consultar el estado real de Banxico. Guardar el token no acredita que el proveedor lo acepte.
+4. Recargar NexoCredit y consultar el estado real de Banxico. Guardar el token no acredita que el proveedor lo acepte.
 
 Para recuperar un arranque fallido sin volver a pegar ni modificar el token:
 

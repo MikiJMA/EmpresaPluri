@@ -1,9 +1,11 @@
 // Resultados de la API y captura enviada; nunca cifras ficticias precargadas.
 import Explicacion from '../../azure_openai/Explicacion'
 import { importe, valorCapturado } from './metricasEscenario.mjs'
+import { esEvaluacion } from '../servicios/contratos.mjs'
 const riskClasses = { Bajo: 'risk-low', Medio: 'risk-medium', Alto: 'risk-high' }
 
 export default function EvaluationResult({ result, busy, submitted, explicacion }) {
+  if (result && !esEvaluacion(result, false)) return <section className="card" aria-label="Resultado del análisis"><p role="alert" className="error">No se puede mostrar un resultado con formato inválido. Vuelve a consultar; no se inventó una clasificación.</p></section>
   const captured = name => valorCapturado(result, submitted, name)
   const score = captured('score_buro_actual')
   return <section className="enterprise-result" aria-label="Resultado del análisis" aria-live="polite" aria-busy={busy}>

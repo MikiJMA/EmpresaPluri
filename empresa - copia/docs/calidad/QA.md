@@ -2,6 +2,10 @@
 
 ## Cómo leer este reporte
 
+Corte 14/10/2026: [verificación de entrega](../evidencias/2026-10-14/entrega-demo.md), suite local final 197 backend/129 frontend, cinco archivos PowerShell, audit npm cero vulnerabilidades conocidas, lint y build. Explicación Ollama corregida comprobada en vivo y restauración aislada de doce tablas aprobada. Las pruebas aisladas se distinguen de las consultas reales y del refresco Power BI todavía pendiente; los resultados anteriores no se reescriben.
+
+Seguimiento vigente del 11/10/2026: [incremento crediticio ficticio](../evidencias/2026-10-11/seguimiento-crediticio.md), suite 154 backend/PostgreSQL y 105 frontend, medición acotada de lecturas, doce tablas restauradas en temporal, planes/pagos/alertas/eventos probados y datos de trabajo conservados. [Segunda ronda de ruptura](../evidencias/2026-10-11/correcciones-ruptura-ronda-2.md) conserva la comprobación previa 139/96. Los registros siguientes permanecen históricos, no son una nueva corrida.
+
 Las secciones posteriores son registros históricos con su fecha: las menciones antiguas de falta de Entra, Power BI, Banxico o conexión ML no describen el estado actual si una comprobación posterior las sustituye. Consultar [estado tecnológico actualizado](../../REQUISITOS_TECNOLOGICOS.md), [entrega demo](../entrega/ENTREGA_DEMO.md) e [índice de evidencias](../evidencias/README.md). Esta organización documental no ejecuta de nuevo las pruebas, no acredita Scrum ni publica cambios remotos.
 
 ## Revisión documental — 4 de octubre de 2026

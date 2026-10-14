@@ -4,6 +4,10 @@ Corte: 04/10/2026. Inventario del estado observado y propuesta de trabajo siguie
 
 ## Incrementos con evidencia técnica
 
+Preparación técnica del 14/10/2026: [prueba integral, empaquetador y verificación de entrega](../../docs/evidencias/2026-10-14/entrega-demo.md). No cierra aceptación, capacitación o ceremonias Scrum; las pruebas e incidencias actuales se registran con su resultado, sin atribuir firmas o reuniones.
+
+Seguimiento real de trabajo técnico del 11/10/2026: [bitácora individual](INCREMENTO_2026-10-11.md). Se añadieron cuotas/abonos, análisis descriptivo, alertas versionadas y auditoría global nueva; documentación técnica/soporte/práctica preparada. No se involucró al asesor ni se cerraron C05/C06/C07 como ceremonias/capacitación/aceptación reales. Las tablas siguientes mantienen el corte histórico de octubre 4; el [informe actual](../../docs/entrega/INFORME_TECNICO_ACTUAL.md) distingue los incrementos posteriores.
+
 | ID | Incremento demostrado | Evidencia | Alcance |
 |---|---|---|---|
 | D01 | React, FastAPI, PostgreSQL y Docker: captura, persistencia, historial, reintentos y filtros | [Prueba integral](../../docs/evidencias/2026-10-04/prueba-e2e.md) | RF01/RF03 y parte de RF04/RF06; reglas demo |

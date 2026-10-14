@@ -4,8 +4,10 @@
 
 | Dato de control | Valor |
 |---|---|
-| Versión | 1.1 |
+| Versión | 1.4 |
+| Fecha de edición | 13/10/2026 |
 | Línea base técnica | 04/10/2026 |
+| Seguimiento funcional | 13/10/2026: reglas-demo-v2 y resúmenes en pesos; IA local y Azure conservados |
 | Estado | Borrador para revisión y aceptación |
 | Producto | NexoCredit: demostración académica local de análisis crediticio |
 | Documento complementario | [MVP y matriz MoSCoW](MVP_NEXOCREDIT.md) |
@@ -16,6 +18,54 @@ Este documento define necesidades, comportamiento, restricciones y criterios de 
 
 “Comprobado” significa que existe evidencia identificable de la línea base, no que se haya repetido la prueba al redactar esta edición. “Propuesto” identifica requisitos o actividades que todavía deben validarse. Los ejemplos son ficticios.
 
+### Adenda 1.4 — Reglas versionadas y presentación monetaria — 13/10/2026
+
+Para las evaluaciones nuevas, `reglas-demo-v2` establece que un score menor representa mayor riesgo demo. El score entero mantiene su escala capturada 0–1000; no procede de una consulta a Buró ni acredita una probabilidad de incumplimiento.
+
+| Variable | Rango | Riesgo que aporta |
+|---|---|---|
+| Score | 0–499 | Alto |
+| Score | 500–679 | Medio |
+| Score | 680–1000 | Bajo |
+| Margen mensual | ≤$7,000 | Alto |
+| Margen mensual | >$7,000 y ≤$15,000 | Medio |
+| Margen mensual | >$15,000 | Bajo |
+
+**PRD-RF03 actualizado:** el resultado usa la categoría de mayor riesgo entre score y margen, con orden Bajo < Medio < Alto. Por ejemplo, margen $20,000 y score 200 producen Alto; el mismo margen y score 500 producen Medio; score 700 produce Bajo. Un score 900 con margen $7,000 produce Alto. Estos límites son ilustrativos de NexoCredit, no una escala oficial o política empresarial validada.
+
+**Historial y compatibilidad:** `PRD-RF04–05` preservan los datos, centavos, resultado y `version_modelo` de evaluaciones anteriores. No se recalculan registros v1 ni se cambia un resultado guardado por reenviar la misma clave idempotente y solicitud. Las tablas de reglas v1 de la sección 9.2 permanecen como contrato histórico, no como regla para nuevas capturas. La ayuda visual y la explicación deben respetar la versión del registro.
+
+**PRD-RF07–08 actualizados:** la guía de explicación se selecciona por versión: fuente `guia-demostracion-v1` / versión 1.0 para v1, y `guia-demostracion-v2` / versión 2.0 para v2. La falta de guía compatible no autoriza reutilizar una guía antigua ni inventar referencias. El catálogo local contiene 3 guías / 15 secciones. Azure AI Search conserva su evidencia histórica de 2 guías / 14 secciones hasta una carga y comprobación nuevas; este incremento no realiza nuevas consultas o cargas cloud. Azure OpenAI, Azure ML, Search, Entra y los campos privados de sus keys permanecen en alcance.
+
+**Presentación monetaria:** los resúmenes React muestran pesos completos, redondeados al entero más cercano; `$18,333.33` aparece como `$18,333`. No se truncan importes ni se elimina precisión de captura, cálculos o PostgreSQL. El margen se sigue calculando a dos decimales, y sus límites no se evalúan usando la presentación redondeada. Los detalles de evaluación y pagos conservan centavos; tasas, porcentajes y métricas ML mantienen su precisión pertinente.
+
+**Criterios del incremento:** distinguir los cortes 499/500 y 679/680; comprobar que un margen insuficiente sólo empeora la categoría; mantener intactos resultados v1; diferenciar ausencia de cero; y utilizar la guía correspondiente al resultado. Esta adenda no declara nuevas suites ejecutadas, despliegue, conectividad Azure o aceptación formal. [Reglas, ejemplos y límites de operación](../manuales/REGLAS_RIESGO_DEMO.md).
+
+### Azure implementado y continuidad local — 12/10/2026
+
+Se conserva como alcance implementado de la demo **Azure OpenAI Service, Azure Machine Learning, Azure AI Search y Microsoft Entra ID**, con consultas/identidad comprobadas el 04/10/2026 y [evidencias identificadas](../manuales/AZURE_IMPLEMENTADO_Y_CONFIGURACION.md). No se reclasifican como tecnologías eliminadas o simplemente preparadas. Sus keys se configuran exclusivamente en el `.env` privado del servidor; las plantillas mantienen los nueve campos Azure sin valores sensibles.
+
+El laboratorio scikit-learn local es una alternativa adicional: modelo UCI independiente, 19 entradas NTD, clase académica y métricas propias, sin cambiar las reglas del formulario principal. Esta adenda sustituye la desactivación del ML local del incremento anterior, no su registro histórico. El código Azure y sus requisitos siguen vigentes, aunque la selección operativa actual sea local. [Manual del laboratorio](../manuales/LABORATORIO_IA_LOCAL.md). La integración previa no acredita disponibilidad cloud actual ni validación crediticia.
+
+### Incremento funcional registrado — 11/10/2026
+
+La línea base histórica se conserva con sus fechas. La versión actual añade acceso local además de Microsoft, Ollama y documentos locales por selección explícita, revisión opcional de formato/fecha RFC–CURP con consulta SAT manual, caché PostgreSQL de explicaciones y reserva durable de diez intentos/hora por cuenta. Las llaves permanecen sólo en configuración privada. Una explicación generada ya no vive únicamente en memoria: se reutiliza 24 h, sin eliminación automática al vencer.
+
+Se añadió seguimiento interno ficticio: plan de cuotas ligado a una evaluación, abonos parciales, saldo vencido/atraso/puntualidad, indicadores descriptivos de deuda y pagos, alertas versionadas y eventos transaccionales. La auditoría global nueva exige Administrador; no cambia el rol de cuentas existentes. No importa Buró, verifica depósitos, calcula intereses ni propone aprobar créditos. No altera resultados de scoring o revisiones anteriores.
+
+Estas capacidades actuales sustituyen las limitaciones históricas de acceso exclusivamente Microsoft, explicación sólo en pantalla y ausencia total de alertas. Las alertas se recalculan al crear/pagar o por acción explícita, no mediante vigilancia permanente. El laboratorio UCI continúa separado y el modo ML local deshabilitado; no se inventa una predicción equivalente. [Arquitectura actual y doce tablas](../desarrollo/ARQUITECTURA_Y_DATOS.md), [operación de seguimiento](../manuales/SEGUIMIENTO_CREDITICIO.md) y [evidencia](../evidencias/2026-10-11/seguimiento-crediticio.md).
+
+#### Requisitos incrementales
+
+| ID | Requisito implementado en demo | Criterio verificable |
+|---|---|---|
+| RF10 | Plan de cuotas y abonos parciales | Importes exactos; fechas y suma del plan; sin sobrepago ni duplicación concurrente |
+| RF11 | Análisis descriptivo del seguimiento | Saldo/atraso/cumplimiento/puntualidad reproducibles; ausencia distinta de cero |
+| RF12 | Alertas de cuotas vencidas trazables | Pendiente/Atendida/Resuelta y versión; atender no liquida; cambios conservan eventos |
+| RF13 | Facultad administrativa adicional | Lectura de auditoría global sólo Administrador, comprobada con 403 para Analista |
+
+La actualización no acredita políticas oficiales, fuentes privadas, representatividad del modelo ni formación/aceptación real. No se involucró al asesor durante esta implementación.
+
 ## 1. Resumen ejecutivo
 
 NexoCredit reúne en una aplicación el registro de escenarios financieros ficticios, una clasificación mediante reglas explícitas, su explicación con inteligencia artificial y el seguimiento de una revisión humana. El usuario captura datos en React; FastAPI valida y calcula el resultado; PostgreSQL conserva la evaluación y sus revisiones. Azure AI Search recupera documentación demo y Azure OpenAI redacta una explicación automática después del guardado.
@@ -24,7 +74,7 @@ La solución incorpora dos recorridos adicionales, separados del cálculo princi
 
 El producto no predice de forma acreditada la probabilidad de incumplimiento de una persona. Las categorías Bajo, Medio y Alto son resultados de reglas de demostración. Los estados Aprobada y Rechazada pertenecen a la revisión demo y no autorizan operaciones financieras.
 
-La entrega se mantiene local, por decisión del usuario. El código puede consultarse en GitHub, pero eso no convierte la aplicación en un servicio disponible públicamente. Tampoco se incluye instalación en la computadora del asesor. La demo requiere Internet para identidad y servicios externos, aunque su interfaz y base se ejecuten localmente.
+La entrega se mantiene local, por decisión del usuario. El código puede consultarse en GitHub, pero eso no convierte la aplicación en un servicio disponible públicamente. Tampoco se incluye instalación en la computadora del asesor. Microsoft y los servicios externos requieren Internet; acceso local, seguimiento y documentos locales no requieren Azure. Ollama necesita su servicio/modelo instalado.
 
 La parte técnica ya cuenta con pruebas y evidencia. La aceptación formal del producto, la práctica con el asesor, algunas metas nuevas de validación y la evidencia real del proceso Scrum no se consideran cerradas por redactar este PRD.
 
@@ -301,7 +351,9 @@ Los identificadores PRD-RF son propios de esta edición; no reemplazan retroacti
 
 La UI solicita deuda, pagos y atraso. La API mantiene compatibilidad con registros anteriores admitiendo omisión o nulo para esos tres campos. No se normaliza automáticamente la ausencia a cero. Se rechazan números no finitos y propiedades no permitidas.
 
-### 9.2 Algoritmo determinista
+### 9.2 Algoritmo determinista histórico — reglas-demo-v1
+
+Contrato de la línea base anterior, conservado para interpretar sus registros. Las evaluaciones nuevas usan `reglas-demo-v2`, definida en la adenda 1.4 del 13/10/2026 y en el [manual de reglas](../manuales/REGLAS_RIESGO_DEMO.md); los resultados v1 no se recalculan.
 
 Margen mensual = ingresos menos gastos, redondeado a dos decimales con la implementación actual. Se aplican las condiciones en este orden:
 
@@ -377,7 +429,7 @@ Se adopta Authorization Code con PKCE y OIDC delegado a MSAL como decisión arqu
 
 React y API usan REST/JSON en el mismo origen mediante Nginx. Las conexiones a proveedores externos usan HTTPS y validación TLS. PostgreSQL utiliza TCP interno Docker; Power BI utiliza loopback 55433 con lector limitado. HTTP y TCP locales sin TLS no constituyen un diseño autorizado para redes públicas.
 
-UUID identifica evaluaciones y solicitudes idempotentes. TIMESTAMPTZ conserva fechas UTC. No se introduce sincronización offline, WebSockets, cola de mensajes ni caché distribuida.
+UUID identifica evaluaciones y operaciones idempotentes. TIMESTAMPTZ conserva instantes UTC; las fechas del plan son DATE con corte diario UTC. No se introduce sincronización offline, WebSockets o cola de mensajes. La caché/cuota PostgreSQL comparte estado de explicación entre procesos.
 
 ### 10.4 Contratos API principales
 
@@ -409,7 +461,7 @@ GET / comprueba disponibilidad básica de la API, no toda la salud de sus depend
 | schema_migrations | Versión SQL y fecha de aplicación | Migraciones registradas y repetibles |
 | reportes.evaluaciones_powerbi | Vista de lectura para analítica | Sin RFC, responsable ni observaciones |
 
-La revisión utiliza bloqueo de fila y restricciones para impedir sobrescrituras concurrentes. Las migraciones emplean control de versión y bloqueo de ejecución. No se guarda automáticamente la explicación, la petición UCI o la caché financiera como evaluación.
+La revisión utiliza bloqueo de fila y restricciones para impedir sobrescrituras concurrentes. Las migraciones emplean control de versión y bloqueo de ejecución. La explicación se conserva en caché privada separada, no como una nueva evaluación. La petición UCI y la caché financiera no se guardan como evaluaciones. Las tablas históricas de esta sección se amplían según el diccionario vigente de doce tablas enlazado arriba.
 
 La información JSONB permite conservar la solicitud y la versión del resultado. No convierte la base en un repositorio de documentos oficiales ni garantiza compatibilidad ilimitada ante cambios de contrato.
 
@@ -537,7 +589,7 @@ La CI final identificada es [run 37247558296](https://github.com/MikiJMA/Empresa
 
 No se sustituyen por supuestos técnicos los detalles sustantivos ausentes: presupuesto, licencias, políticas oficiales, definición de incumplimiento, horizonte del modelo, autorización de históricos, participantes Scrum o aprobación del asesor.
 
-Se requiere decisión antes de persistir explicaciones: qué contenido conservar, finalidad, acceso, retención y coste. Se requiere otra antes de ampliar usuarios o desplegar públicamente. Estos asuntos no bloquean redactar el PRD, pero sí cambian el alcance de una futura implementación.
+La persistencia de explicación ya está implementada para la demo con finalidad/retención/límites documentados; antes de datos reales deben definirse políticas adecuadas de acceso, eliminación y coste. Ampliar usuarios o desplegar públicamente continúa fuera de la autorización local. Los resultados históricos de CI/modelo/Power BI conservan su fecha y no prueban una nueva ejecución.
 
 ## 17. Riesgos y mitigaciones
 

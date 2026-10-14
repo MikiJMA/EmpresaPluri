@@ -1,4 +1,4 @@
-const pesos = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' })
+import { formatearPesos } from '../../interfaz/moneda.mjs'
 
 export function valorCapturado(result, submitted, name) {
   if (!result || submitted?.[name] == null || submitted[name] === '') return null
@@ -7,5 +7,5 @@ export function valorCapturado(result, submitted, name) {
 }
 
 export function importe(value) {
-  return value == null || !Number.isFinite(Number(value)) ? '—' : pesos.format(Number(value))
+  return formatearPesos(value)
 }

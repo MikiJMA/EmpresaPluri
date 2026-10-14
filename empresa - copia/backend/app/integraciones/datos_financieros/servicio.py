@@ -36,9 +36,12 @@ def _fuente(provider):
         else:
             try:
                 result['indicadores'] = consultar_banxico(token) if provider == 'banxico' else consultar_banco_mundial()
-                partial = any(item['valor'] is None for item in result['indicadores'])
+                fecha_futura = any(item.get('fecha_futura', False) for item in result['indicadores'])
+                partial = fecha_futura or any(item['valor'] is None for item in result['indicadores'])
                 result.update(estado='parcial' if partial else 'disponible',
-                    mensaje='Algunos indicadores no tienen un dato publicado.' if partial else 'Últimos datos disponibles del proveedor.')
+                    mensaje=('Banxico reportó la tasa con una fecha posterior a esta consulta. No se presenta como tasa vigente.' if fecha_futura
+                             else 'Algunos indicadores no tienen un dato publicado.' if partial
+                             else 'Últimos datos disponibles del proveedor.'))
                 ttl = CACHE_SECONDS
             except ErrorProveedor as error:
                 result.update(estado='error', mensaje=str(error))

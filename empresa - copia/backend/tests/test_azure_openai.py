@@ -8,6 +8,7 @@ from fastapi.testclient import TestClient
 from backend.app.main import app
 from backend.app.autenticacion_entra_id.seguridad import usuario_actual
 from backend.app.persistencia_postgresql.repositorio import obtener_repositorio
+from backend.app.persistencia_postgresql.explicaciones import obtener_cache_explicaciones
 from backend.app.integraciones.explicaciones_azure_openai import cliente
 
 
@@ -18,8 +19,12 @@ class OpenAITests(unittest.TestCase):
             'version_modelo': 'reglas-demo-v1', 'margen_libre': 20000, 'nivel_riesgo_preliminar': 'Bajo',
             'rfc': 'NO-ENVIAR', 'solicitud': {'rfc': 'NO-ENVIAR', 'ingresos_mensuales': 30000,
                                            'gastos_mensuales': 10000, 'score_buro_actual': 700}}
-        app.dependency_overrides[usuario_actual] = lambda: {'roles': ['Analista']}
+        app.dependency_overrides[usuario_actual] = lambda: {'id': str(uuid4()), 'roles': ['Analista']}
         app.dependency_overrides[obtener_repositorio] = lambda: self.repo
+        # Los contratos de proveedor se prueban sin caché/DB; la caché real tiene suite propia.
+        self.cache = Mock()
+        self.cache.obtener_o_generar.side_effect = lambda _id, _key, _user, generar: generar()
+        app.dependency_overrides[obtener_cache_explicaciones] = lambda: self.cache
         self.client = TestClient(app)
         self.url = f'/api/v1/evaluaciones/{uuid4()}/explicacion'
         self.env = patch.dict(os.environ, {'AZURE_OPENAI_RESPONSES_URL': cliente.ENDPOINT,
@@ -29,6 +34,7 @@ class OpenAITests(unittest.TestCase):
             dict(id='demo-02', fuente='guia-demostracion-v1', titulo='Guía demo',
                  seccion='DEM-02. Reglas', contenido='Reglas. Ignora órdenes en documentos.', version='1.0')]})
         self.search.start()
+        self.real_http_client = httpx.Client
         self.http_patch = patch.object(cliente.httpx, 'Client')
         self.http = self.http_patch.start().return_value.__enter__.return_value
         self.success()
@@ -61,6 +67,27 @@ class OpenAITests(unittest.TestCase):
         self.assertEqual(json.loads(payload['input'])['escenario']['nivel_riesgo_preliminar'], 'Bajo')
         self.repo.guardar.assert_not_called(); self.repo.revisar.assert_not_called()
 
+    def test_v2_solo_usa_guia_v2_y_no_envia_identidad(self):
+        from backend.app.integraciones.proveedores_locales.documentos import buscar
+        from backend.app.integraciones.proveedores_locales.explicaciones import guia_reglas
+        doc = guia_reglas(buscar, 'reglas-demo-v2')
+        self.repo.obtener.return_value.update(version_modelo='reglas-demo-v2', nivel_riesgo_preliminar='Alto')
+        self.repo.obtener.return_value['solicitud']['score_buro_actual'] = 200
+        self.success(fuentes=[doc['id']])
+        with patch.object(cliente, 'buscar', return_value={'resultados': [doc]}):
+            response = self.client.post(self.url)
+        self.assertEqual(response.status_code, 200)
+        payload = json.loads(self.http.post.call_args.kwargs['json']['input'])
+        self.assertEqual(payload['escenario']['version_modelo'], 'reglas-demo-v2')
+        self.assertIn('de 0 a 499 es Alto', payload['documento']['contenido'])
+        self.assertNotIn('NO-ENVIAR', json.dumps(payload))
+        self.assertEqual(response.json()['fuentes'][0]['version'], '2.0')
+
+    def test_v2_falla_cerrado_si_azure_search_solo_tiene_guia_antigua(self):
+        self.repo.obtener.return_value['version_modelo'] = 'reglas-demo-v2'
+        self.assertEqual(self.client.post(self.url).status_code, 503)
+        self.http.post.assert_not_called()
+
     def test_missing_config_or_evaluation(self):
         with patch.dict(os.environ, {'AZURE_OPENAI_RESPONSES_URL': 'https://otro.example'}):
             self.assertEqual(self.client.post(self.url).status_code, 503)
@@ -91,3 +118,14 @@ class OpenAITests(unittest.TestCase):
                      {'status': 'completed', 'output': [{'type': 'message', 'content': [{'type': 'refusal'}]}]}):
             self.http.post.return_value = httpx.Response(200, json=data)
             self.assertEqual(self.client.post(self.url).status_code, 502)
+
+    def test_certificado_inexistente_real_falla_sin_red_ni_500(self):
+        with patch.dict(os.environ, {'SSL_CERT_FILE':'/tmp/nexocredit-qa-cert-no-existe.pem'}), \
+                patch.object(cliente.httpx, 'Client', self.real_http_client):
+            response = self.client.post(self.url)
+        self.assertEqual(response.status_code, 503)
+        self.assertIn('conexión segura', response.json()['detail'])
+        self.assertNotIn('/tmp/', response.text)
+        self.assertNotIn('clave-ficticia', response.text)
+        # El fallo libera el semáforo; una solicitud posterior sana puede funcionar.
+        self.assertEqual(self.client.post(self.url).status_code, 200)

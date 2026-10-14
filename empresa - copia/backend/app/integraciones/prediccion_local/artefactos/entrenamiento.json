@@ -1,0 +1,71 @@
+{
+  "modelo_sha256": "259b997587543c3466f665a8b62577465014c2c867ebdbfba61544b2d364b8a4",
+  "modelo_id": "nexocredit-uci-logistica-v1",
+  "filas_entrenamiento": 17909,
+  "filas_contrastadas": 30000,
+  "discrepancias_exportacion": 0,
+  "solapamiento_predictores": 0,
+  "parametros": {
+    "C": 1.0,
+    "class_weight": "balanced",
+    "solver": "lbfgs",
+    "tol": 1e-07,
+    "max_iter": 1500,
+    "random_state": 20261012,
+    "umbral": 0.5
+  },
+  "versiones": {
+    "python": "3.12.15",
+    "sklearn": "1.9.1",
+    "numpy": "2.5.4",
+    "pandas": "3.0.6"
+  },
+  "fuentes_sha256": {
+    "entrenamiento": "d3f2caae94533112d2c0a58241fdb9e1641d6d2ad9cef10635c727ccde6f5b79",
+    "validacion": "212b599be2da5989d2762d2b7bc7516bfbb8f56990d988b6f80a7afd49684891",
+    "prueba": "d7cf431db3eb63400d72a5cfca20d679396013ccc18ff5c902ff71215b01fb72"
+  },
+  "fuente": "https://archive.ics.uci.edu/dataset/350/default+of+credit+card+clients",
+  "licencia": "CC BY 4.0",
+  "metricas": {
+    "validacion": {
+      "filas": 6136,
+      "matriz_confusion": [
+        [
+          3431,
+          1364
+        ],
+        [
+          482,
+          859
+        ]
+      ],
+      "auc": 0.7186024467756698,
+      "exactitud": 0.6991525423728814,
+      "sensibilidad": 0.6405667412378822,
+      "precision": 0.38641475483580745,
+      "f1": 0.4820426487093154,
+      "baseline_exactitud": 0.7814537157757496
+    },
+    "prueba": {
+      "filas": 5955,
+      "matriz_confusion": [
+        [
+          3418,
+          1278
+        ],
+        [
+          492,
+          767
+        ]
+      ],
+      "auc": 0.7150479917676206,
+      "exactitud": 0.7027707808564232,
+      "sensibilidad": 0.6092136616362193,
+      "precision": 0.3750611246943765,
+      "f1": 0.4642857142857143,
+      "baseline_exactitud": 0.7885810243492863
+    }
+  },
+  "limites": "UCI Taiwán 2005, NTD, partición agrupada aleatoria no temporal. No validado para México. No calibrado prospectivamente; clase ponderada, no probabilidad de crédito real. No son las entradas ni el scoring del formulario principal."
+}

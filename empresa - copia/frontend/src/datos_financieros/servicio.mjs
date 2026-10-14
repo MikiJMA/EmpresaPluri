@@ -27,6 +27,15 @@ export function validarIndicadores(payload) {
         ? 'https://www.banxico.org.mx/SieAPIRest/service/v1/doc/consultaDatosSerieOp'
         : `https://data.worldbank.org/indicator/${item.serie}?locations=MX`
       if (item.fuente_url !== expected || (item.valor !== null && item.periodo === null)) invalid()
+      if (item.fecha_futura !== undefined && typeof item.fecha_futura !== 'boolean') invalid()
+      if (provider.id === 'banxico' && item.periodo !== null) {
+        const fechaDato = Date.parse(`${item.periodo}T00:00:00Z`)
+        const fechaConsulta = Date.parse(`${provider.consulta_utc.slice(0, 10)}T00:00:00Z`)
+        if (!Number.isFinite(fechaDato)) invalid()
+        if (fechaDato > fechaConsulta) {
+          if (item.serie !== 'SF61745' || item.fecha_futura !== true || fechaDato - fechaConsulta > 7 * 86400000 || provider.estado !== 'parcial') invalid()
+        } else if (item.fecha_futura) invalid()
+      } else if (item.fecha_futura) invalid()
       codes.add(item.serie)
     }
   }

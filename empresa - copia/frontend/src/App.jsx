@@ -1,7 +1,8 @@
-import { useContext, useRef, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import './styles/App.css'
 import { evaluarCredito } from './evaluacion_crediticia/servicios/creditApi'
 import EvaluationForm from './evaluacion_crediticia/componentes/EvaluationForm'
+import RevisarIdentidad from './evaluacion_crediticia/componentes/RevisarIdentidad'
 import EvaluationResult from './evaluacion_crediticia/componentes/EvaluationResult'
 import EvaluationHistory from './evaluacion_crediticia/componentes/EvaluationHistory'
 import Dashboard from './dashboard/Dashboard'
@@ -15,12 +16,18 @@ import MarcoAplicacion from './interfaz/MarcoAplicacion'
 import IndicadoresEscenario from './evaluacion_crediticia/componentes/IndicadoresEscenario'
 import { UsuarioContext } from './autenticacion/contexto'
 import './styles/Enterprise.css'
+import './styles/ScoreAyuda.css'
+import './styles/Identidad.css'
+import EstadoProveedores from './interfaz/EstadoProveedores'
+import SeguimientoCreditos from './seguimiento_crediticio/SeguimientoCreditos'
+import ResumenInicio from './interfaz/ResumenInicio'
+import { seccionDesdeHash } from './interfaz/secciones.mjs'
 
 const initial = { rfc: '', ingresos_mensuales: '', gastos_mensuales: '', score_buro_actual: '', deuda_actual: '', pagos_mensuales_creditos: '', dias_atraso_actual: '' }
 
 export default function App() {
   const user = useContext(UsuarioContext)
-  const [seccion, setSeccion] = useState('evaluacion')
+  const [seccion, setSeccion] = useState(() => seccionDesdeHash(window.location.hash) || 'seguimiento')
   const [form, setForm] = useState(initial)
   const [result, setResult] = useState(null)
   const [error, setError] = useState('')
@@ -31,6 +38,27 @@ export default function App() {
   const [explicacion, setExplicacion] = useState(null)
   const [generarExplicacion] = useState(() => crearGeneradorExplicaciones(solicitarExplicacion))
   const intentoVisible = useRef(0)
+
+  useEffect(() => {
+    function sincronizarSeccion() {
+      const destino = seccionDesdeHash(window.location.hash)
+      if (destino) setSeccion(destino)
+    }
+    window.addEventListener('hashchange', sincronizarSeccion)
+    return () => window.removeEventListener('hashchange', sincronizarSeccion)
+  }, [])
+
+  function nuevaEvaluacion() {
+    if (busy) return
+    intentoVisible.current += 1
+    setForm(initial)
+    setSubmitted(null)
+    setResult(null)
+    setExplicacion(null)
+    setError('')
+    clave.current = null
+    setSeccion('evaluacion')
+  }
 
   function change(event) {
     intentoVisible.current += 1
@@ -71,17 +99,22 @@ export default function App() {
 
   return (
     <MarcoAplicacion user={user} seccion={seccion} onSeccionChange={setSeccion}>
+      <div id="seguimiento">
+        <ResumenInicio onSeccionChange={setSeccion} onNuevaEvaluacion={nuevaEvaluacion} busy={busy} />
+        <Dashboard revision={revision} />
+      </div>
       <IndicadoresEscenario result={result} submitted={submitted} />
-      <div className="demo-banner"><span className="info-icon" aria-hidden="true">i</span><p><strong>Modo demostración</strong><span> Usa datos ficticios. El riesgo se calcula con reglas ilustrativas; Azure OpenAI explica el resultado. El modelo de Azure ML se consulta por separado.</span></p></div>
       <div className="workspace" id="evaluacion">
-        <EvaluationForm form={form} busy={busy} error={error} change={change} submit={submit} />
+        <EvaluationForm form={form} busy={busy} error={error} change={change} submit={submit} identidad={<RevisarIdentidad rfc={form.rfc} bloqueado={busy} />} />
         <EvaluationResult result={result} busy={busy} submitted={submitted} explicacion={explicacion} />
       </div>
       <div id="historial"><EvaluationHistory revision={revision} /></div>
-      <div id="seguimiento"><Dashboard revision={revision} /></div>
+      <SeguimientoCreditos activo={seccion === 'creditos'} revision={revision}/>
       <div id="laboratorio"><AzureMLDemo /></div>
       <IndicadoresFinancieros />
       <BuscadorDocumentos />
+      <div className="demo-banner"><span className="info-icon" aria-hidden="true">i</span><p><strong>Modo demostración</strong><span> Usa datos ficticios. El riesgo se calcula con reglas ilustrativas; la explicación usa Azure, Ollama o reglas locales según tu configuración. El laboratorio académico se consulta por separado.</span></p></div>
+      <EstadoProveedores />
     </MarcoAplicacion>
   )
 }

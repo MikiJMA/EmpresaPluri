@@ -109,3 +109,21 @@ test('texto del proveedor se escapa y las fuentes conservan atributos seguros', 
   assert.ok(!html.includes('<script>'))
   assert.ok(html.includes('rel="noopener noreferrer"'))
 })
+
+test('la tasa con fecha posterior conserva FIX y muestra aviso, no afirma vigencia', () => {
+  const data = payload()
+  data.proveedores[0] = { ...data.proveedores[0], estado: 'parcial', consulta_utc: '2026-10-11T23:00:00Z', mensaje: 'Fecha posterior a la consulta.', indicadores: [
+    { serie: 'SF43718', nombre: 'Tipo de cambio FIX', unidad: 'MXN por USD', frecuencia: 'Última observación publicada', valor: 18.4163, periodo: '2026-10-09', estado: 'disponible', fecha_futura: false, fuente_url: 'https://www.banxico.org.mx/SieAPIRest/service/v1/doc/consultaDatosSerieOp' },
+    { serie: 'SF61745', nombre: 'Tasa objetivo de Banxico', unidad: '% anual', frecuencia: 'Última observación publicada', valor: 6.5, periodo: '2026-10-12', estado: 'disponible', fecha_futura: true, fuente_url: 'https://www.banxico.org.mx/SieAPIRest/service/v1/doc/consultaDatosSerieOp' },
+  ] }
+  assert.equal(validarIndicadores(data), data)
+  const html = render({ data })
+  assert.ok(html.includes('18.4163'))
+  assert.ok(html.includes('6.50'))
+  assert.ok(html.includes('Fecha futura reportada'))
+  assert.ok(html.includes('no confirma la tasa vigente a esa fecha'))
+  for (const change of [d => { d.proveedores[0].indicadores[1].fecha_futura = false }, d => { d.proveedores[0].estado = 'disponible' }, d => { d.proveedores[0].indicadores[1].periodo = '2026-10-19' }, d => { d.proveedores[0].indicadores[0].periodo = '2026-10-12'; d.proveedores[0].indicadores[0].fecha_futura = true }]) {
+    const modified = structuredClone(data); change(modified)
+    assert.throws(() => validarIndicadores(modified), /formato esperado/)
+  }
+})

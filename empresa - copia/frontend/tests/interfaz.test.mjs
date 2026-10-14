@@ -1,5 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
+import { readFile } from 'node:fs/promises'
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { cargarComponente } from './helpers/cargar-componente.mjs'
@@ -15,9 +16,22 @@ const render = (component, props) => renderToStaticMarkup(createElement(componen
 const form = { rfc: 'AAAA010101AA1', ingresos_mensuales: '30000', gastos_mensuales: '10000', deuda_actual: '0', pagos_mensuales_creditos: '0', dias_atraso_actual: '0', score_buro_actual: '700' }
 const result = { id: 'prueba', rfc: form.rfc, margen_libre: 20000, nivel_riesgo_preliminar: 'Bajo', factores: ['Factor devuelto por la API'], mensaje: 'Demostración; requiere revisión humana.', version_modelo: 'reglas-demo-v1', guardado: true, fecha: '2026-09-30T12:00:00Z' }
 
+test('el aviso demo y los proveedores quedan al final del contenido, antes del pie', async () => {
+  const app = await readFile(new URL('../src/App.jsx', import.meta.url), 'utf8')
+  const documentos = app.indexOf('<BuscadorDocumentos />')
+  const aviso = app.indexOf('<div className="demo-banner">')
+  const proveedores = app.indexOf('<EstadoProveedores />')
+  assert.ok(documentos >= 0 && aviso > documentos && proveedores > aviso)
+  assert.match(app.slice(proveedores), /^<EstadoProveedores \/>\s*<\/MarcoAplicacion>/)
+  assert.equal(app.split('className="demo-banner"').length - 1, 1)
+  assert.equal(app.split('<EstadoProveedores />').length - 1, 1)
+  const html = render(Marco, { children: createElement('div', { id: 'contenido-final-prueba' }) })
+  assert.ok(html.indexOf('id="contenido-final-prueba"') < html.indexOf('<footer>'))
+})
+
 test('los indicadores no muestran cifras antes de evaluar ni una captura anterior', () => {
   const html = render(Indicadores, { result: null, submitted: form })
-  assert.equal((html.match(/<strong>—<\/strong>/g) || []).length, 4)
+  assert.equal((html.match(/<strong(?: [^>]*)?>—<\/strong>/g) || []).length, 4)
   assert.doesNotMatch(html, /742|136,800|30,000/)
 })
 
@@ -42,7 +56,7 @@ test('el resumen mantiene escala demo, factores reales y explicación automátic
   assert.match(html, /aria-valuemax="1000" aria-valuenow="700"/)
   assert.match(html, /width:70%/)
   assert.match(html, /Factor devuelto por la API/)
-  assert.match(html, /Generando explicación con IA/)
+  assert.match(html, /Generando explicación con el proveedor seleccionado/)
   assert.match(html, /Probabilidad de incumplimiento no disponible/)
   assert.doesNotMatch(html, /v4\.2\.1|742 \/ 850|80\.4%|Historial de pago consistente/)
 })
@@ -88,4 +102,21 @@ test('la tabla conserva datos, distintivos y acceso a revisión manual', () => {
   assert.match(html, /Ver detalle/)
   assert.doesNotMatch(html, /Renata|185,000|disabled=""/)
   assert.match(render(Tabla, { items: [result], selected: 'prueba', onSelected: () => {} }), /disabled=""/)
+})
+
+test('cada sección mantiene su navegación y muestra una cabecera propia', () => {
+  const headings = {
+    seguimiento: 'Resumen de evaluaciones',
+    evaluacion: 'Evaluación de riesgo crediticio',
+    historial: 'Historial y revisión manual',
+    laboratorio: 'Laboratorio académico · IA predictiva',
+    indicadores: 'Indicadores financieros',
+    documentos: 'Documentos de demostración',
+  }
+  for (const [seccion, heading] of Object.entries(headings)) {
+    const html = render(Marco, { user: null, seccion, onSeccionChange: () => {} })
+    assert.ok(html.includes(`<h1>${heading}</h1>`))
+    assert.match(html, new RegExp(`href="#${seccion}"[^>]*aria-current="location"`))
+    assert.match(html, /id="contenido-principal"/)
+  }
 })

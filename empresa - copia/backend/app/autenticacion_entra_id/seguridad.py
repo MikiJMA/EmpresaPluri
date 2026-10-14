@@ -51,6 +51,9 @@ def validar_token(token):
 
 def usuario_actual(credentials: HTTPAuthorizationCredentials | None = Depends(bearer)):
     if credentials is None or credentials.scheme.lower() != 'bearer' or len(credentials.credentials) > 20000:
-        raise HTTPException(401, 'Inicia sesión con Microsoft para acceder a NexoCredit.',
+        raise HTTPException(401, 'Inicia sesión para acceder a NexoCredit.',
                             headers={'WWW-Authenticate': 'Bearer'})
+    from backend.app.autenticacion_local.servicio import es_token_local, validar_token_local
+    if es_token_local(credentials.credentials):
+        return validar_token_local(credentials.credentials)
     return validar_token(credentials.credentials)

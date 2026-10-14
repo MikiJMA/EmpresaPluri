@@ -19,12 +19,13 @@ export default function BuscadorDocumentos() {
   const [busy, setBusy] = useState(false)
   const [catalogo, setCatalogo] = useState({ estado: 'cargando' })
   const [intentoCatalogo, setIntentoCatalogo] = useState(0)
+  const [proveedorBusqueda, setProveedorBusqueda] = useState(null)
 
   useEffect(() => {
     const controller = new AbortController()
     const signal = AbortSignal.any([controller.signal, AbortSignal.timeout(14000)])
-    servicio.listar(signal).then(
-      fragmentos => { if (!controller.signal.aborted) setCatalogo({ estado: 'lista', fragmentos }) },
+    servicio.listarConOrigen(signal).then(
+      data => { if (!controller.signal.aborted) setCatalogo({ estado: 'lista', fragmentos: data.resultados, proveedor: data.proveedor || 'azure' }) },
       err => { if (!controller.signal.aborted) setCatalogo({ estado: 'error', error: mensajeError(err) }) },
     )
     return () => controller.abort()
@@ -39,13 +40,16 @@ export default function BuscadorDocumentos() {
     event.preventDefault()
     setBusy(true); setError(''); setResultados(null)
     try {
-      setResultados(await servicio.buscar(consulta, AbortSignal.timeout(14000)))
+      const data = await servicio.buscarConOrigen(consulta, AbortSignal.timeout(14000))
+      setResultados(data.resultados)
+      setProveedorBusqueda(data.proveedor || 'azure')
     } catch (err) {
       setError(mensajeError(err))
     } finally { setBusy(false) }
   }
 
   return <PanelDocumentos consulta={consulta} busy={busy} error={error} resultados={resultados}
+    proveedorBusqueda={proveedorBusqueda}
     catalogo={catalogo} submit={submit} reintentar={reintentar}
     onConsultaChange={value => { setConsulta(value); setResultados(null); setError('') }} />
 }

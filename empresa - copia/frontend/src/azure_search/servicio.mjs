@@ -9,11 +9,16 @@ export function crearServicioDocumentos(fetchApi, baseApi) {
       !item || ['id', 'fuente', 'titulo', 'seccion', 'contenido', 'version', 'aviso'].some(field => typeof item[field] !== 'string'))) {
       throw new Error('La respuesta de documentos no tiene el formato esperado.')
     }
-    return data.resultados
+    return data
   }
   return {
-    listar: signal => consultar('documentos', { method: 'GET', signal }),
-    buscar: (consulta, signal) => consultar('buscar', {
+    listar: async signal => (await consultar('documentos', { method: 'GET', signal })).resultados,
+    listarConOrigen: signal => consultar('documentos', { method: 'GET', signal }),
+    buscar: async (consulta, signal) => (await consultar('buscar', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, signal,
+      body: JSON.stringify({ consulta: consulta.trim() }),
+    })).resultados,
+    buscarConOrigen: (consulta, signal) => consultar('buscar', {
       method: 'POST', headers: { 'Content-Type': 'application/json' }, signal,
       body: JSON.stringify({ consulta: consulta.trim() }),
     }),

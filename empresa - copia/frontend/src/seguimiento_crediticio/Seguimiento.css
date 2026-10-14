@@ -1,0 +1,27 @@
+.ledger { margin-top:24px; overflow-wrap:anywhere; }
+.ledger-heading { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin:16px 0; }
+.ledger button { width:auto; margin:0; font-size:13px; }
+.ledger input,.ledger select,.ledger textarea { width:100%; padding:12px; margin-top:6px; border:1px solid #dce3f4; border-radius:10px; background:#f8fafc; color:#172554; font:inherit; }
+.ledger label { display:block; font-size:13px; }
+.ledger-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; align-items:end; }
+.ledger-cuota { padding:16px 0; border-top:1px solid #e2e8f0; }
+.ledger details { margin:20px 0; padding:16px; border:1px solid #dce3f4; border-radius:14px; background:#f8faff; }
+.ledger summary { cursor:pointer; font-weight:600; color:#4338ca; }
+.ledger-scroll { overflow-x:auto; margin:18px 0; }
+.ledger table { width:100%; border-collapse:collapse; text-align:left; }
+.ledger caption { text-align:left; padding:10px 0; font-weight:600; }
+.ledger th,.ledger td { padding:12px; border-bottom:1px solid #dce3f4; font-size:13px; }
+.ledger th { background:#eef2ff; }
+.ledger-detail { border-top:2px solid #dce3f4; padding-top:20px; }
+.ledger-metrics { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; }
+.ledger-metrics > div { padding:16px; background:#eef2ff; border:1px solid #dce3f4; border-radius:12px; }
+.ledger-metrics span { display:block; font-size:12px; color:#64748b; }
+.ledger-metrics strong { display:block; font-size:21px; margin-top:6px; font-variant-numeric:tabular-nums; }
+.ledger-alert { padding:16px; margin:12px 0; border:1px solid #f59e0b; border-left:4px solid #f59e0b; border-radius:10px; background:#fffbeb; }
+.ledger-alert-atendida { border-color:#818cf8; background:#eef2ff; }
+.ledger-alert-resuelta { border-color:#34d399; background:#ecfdf5; }
+.ledger-alert textarea { min-height:70px; }
+.ledger-alert button { margin-top:12px; }
+#creditos { scroll-margin-top:20px; }
+@media(max-width:1100px) { .ledger-metrics { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media(max-width:600px) { .ledger-grid { grid-template-columns:1fr; } .ledger-metrics { grid-template-columns:1fr 1fr; } .ledger-metrics strong { font-size:17px; } }

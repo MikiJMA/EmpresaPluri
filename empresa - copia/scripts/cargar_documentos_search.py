@@ -1,4 +1,4 @@
-"""Carga acotada de dos documentos demo. La clave admin solo vive en memoria."""
+"""Carga acotada de guías demo v1/v2. La clave admin solo vive en memoria."""
 import getpass
 import json
 from pathlib import Path
@@ -12,7 +12,7 @@ INDEX = 'plurione-documentos-demo'
 VERSION = '2025-09-01'
 DESCRIPTION = 'PluriOne demo: alcance-proyecto-v1 y guia-demostracion-v1; esquema 1'
 CONTENT = Path(__file__).resolve().parents[1] / 'backend/app/integraciones/busqueda_azure_ai_search/contenidos_demo'
-FILES = ('01_alcance_proyecto.md', '02_guia_demostracion.md')
+FILES = ('01_alcance_proyecto.md', '02_guia_demostracion.md', '03_reglas_demo_v2.md')
 
 
 def documentos():
@@ -32,8 +32,8 @@ def documentos():
                 'fuente': source, 'titulo': title, 'seccion': heading.strip(),
                 'contenido': body.strip(), 'version': version,
                 'aviso': 'Material académico de demostración. No es una política oficial ni autoriza créditos.'})
-    if len(result) != 14 or len({doc['id'] for doc in result}) != 14:
-        raise ValueError('Se esperaban exactamente 14 secciones únicas')
+    if len(result) != 15 or len({doc['id'] for doc in result}) != 15:
+        raise ValueError('Se esperaban exactamente 15 secciones únicas')
     return result
 
 
@@ -84,13 +84,13 @@ def cargar(docs, key):
 def main():
     docs = documentos()
     if '--validar' in sys.argv:
-        print('Validación local correcta: 2 documentos, 14 secciones únicas. Sin conexión a Azure.')
+        print('Validación local correcta: 3 documentos, 15 secciones únicas. Sin conexión a Azure.')
         return 0
     if not sys.stdin.isatty():
         print('Abre el archivo CMD con doble clic: se necesita una consola con entrada oculta.')
         return 1
     print(f'Destino: {ENDPOINT} / {INDEX}')
-    print('Se cargarán SOLO alcance y guía demo (14 secciones), nunca expedientes ni claves.')
+    print('Se cargarán SOLO alcance y guías demo v1/v2 (15 secciones), nunca expedientes ni claves.')
     print('Al repetir, se actualizan esas mismas secciones. No se eliminan índices ni documentos.')
     if input('Escribe CARGAR para continuar: ').strip() != 'CARGAR':
         print('Cancelado sin cambios.'); return 1
@@ -99,7 +99,7 @@ def main():
         if not re.fullmatch(r'[A-Za-z0-9_+/=-]{16,512}', key):
             print('Formato de clave no válido.'); return 1
         cargar(docs, key)
-        print('Azure confirmó la carga de las 14 secciones. La clave de administrador no se guardó.')
+        print('Azure confirmó la carga de las 15 secciones. La clave de administrador no se guardó.')
         print('La disponibilidad en búsquedas puede tardar unos segundos.')
         return 0
     except urllib.error.HTTPError as error:

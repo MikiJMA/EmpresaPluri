@@ -1,10 +1,16 @@
 :root {
+  --font-numeric: 'Segoe UI', Arial, sans-serif;
   font-family: 'Segoe UI', system-ui, sans-serif;
   color: #203831;
   background: #f5f7f6;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
+}
+/* Ceros convencionales en cifras, controles y acceso, sin el glifo punteado. */
+:where(.enterprise-app, .access-screen, .session-bar),
+:where(.enterprise-app, .access-screen, .session-bar) * {
+  font-feature-settings: 'zero' 0;
 }
 * { box-sizing: border-box; }
 body { margin: 0; }

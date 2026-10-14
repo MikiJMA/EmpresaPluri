@@ -57,7 +57,7 @@ test('catálogo y búsqueda adaptan solo la marca y conservan reglas, métricas 
   assert.match(html, /7 000/)
   assert.match(html, /32,01/)
   assert.match(html, /versión 1\.0/)
-  assert.match(html, /contenido original en Azure AI Search no se modifica/)
+  assert.match(html, /contenido original no se modifica/)
 })
 
 test('no reescribe fuentes ajenas ni datos de los solicitantes', () => {

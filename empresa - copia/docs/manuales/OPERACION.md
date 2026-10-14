@@ -2,6 +2,19 @@
 
 Actualización documental: 04/10/2026. Refleja código y pruebas existentes; no implica una nueva ejecución ni aceptación empresarial. Ver [evidencias](../evidencias/README.md) y [pendientes de entrega](../entrega/ENTREGA_DEMO.md).
 
+## Operación vigente — actualización del 11/10/2026
+
+Se conserva abajo el recorrido histórico de octubre 4. Para la versión actual, esta sección y los manuales enlazados prevalecen sobre las menciones de acceso sólo Microsoft, texto sólo en memoria, datos siempre libres o ausencia total de alertas.
+
+- Acceso Microsoft o cuenta local habilitada, sin contraseñas en código. Al recargar se pierde la sesión local en memoria y debe iniciarse de nuevo. [Acceso, Ollama y llaves](ACCESO_LOCAL_Y_PROVEEDORES.md).
+- Formulario: números válidos/acotados, pagos incluidos en gastos, sin atraso pendiente con deuda cero. La guía de score describe margen y score demo, no Buró. El RFC admite identificadores ficticios en API; la interfaz añade revisión opcional de formato/fecha contra CURP y consulta SAT manual, no identidad oficial. [RFC/CURP](REVISION_RFC_CURP.md).
+- Explicación automática: Azure, Ollama o plantilla según selección explícita. Caché privada PostgreSQL 24 h y reserva durable de diez intentos/hora; error un minuto. No envío de RFC, CURP o comentarios; no reintento automático. La plantilla no es IA generativa.
+- Nueva sección **Créditos y pagos**: planes ficticios ligados a evaluaciones, abonos parciales, saldos/atraso/puntualidad, alertas versionadas y eventos. Actualizar vencimientos por acción explícita; no importa Buró o depósitos ni modifica el score. [Manual completo](SEGUIMIENTO_CREDITICIO.md).
+- Analista mantiene seguimiento operativo. Administrador añade consulta de la auditoría global del nuevo módulo. No se modificaron cuentas existentes; las facultades históricas fuera de seguimiento permanecen iguales.
+- [Arquitectura y doce tablas](../desarrollo/ARQUITECTURA_Y_DATOS.md), [plan de mantenimiento](MANTENIMIENTO_Y_SOPORTE.md), [guía de práctica preparada](../entrega/CAPACITACION_DEMO.md). No hay acta de capacitación ni firmas generadas.
+
+Datos de trabajo y backups siguen privados. No borrar volúmenes para resolver fallos y no copiar `.env`, dumps o cachés de Power BI al entregar. Las integraciones/evidencias históricas Azure no garantizan disponibilidad actual.
+
 ## Manual de usuario del prototipo
 
 Acceso: abrir [localhost:8080](http://localhost:8080/) y pulsar «Iniciar sesión con Microsoft». Introducir la contraseña solo en Microsoft. Se requiere cuenta autorizada del tenant configurado, ámbito access_as_user y rol Analista o Administrador. Ambos roles tienen el mismo acceso funcional actual. La interfaz comprueba la identidad contra FastAPI; mostrar el login no sustituye la validación del servidor. No compartir tokens ni claves. Si la sesión vence, volver a iniciar sesión; 403 indica permisos insuficientes. No desactivar controles para resolver un fallo.

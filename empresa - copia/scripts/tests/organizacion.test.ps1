@@ -5,6 +5,10 @@ $launchers = @(
     @{ Path = 'operacion/aplicacion/Abrir NexoCredit.cmd'; Script = 'docker.ps1'; Action = 'abrir' },
     @{ Path = 'operacion/aplicacion/Actualizar NexoCredit.cmd'; Script = 'docker.ps1'; Action = 'iniciar' },
     @{ Path = 'operacion/aplicacion/Detener NexoCredit.cmd'; Script = 'docker.ps1'; Action = 'detener' },
+    @{ Path = 'operacion/aplicacion/Crear usuario local.cmd'; Script = 'modo-local.ps1'; Action = 'usuario' },
+    @{ Path = 'operacion/integraciones/Editar configuracion privada.cmd'; Script = 'modo-local.ps1'; Action = 'editar' },
+    @{ Path = 'operacion/integraciones/Activar modo local.cmd'; Script = 'modo-local.ps1'; Action = 'local' },
+    @{ Path = 'operacion/integraciones/Activar modo Azure.cmd'; Script = 'modo-local.ps1'; Action = 'azure' },
     @{ Path = 'operacion/integraciones/Cargar documentos Azure AI Search.cmd'; Script = 'cargar_documentos_search.py' },
     @{ Path = 'operacion/integraciones/Conectar Azure AI Search.cmd'; Script = 'configurar-azure-search.ps1' },
     @{ Path = 'operacion/integraciones/Conectar Azure ML.cmd'; Script = 'configurar-azure-ml.ps1' },
@@ -62,4 +66,4 @@ foreach ($settings in @($workspace.settings, $outerSettings,
         if (-not $settings.'files.exclude'.$hidden) { throw "La vista no oculta $hidden." }
     }
 }
-Write-Host 'Correcto: 11 lanzadores, rutas de documentos, CI unico y workspace. Sin ejecutar comandos, leer secretos o modificar datos.'
+Write-Host 'Correcto: 15 lanzadores, rutas de documentos, CI unico y workspace. Sin ejecutar comandos, leer secretos o modificar datos.'

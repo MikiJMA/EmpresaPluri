@@ -29,6 +29,8 @@ El alcance final incluye historial crediticio, pagos, ingresos, endeudamiento y 
 
 ## Requerimientos iniciales
 
+Incremento del 11/10/2026: RF04 ahora incluye análisis descriptivo real de los pagos internos ficticios (saldos/atraso/puntualidad) y ratios capturados; RF06 incorpora alertas de cuotas vencidas, sin vigilancia de fondo; RF08 incorpora eventos transaccionales del seguimiento y lectura administrativa diferenciada. No son políticas oficiales, fuente Buró o auditoría completa. Los estados siguientes son históricos; [informe vigente por objetivo](../entrega/INFORME_TECNICO_ACTUAL.md).
+
 | ID | Requerimiento | Criterio de aceptación | Estado |
 |---|---|---|---|
 | RF01 | Capturar y validar escenario | Rechazar ingresos no positivos, gastos negativos, identificador vacío y score fuera de escala demo | Implementado |

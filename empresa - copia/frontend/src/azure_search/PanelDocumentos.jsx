@@ -1,13 +1,16 @@
 import { agruparGuias } from './servicio.mjs'
 import { MARCA, presentarDocumentoDemo } from '../interfaz/marca.mjs'
 
-export default function PanelDocumentos({ consulta, onConsultaChange, submit, busy, error, resultados, catalogo, reintentar }) {
+export default function PanelDocumentos({ consulta, onConsultaChange, submit, busy, error, resultados, catalogo, reintentar, proveedorBusqueda }) {
   const fragmentos = (catalogo.fragmentos || []).map(presentarDocumentoDemo)
   const guias = agruparGuias(fragmentos)
   const encontrados = resultados?.map(presentarDocumentoDemo)
   const adaptado = [...fragmentos, ...(encontrados || [])].some(item => item.presentacion_adaptada)
+  const proveedor = proveedorBusqueda || catalogo.proveedor
+  const origen = proveedor === 'local' ? 'archivos locales' : proveedor === 'azure' ? 'Azure AI Search' : 'el proveedor configurado'
   return <section className="card documents-panel" id="documentos" aria-labelledby="search-heading">
-    <h2 id="search-heading">Documentos de demostración · Azure AI Search</h2>
+    <h2 id="search-heading">Documentos de demostración</h2>
+    <p>Origen: {origen}. {proveedor === 'local' ? 'La búsqueda es textual y se realiza en tu servidor, sin Azure.' : proveedor === 'azure' ? 'La consulta utiliza Azure AI Search.' : 'La procedencia se indica cuando termina la carga.'}</p>
     <p>Consulta el alcance del proyecto y la guía del prototipo. No son políticas oficiales de crédito. No introduzcas datos personales en el buscador.</p>
     <form onSubmit={submit} className="documents-search">
       <label htmlFor="consulta-documentos">Palabras clave (por ejemplo: margen, tecnologías o incumplimiento)</label>
@@ -17,10 +20,10 @@ export default function PanelDocumentos({ consulta, onConsultaChange, submit, bu
     </form>
     {error && <p role="alert" className="error">{error}</p>}
     <div aria-live="polite" aria-busy={busy}>
-      {busy && <p role="status">Buscando fragmentos en Azure AI Search…</p>}
+      {busy && <p role="status">Buscando fragmentos en {origen}…</p>}
       {resultados !== null && <div className="documents-results">
         <h3>Resultados de búsqueda</h3>
-        <p>{resultados.length ? `${resultados.length} fragmentos recuperados de Azure AI Search.` : 'No se encontraron coincidencias. Prueba con menos palabras.'}</p>
+        <p>{resultados.length ? `${resultados.length} fragmentos recuperados de ${origen}.` : 'No se encontraron coincidencias. Prueba con menos palabras.'}</p>
         {encontrados.map(item => <article key={item.id} className="documents-fragment">
           <h4>{item.seccion}</h4>
           <p className="documents-source">Fuente: {item.titulo} · {item.fuente} · versión {item.version}</p>
@@ -31,10 +34,10 @@ export default function PanelDocumentos({ consulta, onConsultaChange, submit, bu
     </div>
     <div className="documents-catalog" aria-live="polite" aria-busy={catalogo.estado === 'cargando'}>
       <h3>Guías disponibles</h3>
-      {catalogo.estado === 'cargando' && <p role="status">Cargando las guías desde Azure AI Search…</p>}
+      {catalogo.estado === 'cargando' && <p role="status">Cargando las guías desde el proveedor configurado…</p>}
       {catalogo.estado === 'error' && <div><p role="alert" className="error">{catalogo.error}</p><button type="button" onClick={reintentar}>Reintentar carga de guías</button></div>}
       {catalogo.estado === 'lista' && <>
-        <p>{guias.length ? `${guias.length} ${guias.length === 1 ? 'guía' : 'guías'} · ${catalogo.fragmentos.length} ${catalogo.fragmentos.length === 1 ? 'sección' : 'secciones'}. Abre una guía para leer su contenido.` : 'Todavía no hay guías disponibles en el índice de Azure AI Search.'}</p>
+        <p>{guias.length ? `${guias.length} ${guias.length === 1 ? 'guía' : 'guías'} · ${catalogo.fragmentos.length} ${catalogo.fragmentos.length === 1 ? 'sección' : 'secciones'}. Abre una guía para leer su contenido.` : 'Todavía no hay guías disponibles en el proveedor seleccionado.'}</p>
         <div className="documents-guides">{guias.map(guia => <article className="documents-guide" key={guia.key}>
           <h4>{guia.titulo}</h4>
           <p className="documents-source">Fuente: {guia.fuente} · versión {guia.version}</p>
@@ -49,6 +52,6 @@ export default function PanelDocumentos({ consulta, onConsultaChange, submit, bu
         </article>)}</div>
       </>}
     </div>
-    <p className="documents-note">{adaptado ? `Presentación de las guías demo adaptada a ${MARCA}; se conservan sus identificadores y la versión de fuente. El contenido original en Azure AI Search no se modifica.` : 'Contenido original recuperado de Azure AI Search.'} No genera respuestas con IA ni recomendaciones de aprobación.</p>
+    <p className="documents-note">{adaptado ? `Presentación de las guías demo adaptada a ${MARCA}; se conservan sus identificadores y la versión de fuente. El contenido original no se modifica.` : `Contenido original recuperado de ${origen}.`} No genera respuestas con IA ni recomendaciones de aprobación.</p>
   </section>
 }

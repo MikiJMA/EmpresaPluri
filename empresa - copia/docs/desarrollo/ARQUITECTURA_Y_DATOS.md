@@ -1,0 +1,90 @@
+# Arquitectura y datos — NexoCredit
+
+Corte funcional: 11/10/2026. Documento técnico vigente de la demo local; conserva las evidencias históricas Azure/Power BI, no certifica producción ni datos crediticios oficiales.
+
+## Componentes y responsabilidades
+
+```text
+Navegador React → Nginx /api → FastAPI → PostgreSQL
+                   identidad ├─ Microsoft Entra (MSAL/JWT)
+                             └─ Cuenta local (scrypt/JWT, revocación en DB)
+FastAPI por función
+  evaluación principal → reglas-demo-v1 (margen y score capturado)
+  explicación → Azure OpenAI u Ollama o plantilla sin IA
+  documentos → Azure AI Search o búsqueda literal local
+  laboratorio UCI → Azure ML; local deshabilitado, sin predicción inventada
+  economía pública → Banxico y Banco Mundial
+  seguimiento → cuotas/abonos, cálculos exactos, alertas y eventos
+PostgreSQL → vista limitada reportes.evaluaciones_powerbi → Power BI Desktop
+Docker Compose → frontend/backend/migraciones/postgres
+GitHub Actions → suites y construcción, sin publicación automática
+```
+
+Azure/Entra continúan implementados y obligatorios según el proyecto. Las alternativas locales permiten continuidad, no eliminan esos requisitos ni acreditan conectividad Azure actual. Datos de solicitante, pagos y motivos no se envían a proveedores financieros, al modelo de explicación ni al laboratorio UCI.
+
+## Contratos y límites de confianza
+
+REST/JSON en el mismo origen local `localhost:8080`, con `Authorization: Bearer` y controles del servidor. Entra y los tokens locales tienen claves, emisores/audiencias y mecanismos diferentes; no se interpretan como intercambiables. El local consulta cuenta/rol/versión vigente en PostgreSQL por petición; credenciales sólo en memoria del navegador y configuración privada del backend. HTTPS/TLS en proveedores externos; HTTP local no se habilita para redes públicas.
+
+El UUID de creación/pago/atención se conserva al reintentar. El servidor comprueba cuerpo, crédito, acción y cuenta; no permite suplantar responsable. Una clave diferente no significa que sea válido duplicar un plan: `evaluacion_id` es único. Las lecturas del detalle de seguimiento usan un snapshot `REPEATABLE READ READ ONLY`. Una escritura bloquea la fila del crédito, valida saldo y confirma movimiento/eventos/alertas juntos. No hay transacciones distribuidas ni llamadas a IA dentro de esa operación.
+
+Dinero de seguimiento: Decimal en Python, `NUMERIC(12,2)` en PostgreSQL, texto decimal en JSON y centavos BigInt en validadores React. Los cálculos previos del formulario mantienen su representación histórica, sin migración contable retrospectiva. Rango de saldos hasta 1.000.000.000, 60 cuotas y 500 pagos por plan.
+
+## Relaciones principales
+
+```mermaid
+erDiagram
+    EVALUACIONES ||--o{ REVISIONES : tiene
+    EVALUACIONES ||--o{ CACHE_EXPLICACIONES : fundamenta
+    EVALUACIONES ||--o| CREDITOS_DEMO : asocia
+    CREDITOS_DEMO ||--|{ CUOTAS_DEMO : planifica
+    CREDITOS_DEMO ||--o{ PAGOS_DEMO : registra
+    CUOTAS_DEMO ||--o{ PAGOS_DEMO : recibe
+    CUOTAS_DEMO ||--o| ALERTAS_CREDITO_DEMO : origina
+    CREDITOS_DEMO ||--o{ EVENTOS_SEGUIMIENTO_DEMO : audita
+```
+
+Las cuentas/contadores/cuotas de generación no contienen FK a créditos; revisiones admiten identidades históricas Entra. El evento usa huella de cuenta y responsable autenticado, no FK obligatoria a `usuarios_locales`, para soportar ambos proveedores de identidad.
+
+## Diccionario de tablas
+
+El esquema actual tiene doce tablas, incluida `schema_migrations`. Las migraciones SQL y OpenAPI son la referencia ejecutable; este resumen no sustituye sus restricciones.
+
+| Tabla | Campos principales | Integridad y finalidad |
+|---|---|---|
+| `evaluaciones` | id UUID PK, fecha TIMESTAMPTZ, solicitud/resultado JSONB | Objetos JSON; solicitud/resultado originales, índice fecha/id |
+| `revisiones` | id PK, evaluacion_id FK, version, estado, observaciones, responsable, fecha | Versión positiva única por evaluación; Pendiente/Aprobada/Rechazada demo |
+| `schema_migrations` | version TEXT PK, fecha TIMESTAMPTZ | Registro de scripts aplicados bajo lock de migración |
+| `usuarios_locales` | id PK, usuario único, nombre, password_hash, roles, activo, version_sesion, contadores/bloqueo, creado/actualizado | Hash scrypt con sal, sin contraseña recuperable; no cuenta predeterminada |
+| `auth_intentos_locales` | origen_hash PK, inicio/cantidad, inicio_total/cantidad_total | HMAC de origen, ventanas separadas de fallos y ráfagas |
+| `cache_explicaciones` | evaluacion_id FK + clave PK, respuesta JSONB o error_http/error_detalle, vence | Caché 24 h/errores 1 min; vencimiento no elimina automáticamente |
+| `cuotas_explicaciones` | usuario_hash PK, inicio, cantidad positiva | Diez intentos/hora; reserva confirmada antes del proveedor |
+| `creditos_demo` | id PK, evaluacion_id FK único, concepto, fecha_apertura, monto_total_pactado, plan JSONB, creado, alertas_revisadas | Un plan por evaluación; total positivo hasta 1.000.000.000 |
+| `cuotas_demo` | id PK, credito_id FK, vencimiento, importe | Fecha única por crédito; par id/credito_id único para FK de pagos |
+| `pagos_demo` | id PK, credito_id FK, cuota_id, fecha_pago, importe, registrado | FK compuesta asegura cuota del crédito; saldo/fecha validados bajo lock |
+| `alertas_credito_demo` | id PK, credito_id FK, cuota_id FK único, tipo, estado, saldo, dias_atraso, version, observaciones, detectada/actualizada | CUOTA_VENCIDA; versión positiva; Pendiente/Atendida/Resuelta |
+| `eventos_seguimiento_demo` | id PK, credito_id FK, accion, actor_hash, responsable, datos JSONB, fecha | Escritura junto al movimiento; índice crédito/fecha/id; sin endpoint de edición |
+
+Los checks SQL controlan tipos/rangos locales. La suma del plan y los pagos que no superan saldo son invariantes del servicio transaccional, no checks SQL entre filas. Modificaciones manuales SQL pueden saltarse ese servicio: no son un flujo soportado de edición.
+
+## Migraciones y permisos
+
+001 evaluaciones; 002 revisiones; 003 identidad local; 004 controles y explicación; 005 seguimiento. 005 es aditiva: no reescribe ni genera créditos/pagos para evaluaciones antiguas. Los roles Docker de aplicación y lector de reportes siguen separados. No se conceden permisos de las tablas nuevas al lector Power BI ni a PUBLIC.
+
+Power BI conserva la vista de evaluaciones existente. No se agregó automáticamente una página de créditos o medidas del ledger al PBIP: esa ampliación queda separada. No publica RFC, observaciones o eventos de identidad mediante nuevas vistas analíticas.
+
+## Seguridad, fallos y operación
+
+Validación Pydantic, contratos React, fechas reales, límites de página y mensajes saneados; secretos en `infraestructura/contenedores_docker/.env`, excluido de Git. Nunca incluir valores de llaves en ejemplos, logs, capturas o OpenAPI exportada.
+
+Analista conserva captura/revisión/seguimiento; Administrador añade lectura de la auditoría global nueva. El resto de rutas mantiene sus facultades anteriores. No es RBAC productivo completo ni auditoría de todas las lecturas. La IP/NAT todavía puede compartir límites de acceso. Backend/DB en loopback; no exponer a Internet.
+
+Antes de una migración: respaldo privado, ensayo temporal, suites, actualización local y conteos/fingerprints. Ante fallo: no borrar volumen ni rotar credenciales a ciegas; seguir [runbook](../manuales/MANTENIMIENTO_Y_SOPORTE.md). Retención/cifrado productivos, MFA, monitoreo permanente y datasets autorizados no quedan implementados por este documento.
+
+## Adenda local ML — 12/10/2026
+
+Esta adenda conserva el estado del laboratorio del 12/10/2026. Desde el 13/10/2026 la evaluación principal utiliza `reglas-demo-v2` para escenarios nuevos, sin modificar el modelo UCI ni sus métricas. No hay migración: los JSON v1 y su respuesta idempotente conservan resultado y versión. La explicación recupera DEM-02 por versión; catálogo local tres guías/quince secciones, pendiente de carga cloud. El frontend redondea resúmenes a pesos sin alterar datos originales. [Reglas principales, importes y límites](../manuales/REGLAS_RIESGO_DEMO.md).
+
+El laboratorio UCI ahora selecciona explícitamente Azure ML, modelo logístico scikit-learn local o deshabilitado. Se conserva el corte anterior como evidencia histórica. FastAPI `/api/v1/ml/*` y alias `/api/v1/azure-ml/*` exigen la misma identidad autorizada; React muestra **Laboratorio IA** y las métricas según proveedor. Los proveedores de explicación/documentos continúan siendo independientes.
+
+El adaptador local lee un JSON numérico incluido en la imagen, verifica su SHA-256/contrato y calcula la clase académica sin red ni deserialización de objetos. No almacena entradas/resultados, tiene 19 variables UCI/NTD distintas de las solicitudes principales y no requiere una tabla, migración, llave o servicio Ollama. La autenticación local mantiene su lectura de cuenta en PostgreSQL, pero el modelo no escribe la base. Si falta o se altera el artefacto falla cerrado con 503, no invoca Azure como fallback. [Entrenamiento y contrato](../../inteligencia_artificial/prediccion_local/README.md), [operación](../manuales/LABORATORIO_IA_LOCAL.md).

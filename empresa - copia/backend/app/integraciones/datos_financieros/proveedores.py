@@ -1,5 +1,5 @@
 """Adaptadores de lectura pública; destinos y series cerrados, nunca datos de clientes."""
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 import json
 import math
 import re
@@ -89,13 +89,18 @@ def consultar_banxico(token):
             if not isinstance(records, list) or len(records) > 1:
                 raise ValueError('Observaciones inesperadas')
             value = period = None
+            fecha_futura = False
             if records:
                 raw = records[0]['dato']
                 if not isinstance(raw, str):
                     raise ValueError('Dato inválido')
                 period_date = datetime.strptime(records[0]['fecha'], '%d/%m/%Y').date()
-                if period_date > datetime.now(timezone.utc).date():
-                    raise ValueError('Fecha futura')
+                hoy = datetime.now(timezone.utc).date()
+                fecha_futura = period_date > hoy
+                # SIE oportuno puede publicar la tasa con una fecha próxima. No es
+                # tasa vigente: conservar la fecha/advertencia sin invalidar el FIX.
+                if fecha_futura and (code != 'SF61745' or period_date > hoy + timedelta(days=7)):
+                    raise ValueError('Fecha futura inesperada')
                 period = period_date.isoformat()
                 if raw.strip() not in ('N/E', 'N/D', ''):
                     if not re.fullmatch(r'-?(?:\d+|\d{1,3}(?:,\d{3})+)(?:\.\d+)?', raw.strip()):
@@ -105,6 +110,7 @@ def consultar_banxico(token):
                         raise ValueError('Tipo de cambio inválido')
             indexed[code] = _indicador(code, BANXICO_SERIES[code], value, period,
                 'https://www.banxico.org.mx/SieAPIRest/service/v1/doc/consultaDatosSerieOp')
+            indexed[code]['fecha_futura'] = fecha_futura
         return [indexed[code] for code in BANXICO_SERIES]
     except (KeyError, TypeError, ValueError, OverflowError):
         raise ErrorProveedor('Banxico devolvió datos incompletos o inválidos.') from None

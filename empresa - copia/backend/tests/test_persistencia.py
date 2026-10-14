@@ -82,6 +82,25 @@ class PostgreSQLTests(unittest.TestCase):
         self.assertEqual(conflict.status_code, 409)
         self.assertEqual(client.get('/api/v1/evaluaciones/' + str(uuid4())).status_code, 404)
 
+    def test_reintento_v1_conserva_resultado_y_nueva_evaluacion_usa_v2(self):
+        original = {**PAYLOAD, 'score_buro_actual': 200, 'ingresos_mensuales': 30000.25, 'gastos_mensuales': 10000.12}
+        anterior = dict(rfc=original['rfc'], margen_libre=20000.13, nivel_riesgo_preliminar='Medio',
+                        version_modelo='reglas-demo-v1', modo='demostracion', factores=['Factor histórico'],
+                        mensaje='Resultado histórico, no recalcular.')
+        key = str(uuid4())
+        self.repo_anterior = RepositorioEvaluaciones().guardar(key, original, anterior)
+        response = client.post('/api/v1/evaluar', json=original, headers={'Idempotency-Key': key})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['version_modelo'], 'reglas-demo-v1')
+        self.assertEqual(response.json()['nivel_riesgo_preliminar'], 'Medio')
+        detalle = client.get('/api/v1/evaluaciones/' + key).json()
+        self.assertEqual(detalle['solicitud'], original)
+        self.assertEqual(detalle['factores'], ['Factor histórico'])
+        nueva = client.post('/api/v1/evaluar', json=original).json()
+        self.assertEqual(nueva['version_modelo'], 'reglas-demo-v2')
+        self.assertEqual(nueva['nivel_riesgo_preliminar'], 'Alto')
+        self.assertEqual(nueva['margen_libre'], 20000.13)
+
     def test_validacion_paginacion_y_rollback(self):
         self.assertEqual(client.post('/api/v1/evaluar', json={**PAYLOAD, 'ingresos_mensuales': -1}).status_code, 422)
         self.assertEqual(client.get('/api/v1/evaluaciones').json()['items'], [])

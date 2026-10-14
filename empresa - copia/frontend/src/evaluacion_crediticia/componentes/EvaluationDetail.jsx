@@ -1,6 +1,7 @@
 import { useContext, useEffect, useRef, useState } from 'react'
 import { UsuarioContext } from '../../autenticacion/contexto'
 import { consultarDetalle, guardarRevision } from '../servicios/creditApi'
+import { presentarResponsable } from './presentarResponsable.mjs'
 import '../../styles/Detail.css'
 
 const fields = { ingresos_mensuales: 'Ingresos mensuales', gastos_mensuales: 'Gastos mensuales', deuda_actual: 'Deuda actual', pagos_mensuales_creditos: 'Pagos mensuales de créditos', dias_atraso_actual: 'Días de atraso', score_buro_actual: 'Score capturado' }
@@ -35,7 +36,7 @@ export default function EvaluationDetail({ id, close }) {
   return <section className="evaluation-detail" aria-labelledby="detail-title">
     <h2 id="detail-title" ref={title} tabIndex={-1}>Detalle y revisión manual</h2>
     <button type="button" disabled={busy} onClick={close}>Cerrar detalle</button>
-    <p className="notice">Solo demostración. Las nuevas revisiones usan tu identidad verificada con Microsoft. Las revisiones anteriores a esta integración pueden contener nombres declarados. No usar para autorizar créditos reales.</p>
+    <p className="notice">Solo demostración. Las nuevas revisiones usan tu cuenta autenticada. Su identificador se conserva internamente. Las revisiones anteriores a esta integración pueden contener nombres declarados. No usar para autorizar créditos reales.</p>
     {error && <p role="alert" className="error">{error}</p>}
     {!data && !error && <p role="status">Cargando detalle…</p>}
     {data && <>
@@ -45,13 +46,13 @@ export default function EvaluationDetail({ id, close }) {
       <p>Estado manual: <strong>{data.estado_revision}</strong> · Revisión {data.version_revision}</p>
       <form onSubmit={save}><fieldset disabled={busy}>
         <label htmlFor="revision-estado">Estado manual (demo)</label><select id="revision-estado" name="estado" value={form.estado} onChange={change}>{['Pendiente', 'Aprobada', 'Rechazada'].map(s => <option key={s}>{s}</option>)}</select>
-        <label htmlFor="revision-responsable">Responsable autenticado</label><input id="revision-responsable" name="responsable" readOnly value={form.responsable} />
+        <label htmlFor="revision-responsable">Responsable autenticado</label><input id="revision-responsable" name="responsable" readOnly value={user.nombre || presentarResponsable(form.responsable)} />
         <label htmlFor="revision-observaciones">Observaciones / motivo</label><textarea id="revision-observaciones" name="observaciones" maxLength={2000} required value={form.observaciones} onChange={change} />
         <button type="submit" disabled={busy || !form.responsable.trim() || !form.observaciones.trim()}>{busy ? 'Guardando…' : 'Guardar revisión demo'}</button>
       </fieldset></form>
       {notice && <p role="status">{notice}</p>}
       <h3>Historial de revisiones</h3>
-      {!data.revisiones.length ? <p>Sin revisiones manuales. Pendiente de revisar.</p> : <ol>{data.revisiones.map(r => <li key={r.id}><strong>{r.estado}</strong> · {new Date(r.fecha).toLocaleString('es-MX')} · {r.responsable}<p>{r.observaciones}</p></li>)}</ol>}
+      {!data.revisiones.length ? <p>Sin revisiones manuales. Pendiente de revisar.</p> : <ol>{data.revisiones.map(r => <li key={r.id}><strong>{r.estado}</strong> · {new Date(r.fecha).toLocaleString('es-MX')} · {presentarResponsable(r.responsable)}<p>{r.observaciones}</p></li>)}</ol>}
     </>}
   </section>
 }

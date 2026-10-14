@@ -45,7 +45,7 @@ switch ($Accion) {
     'pruebas' { & (Join-Path $PSScriptRoot 'probar-programacion.ps1') }
 }
 if ($LASTEXITCODE -ne 0) { throw 'Docker Compose no completo la accion. Consulta los mensajes anteriores.' }
-if ($Accion -eq 'iniciar') { Write-Host 'Proyecto iniciado. Acceso Microsoft: http://localhost:8080/ (WEB_PORT en .env).' }
+if ($Accion -eq 'iniciar') { Write-Host 'Proyecto iniciado. Acceso NexoCredit: http://localhost:8080/ (WEB_PORT en .env). Los metodos habilitados aparecen en la pantalla de acceso.' }
 if ($Accion -eq 'abrir') {
     $webPort = '8080'
     foreach ($line in Get-Content -LiteralPath $envFile) {

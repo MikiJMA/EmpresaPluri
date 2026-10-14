@@ -1,0 +1,2 @@
+# La huella del modelo se comprueba por bytes; no convertir sus saltos en Windows.
+backend/app/integraciones/prediccion_local/artefactos/*.json text eol=lf

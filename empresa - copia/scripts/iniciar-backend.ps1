@@ -9,4 +9,4 @@ if (Test-Path -LiteralPath '.\.local\postgresql\datos\PG_VERSION') {
     & $python .\scripts\postgresql_local.py iniciar
     if ($LASTEXITCODE -ne 0) { throw 'No se pudo iniciar PostgreSQL.' }
 }
-& $python -m uvicorn backend.app.main:app --reload --reload-dir backend/app --host 127.0.0.1 --port 8000
+& $python -m uvicorn backend.app.main:app --reload --reload-dir backend/app --host 127.0.0.1 --port 8000 --no-proxy-headers

@@ -1,0 +1,9 @@
+.identity-check { margin: 12px 0 18px; padding: 14px; border: 1px solid #dbe3ef; border-radius: 10px; background: #f8fafc; }
+.identity-check label { font-size: 11px; }
+.identity-check .identity-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 10px; }
+.enterprise-app .identity-actions button { width: auto; margin: 0; padding: 8px 10px; min-height: 36px; font-size: 11px; }
+.identity-actions a { font-size: 11px; }
+.identity-check p { margin: 8px 0 0; font-size: 10.5px; line-height: 1.6; color: #64748b; }
+.identity-check .identity-review { margin-top: 12px; padding: 12px; background: #fff; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 11px; color: #334155; }
+.identity-review ul { margin: 8px 0 0; padding-left: 16px; line-height: 1.6; }
+.identity-check .identity-warning { color: #9a3412; }

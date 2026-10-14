@@ -1,5 +1,6 @@
 from concurrent.futures import ThreadPoolExecutor
 from copy import deepcopy
+from datetime import datetime, timezone
 import os
 import ssl
 import threading
@@ -171,6 +172,31 @@ class FinancierosTests(unittest.TestCase):
         payload = bmx_payload(); payload['bmx']['series'][1]['idSerie'] = 'SF43718'
         with patch.object(p, '_leer_json', return_value=payload):
             with self.assertRaises(p.ErrorProveedor): p.consultar_banxico(TOKEN_FICTICIO)
+
+    def test_tasa_con_fecha_proxima_no_oculta_fix_ni_se_presenta_como_vigente(self):
+        payload = bmx_payload(('18.4163', '6.5000'))
+        payload['bmx']['series'][0]['datos'][0]['fecha'] = '09/10/2026'
+        payload['bmx']['series'][1]['datos'][0]['fecha'] = '12/10/2026'
+        self.transport.handler = lambda request: httpx.Response(200, json=payload if request.url.host == 'www.banxico.org.mx' else wb_payload())
+        with patch.object(p, 'datetime', wraps=datetime) as reloj:
+            reloj.now.return_value = datetime(2026, 10, 11, tzinfo=timezone.utc)
+            response = self.client.get(PATH)
+        bmx = response.json()['proveedores'][0]
+        self.assertEqual(bmx['estado'], 'parcial')
+        self.assertIn('No se presenta como tasa vigente', bmx['mensaje'])
+        self.assertEqual([i['valor'] for i in bmx['indicadores']], [18.4163, 6.5])
+        self.assertFalse(bmx['indicadores'][0]['fecha_futura'])
+        self.assertTrue(bmx['indicadores'][1]['fecha_futura'])
+        self.assertEqual(bmx['indicadores'][1]['periodo'], '2026-10-12')
+
+    def test_fecha_futura_sigue_acotada_y_nunca_se_permite_para_fix(self):
+        for serie, fecha in [(0, '12/10/2026'), (1, '19/10/2026')]:
+            payload = bmx_payload()
+            payload['bmx']['series'][serie]['datos'][0]['fecha'] = fecha
+            with patch.object(p, '_leer_json', return_value=payload), patch.object(p, 'datetime', wraps=datetime) as reloj:
+                reloj.now.return_value = datetime(2026, 10, 11, tzinfo=timezone.utc)
+                with self.assertRaises(p.ErrorProveedor):
+                    p.consultar_banxico(TOKEN_FICTICIO)
 
     def test_http_timeouts_limites_redireccion_y_json_invalidos(self):
         for status in (302, 400, 401, 403, 429, 500):

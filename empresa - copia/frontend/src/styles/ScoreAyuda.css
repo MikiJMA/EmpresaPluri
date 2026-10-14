@@ -1,0 +1,22 @@
+/* Ayuda breve del score; no representa una clasificación antes de evaluar. */
+.score-help { margin-top: 10px; color: #475569; }
+.score-help .score-help-text { margin: 0; font-size: 12px; line-height: 1.6; color: #334155; }
+.score-help .score-help-location { margin: 6px 0 0; font-size: 11px; line-height: 1.5; color: #475569; }
+.score-help .score-help-disclaimer { margin: 7px 0 0; font-size: 10px; line-height: 1.5; color: #64748b; }
+
+/* Rangos siempre visibles junto a sus cifras, no en un desplegable del formulario. */
+.enterprise-kpis.enterprise-kpis-explained { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.enterprise-kpi .scenario-reading { margin: 14px 0 0; font-size: 12px; line-height: 1.7; color: #334155; }
+.scenario-guide { margin-top: 14px; padding-top: 12px; border-top: 1px solid #dfe6f5; }
+.enterprise-kpi .scenario-guide h3 { margin: 0 0 10px; font-size: 10px; color: #4b5a78; }
+.scenario-guide dl { margin: 0; }
+.scenario-guide dl > div { display: grid; grid-template-columns: minmax(0, .38fr) minmax(0, .62fr); gap: 12px; padding: 8px 0; }
+.scenario-guide dt { font-size: 12px; line-height: 1.6; font-weight: 700; color: #213a6b; font-variant-numeric: tabular-nums; }
+.scenario-guide dd { margin: 0; font-size: 12px; line-height: 1.6; color: #475569; }
+.enterprise-kpi .scenario-caution { margin: 12px 0 0; font-size: 10px; line-height: 1.6; color: #4b5a78; }
+.scenario-example { margin-top: 12px; padding: 12px; background: #edf2ff; border-left: 3px solid #2f5bff; font-size: 11px; line-height: 1.7; color: #213a6b; }
+.enterprise-kpi .scenario-example p { margin: 4px 0 0; color: #334155; font-size: 12px; }
+@media (max-width: 600px) {
+  .enterprise-kpis.enterprise-kpis-explained { grid-template-columns: minmax(0, 1fr); }
+  .scenario-guide dl > div { grid-template-columns: minmax(0, .4fr) minmax(0, .6fr); gap: 10px; }
+}

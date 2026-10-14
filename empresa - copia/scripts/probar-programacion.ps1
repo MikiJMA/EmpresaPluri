@@ -80,7 +80,7 @@ try {
 } finally {
     if ($testContainer) { Remove-PostgresTestContainer $dockerTestExe $testContainer $marker }
 }
-foreach ($test in @('docker-url.test.ps1', 'banxico-config.test.ps1', 'programacion-aislada.test.ps1', 'organizacion.test.ps1')) {
+foreach ($test in @('docker-url.test.ps1', 'banxico-config.test.ps1', 'programacion-aislada.test.ps1', 'organizacion.test.ps1', 'modo-local.test.ps1')) {
     & (Join-Path $PSScriptRoot "tests/$test")
 }
 Write-Host 'Verificacion local aprobada. Base temporal retirada; base de trabajo intacta. No se ejecuto CI remota.'

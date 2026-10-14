@@ -12,7 +12,15 @@ Con Docker Desktop activo:
 
 Los tres accesos reutilizan scripts/docker.ps1. No instalan Docker ni publican la aplicación. Abrir con imágenes antiguas no demuestra que un cambio reciente ya esté aplicado.
 
+- [Crear usuario local](<aplicacion/Crear usuario local.cmd>): solicita usuario/nombre y contraseña oculta, sin cuentas predeterminadas. Requiere imágenes actualizadas, migración 003 y acceso local habilitado.
+
 ## Integraciones
+
+- [Editar configuración privada](<integraciones/Editar configuracion privada.cmd>): abre `.env` en un editor, sin pegar llaves en la terminal ni en el navegador.
+- [Activar modo local](<integraciones/Activar modo local.cmd>): Ollama + documentos locales, cuenta local habilitada y laboratorio ML deshabilitado honestamente. Conserva llaves Azure y datos PostgreSQL.
+- [Activar modo Azure](<integraciones/Activar modo Azure.cmd>): vuelve a Azure sin quitar el acceso local; requiere suscripción/recursos vigentes.
+
+Consultar [campos de configuración, cuentas y límites](../docs/manuales/ACCESO_LOCAL_Y_PROVEEDORES.md). Ollama no requiere llave. Cambiar de proveedor no cancela recursos ni facturación Azure.
 
 - [Conectar Azure OpenAI](<integraciones/Conectar Azure OpenAI.cmd>).
 - [Conectar Azure ML](<integraciones/Conectar Azure ML.cmd>).

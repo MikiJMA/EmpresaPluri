@@ -47,8 +47,10 @@ class EntraTests(unittest.TestCase):
     def test_marca_nueva_conserva_identificadores_y_controles_de_acceso(self):
         self.assertEqual(self.client.get('/openapi.json').json()['info']['title'], 'API de Riesgo Crediticio - NexoCredit')
         config = self.client.get('/api/v1/auth/config').json()
-        self.assertEqual(config, {'clientId': CLIENT_ID, 'tenantId': TENANT_ID,
+        self.assertEqual({k: config[k] for k in ('clientId', 'tenantId', 'scope', 'redirectUri')}, {'clientId': CLIENT_ID, 'tenantId': TENANT_ID,
                                  'scope': f'api://{API_ID}/access_as_user', 'redirectUri': 'http://localhost:8080/'})
+        self.assertEqual(set(config['local']), {'habilitado', 'cuentas_disponibles'})
+        self.assertNotIn('LOCAL_AUTH_SECRET', str(config))
         response = self.client.get('/api/v1/auth/me')
         self.assertEqual(response.status_code, 401)
         self.assertIn('NexoCredit', response.json()['detail'])

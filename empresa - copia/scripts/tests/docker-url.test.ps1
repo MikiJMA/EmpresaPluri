@@ -16,4 +16,9 @@ foreach ($invalid in @('', '0', '65536', '8080/path', 'abc', '-1', '8080;otra-co
     try { $null = Get-PluriOneWebUrl $invalid } catch { $rejected = $true }
     if (-not $rejected) { throw 'Se acepto un puerto invalido.' }
 }
-Write-Host 'Correcto: localhost para Entra, puerto configurable y rechazo de entradas invalidas. Sin Docker ni secretos.'
+$dockerTestRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
+$nginxTest = Get-Content -LiteralPath (Join-Path $dockerTestRoot 'infraestructura/contenedores_docker/nginx.conf') -Raw
+$backendTest = Get-Content -LiteralPath (Join-Path $dockerTestRoot 'infraestructura/contenedores_docker/backend.Dockerfile') -Raw
+if (-not $nginxTest.Contains('proxy_set_header X-Forwarded-For $remote_addr;') -or $nginxTest.Contains('$proxy_add_x_forwarded_for')) { throw 'El proxy no sobrescribe el origen no confiable.' }
+if (-not $backendTest.Contains('--no-proxy-headers')) { throw 'Uvicorn no debe confiar automaticamente en encabezados enviados al puerto directo.' }
+Write-Host 'Correcto: origen Entra, puerto configurable, encabezado sobrescrito y proxy explicito. Sin Docker ni secretos.'

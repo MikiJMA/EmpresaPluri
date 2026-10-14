@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
 import { consultarDashboard } from '../evaluacion_crediticia/servicios/creditApi'
 import './Dashboard.css'
+import { formatearPesos } from '../interfaz/moneda.mjs'
 
 const initial = { desde: '', hasta: '', riesgo: '' }
-const pesos = value => value == null ? 'Sin datos' : new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(Number(value))
+const pesos = value => formatearPesos(value, { sinDatos: 'Sin datos' })
 
 export default function Dashboard({ revision }) {
   const [draft, setDraft] = useState(initial)
@@ -24,6 +25,7 @@ export default function Dashboard({ revision }) {
   return <section className="dashboard card" aria-labelledby="dashboard-title" aria-busy={loading}>
     <h2 id="dashboard-title">Dashboard de evaluaciones</h2>
     <p>Resumen de todas las evaluaciones guardadas, no solo de la página del historial. Riesgos de demostración, no probabilidades de incumplimiento.</p>
+    <p className="dashboard-scope">Importes mostrados sin decimales, redondeados a pesos. Los cálculos y datos guardados conservan centavos. El resumen incluye las versiones originales de cada evaluación.</p>
     <form className="dashboard-filters" onSubmit={apply}>
       <label>Desde (UTC)<input type="date" name="desde" value={draft.desde} onChange={change} /></label>
       <label>Hasta (UTC)<input type="date" name="hasta" value={draft.hasta} onChange={change} /></label>

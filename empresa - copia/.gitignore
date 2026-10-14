@@ -17,5 +17,5 @@ dist/
 # Capturas locales sin depurar para un repositorio publico.
 docs/evidencias/**/*.jpg
 docs/evidencias/**/*.png
-# Artefacto binario sin uso en el backend; el cliente activo consulta Azure.
+# Artefacto AutoML binario sin uso local; la alternativa local usa JSON numérico verificado.
 backend/app/integraciones/prediccion_azure_ml/model.pkl

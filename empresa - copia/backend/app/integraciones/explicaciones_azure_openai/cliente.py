@@ -1,11 +1,13 @@
 """Explicación auxiliar de reglas demo; nunca modifica decisiones ni registros."""
 import json
 import os
+import ssl
 from threading import BoundedSemaphore
 
 import httpx
 from fastapi import HTTPException
 from backend.app.integraciones.busqueda_azure_ai_search.buscador import buscar
+from backend.app.integraciones.proveedores_locales.explicaciones import escenario_permitido, guia_reglas
 
 ENDPOINT = 'https://julianvillegas191-9159-resource.cognitiveservices.azure.com/openai/responses?api-version=2025-04-01-preview'
 DEPLOYMENT = 'gpt-5-mini-1'
@@ -18,32 +20,21 @@ def configurado():
             and bool(os.getenv('AZURE_OPENAI_API_KEY', '').strip()))
 
 
-def explicar(registro):
+def explicar(registro, buscador=None):
     if not configurado():
         raise HTTPException(503, 'Falta configurar Azure OpenAI. Ejecuta operacion/integraciones/Conectar Azure OpenAI.cmd.')
-    if registro.get('version_modelo') != 'reglas-demo-v1':
-        raise HTTPException(409, 'Esta versión de evaluación no admite explicación demo.')
+    escenario_permitido(registro)
     if not _slots.acquire(blocking=False):
         raise HTTPException(429, 'Ya hay explicaciones en curso. Espera antes de intentar otra.')
     try:
-        return _generar(registro)
+        return _generar(registro, buscador)
     finally:
         _slots.release()
 
 
-def _generar(registro):
-    docs = [doc for doc in buscar('margen')['resultados']
-            if doc['fuente'] == 'guia-demostracion-v1'
-            and doc['seccion'].startswith('DEM-02.') and doc['version'] == '1.0']
-    if len(docs) != 1 or not docs[0]['contenido'].strip():
-        raise HTTPException(503, 'No se recuperó la guía de reglas demo. Revisa Azure AI Search.')
-    doc = docs[0]
-    solicitud = registro['solicitud']
-    # Lista permitida: no RFC, UUID, identidad, comentarios ni otros datos personales.
-    escenario = {key: solicitud[key] for key in
-                 ('ingresos_mensuales', 'gastos_mensuales', 'score_buro_actual')}
-    escenario.update({key: registro[key] for key in
-                      ('margen_libre', 'nivel_riesgo_preliminar', 'version_modelo')})
+def _generar(registro, buscador=None):
+    escenario = escenario_permitido(registro)
+    doc = guia_reglas(buscador or buscar, escenario['version_modelo'])
     schema = {'type': 'object', 'additionalProperties': False,
               'properties': {'explicacion': {'type': 'string'},
                              'fuentes': {'type': 'array', 'items': {'type': 'string', 'enum': [doc['id']]}}},
@@ -91,5 +82,7 @@ def _generar(registro):
                 'aviso': 'Texto generado por IA: puede contener errores. No modifica el riesgo ni autoriza créditos.'}
     except httpx.TimeoutException:
         raise HTTPException(504, 'Azure OpenAI tardó demasiado. No se reintentó automáticamente; el intento puede generar consumo.') from None
+    except (OSError, ssl.SSLError):
+        raise HTTPException(503, 'No se pudo establecer una conexión segura con Azure OpenAI. Revisa certificados y configuración del servicio; no desactives TLS.') from None
     except (httpx.HTTPError, ValueError, KeyError, TypeError, AttributeError):
         raise HTTPException(502, 'Azure OpenAI no devolvió una explicación completa y válida.') from None

@@ -4,9 +4,11 @@ from typing import Annotated
 from fastapi import APIRouter
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-from backend.app.integraciones.prediccion_azure_ml.cliente_ml import FEATURES, configuracion, predecir
+from backend.app.integraciones.prediccion_azure_ml.cliente_ml import FEATURES
+from backend.app.integraciones.proveedores import estado_ml, predecir
 
 router = APIRouter(prefix='/api/v1/azure-ml', tags=['Demostración UCI'])
+ml_router = APIRouter(prefix='/api/v1/ml', tags=['Laboratorio IA local o Azure'])
 
 
 class EscenarioUCI(BaseModel):
@@ -27,12 +29,13 @@ class EscenarioUCI(BaseModel):
         return self
 
 
+@ml_router.get('/estado')
 @router.get('/estado')
 def estado():
-    _, _, _, ready = configuracion()
-    return {'configurado': ready, 'conexion_verificada': False, 'columnas': FEATURES}
+    return estado_ml()
 
 
+@ml_router.post('/predecir')
 @router.post('/predecir')
 async def prediccion(escenario: EscenarioUCI):
     return await predecir(escenario.valores)
