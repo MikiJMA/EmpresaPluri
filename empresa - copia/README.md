@@ -14,6 +14,8 @@ Python, FastAPI, React.js, Azure OpenAI Service, Azure Machine Learning, Azure A
 
 ### Preparación de entrega — 14/10/2026
 
+[GitHub Actions del código](docs/evidencias/2026-10-14/github-actions.md) aprobó ambos trabajos con 197/129. ZIP candidato real revisado; la copia final se acompaña de manifiesto de integridad, sin datos privados. Power BI conserva sus definiciones pero requiere el refresco manual pendiente, sin control automático de ventanas.
+
 Suite local final: **197 backend/PostgreSQL y 129 frontend**, sin omisiones, cinco archivos PowerShell, lint/build y auditoría npm con cero vulnerabilidades conocidas. Se añadió una prueba integral aislada, corrección Ollama comprobada en vivo y un generador de ZIP público con manifiesto SHA-256, sin base, cuentas o llaves. Restauración aislada del respaldo de doce tablas aprobada. Las comprobaciones del navegador, hallazgos y pendientes de Power BI/CI/ZIP están separados en la [evidencia de entrega](docs/evidencias/2026-10-14/entrega-demo.md); no se presenta como aceptación o publicación de la aplicación. [Guía de entrega e instalación](docs/entrega/ENTREGA_DEMO.md).
 
 ### Reglas de riesgo y presentación monetaria — 13/10/2026

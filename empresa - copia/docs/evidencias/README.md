@@ -2,6 +2,8 @@
 
 ## Preparación de entrega — 14/10/2026
 
+[GitHub Actions actual](2026-10-14/github-actions.md): commit e9e3c0c, ejecución 38649003430, trabajos backend/frontend aprobados y conteos 197/129 verificados en logs. Código en la rama autorizada, sin modificar main ni desplegar.
+
 [Entrega y verificación actual](2026-10-14/entrega-demo.md): suites aisladas finales 197/129, auditoría npm, prueba integral, escenarios v2, corrección Ollama comprobada en vivo y restauración aislada de doce tablas, junto con pendientes de Power BI/CI/ZIP. Conserva las evidencias anteriores; no se atribuye un cierre todavía no comprobado.
 
 Organizado el 04/10/2026 sin mover ni reemplazar los archivos originales. Las fechas identifican comprobaciones registradas, no pruebas ejecutadas otra vez al crear este índice. [Entrega y límites](../entrega/ENTREGA_DEMO.md).

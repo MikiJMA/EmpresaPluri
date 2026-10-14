@@ -54,16 +54,18 @@ El manifiesto del respaldo previo contiene doce tablas, diez evaluaciones, dos r
 
 `scripts/preparar_entrega.py` prepara una copia con wrapper `NexoCredit/empresa - copia/`, workflow exterior y workspace. Excluye antes de abrir: configuración privada, bases/dumps, dependencias, imágenes Docker, modelos Ollama, CSV UCI, PBIX/ABF y capturas. Mantiene plantillas `.env.example` y el modelo numérico scikit-learn. Redacta únicamente la copia del bloque de identificación del plan y genera un marcador para la ficha del alumno; los originales no se modifican.
 
-La revisión de selección real encontró las tres plantillas públicas y las definiciones Power BI, sin incluir cachés. Las pruebas del generador aprobaron rutas/enlaces, no sobrescritura, redacción y manifiesto. La generación final del ZIP y su verificación de CRC/SHA-256 están pendientes de cerrar el código y la CI; no se presume creado por disponer del script.
+Se creó/revisó un ZIP candidato real de **339 archivos / 2,108,110 bytes**, con referencia Git `e9e3c0cd4b3154e2b0d5b282c2793126225f1623`. CRC, SHA-256 del archivo y cada miembro, rutas únicas, tamaños, exclusiones privadas, redacción y huella del modelo aprobados. SHA-256 del candidato: `35d5f2d08032a7253357d43606d541971f75914adcd50d875110565f93e3216a`. No es la huella del archivo final tras actualizar esta evidencia. La entrega final se acompaña de su manifiesto propio: consultar allí el número de archivos, SHA del ZIP y referencia Git exactos. Las tres plantillas públicas y definiciones Power BI están incluidas; no las cachés ni datos.
 
 Se añadió `.gitattributes` para conservar LF en los JSON del modelo, cuya huella se verifica por bytes: una conversión automática CRLF en Windows no debe invalidarlo. El generador incluye ese archivo y sus catorce pruebas se repitieron correctamente tras esta mejora. La selección pública se revisó sin encontrar secretos nuevos; cinco rutas de perfil personal de capturas se convirtieron a referencias relativas, sin publicar imágenes privadas.
 
 El paquete no es un instalador offline: necesita Docker Desktop, un primer build con Internet, configuración y cuenta nuevas. Ollama necesita servicio y modelo instalados; la alternativa de plantilla se etiqueta explícitamente NO IA. Power BI requiere Desktop y conexión de lectura propia. Azure y Banxico requieren recursos/configuración y credenciales propias.
 
-## Pendientes de este corte
+## Publicación de código y CI
+
+Commit de implementación `e9e3c0cd4b3154e2b0d5b282c2793126225f1623` guardado y subido sólo a la rama autorizada. [GitHub Actions 38649003430](github-actions.md) terminó con ambos trabajos aprobados y conteos 197/129 comprobados en logs, migraciones, cinco pruebas PowerShell, audit, lint y build. `main` permaneció en su SHA anterior. No se publica el servicio ni se crea PR.
+
+## Pendientes fuera de la entrega de código
 
 - Actualizar/conciliar Power BI con las doce evaluaciones actuales, sin publicar.
-- Auditar el commit, subir sólo la rama autorizada y comprobar los dos trabajos de CI.
-- Crear y verificar el ZIP/manifiesto final; no compartir archivos privados.
 
 La guía v2 de Azure Search, la comparación binaria del modelo Azure, validación crediticia real, carga/producción y aceptación/capacitación/Scrum formales permanecen fuera del cierre académico comprobable aquí.

@@ -8,7 +8,7 @@ Verificación local final del **14/10/2026**: **197 pruebas backend/PostgreSQL y
 
 Se conserva el corte **histórico del 13/10/2026**, con 175 backend/PostgreSQL y 129 frontend aprobadas, lint/build y cinco archivos PowerShell: [reglas v2 e importes](../evidencias/2026-10-13/reglas-v2-y-importes.md). Su limitación de auditoría TLS y sus cifras no se reescriben como resultados de hoy. Cero vulnerabilidades reportadas en la auditoría del 14/10 no garantiza ausencia permanente de fallos o seguridad crediticia productiva.
 
-El usuario informó que recargó/entró y abrió, actualizó y guardó Power BI. La comprobación posterior encontró todavía el diálogo **«Abrir»** y un modelo de **5 evaluaciones frente a 10 en PostgreSQL** en ese momento: **29 diferencias en 96 comparaciones SQL–DAX**. No se da por verificado el refresco informado. Tras las **dos altas ficticias de QA** hay **12 evaluaciones** y **la actualización/conciliación Power BI sigue pendiente contra ese corte**; nueva CI y generación/revisión del ZIP tampoco se declaran concluidas. No se presume aceptación, capacitación o actualización cloud.
+El usuario informó que recargó/entró y abrió, actualizó y guardó Power BI. La comprobación posterior encontró todavía el diálogo **«Abrir»** y un modelo de **5 evaluaciones frente a 10 en PostgreSQL** en ese momento: **29 diferencias en 96 comparaciones SQL–DAX**. Tras las dos altas ficticias hay **12 evaluaciones**, pero la segunda conciliación todavía devolvió cinco en Desktop. **Actualización/conciliación Power BI pendiente**. Por solicitud del usuario no se controla más la interfaz; [pasos manuales](../evidencias/2026-10-14/entrega-demo.md#power-bi). No se presume aceptación, capacitación o actualización cloud.
 
 La primera alta UI ficticia fue score 200, margen $20,000 → **Alto, reglas-demo-v2**. Recuperó la guía v2 por búsqueda local y completó inferencia real scikit-learn, clase `False` (no incumplimiento académico), independiente del formulario MXN. En ese corte de 11 registros, el filtro Alto mostró 2/$12,500 y al limpiarlo 11/$18,636. Ollama respondió entonces con una comparación errónea; el hallazgo histórico se conserva, no se transforma retrospectivamente en éxito.
 
@@ -27,7 +27,9 @@ Corte PostgreSQL posterior a ambas altas: **12 evaluaciones**, margen promedio *
 
 Las cifras de filas, métricas de modelo, conteos de suites y tiempos del apartado de línea base son muestras **históricas**, no un inventario actual. Para revisar el estado vigente sin exponer secretos, empezar por [el informe técnico](INFORME_TECNICO_ACTUAL.md), [la guía local de práctica](CAPACITACION_DEMO.md) y [los requisitos tecnológicos](../../REQUISITOS_TECNOLOGICOS.md).
 
-### Preparar el ZIP local — acción pendiente, no ejecutada por este documento
+### Preparar el ZIP local — generación y verificación
+
+Se generó/revisó un candidato real de 339 archivos: CRC, SHA-256 del ZIP y cada miembro, exclusiones, redacción y huella del modelo correctos. [CI del commit de implementación](../evidencias/2026-10-14/github-actions.md) aprobó 197/129 en ambos trabajos. También aprobó la restauración aislada del respaldo de doce tablas, sin modificar la base original. El ZIP final se entrega con manifiesto propio; sus cantidades y huellas pueden cambiar al incorporar esta documentación. No confundir el hash del candidato con el final.
 
 Desde la carpeta interior `empresa - copia/`, con Python disponible:
 
@@ -39,7 +41,7 @@ El generador usa sólo la biblioteca estándar. Si `python` no corresponde al en
 
 La copia excluye credenciales, `.env` privados, base/dumps, dependencias instaladas, imágenes Docker, modelos Ollama, CSV UCI, PBIX/ABF y capturas privadas. Incluye el modelo numérico local scikit-learn y sus metadatos; redacta la identificación del plan sólo en la copia y sustituye la ficha privada del alumno por un marcador. No modifica la fuente ni exporta datos de trabajo. La revisión humana sigue siendo necesaria si alguien hubiese pegado un secreto en un archivo público.
 
-No es una entrega autocontenida/offline: quien la ejecute necesita **primer build Docker con descargas/configuración nuevas y una cuenta propia**, sin reutilizar llaves, contraseñas o volumen del equipo original. Después del primer build se activa modo local y se crea la cuenta. Ollama requiere servicio/modelo instalados; sin él, `EXPLICACIONES_PROVEEDOR=local` selecciona una plantilla **NO IA generativa**. `LEEME_PRIMERO.md` dentro del ZIP explica la secuencia. No se declara generado, íntegro o listo para compartir hasta ejecutar y revisar el paquete y su manifiesto.
+No es una entrega autocontenida/offline: en un equipo sin instalación previa necesita **primer build Docker con descargas/configuración nuevas y una cuenta propia**, sin reutilizar llaves, contraseñas o volumen del equipo original. Una carpeta distinta por sí sola no crea otro proyecto/volumen Compose: si NexoCredit ya está instalado, conservar su entorno y consultar operación antes de iniciar otra copia. Después del primer build se activa modo local y se crea la cuenta. Ollama requiere servicio/modelo instalados; sin él, `EXPLICACIONES_PROVEEDOR=local` selecciona una plantilla **NO IA generativa**. `LEEME_PRIMERO.md` dentro del ZIP explica la secuencia; su manifiesto permite comprobar integridad, no certifica aptitud crediticia.
 
 ## Línea base documental histórica — 04/10/2026
 
