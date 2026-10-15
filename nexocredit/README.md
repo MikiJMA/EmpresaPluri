@@ -2,6 +2,49 @@
 
 NexoCredit es una marca demostrativa, no una razón social ni una aprobación empresarial. Los identificadores técnicos existentes se conservan para mantener las conexiones; la documentación histórica del proyecto no se altera retrospectivamente.
 
+## Ruta rápida para el revisor (sin Azure, 3 a 5 minutos)
+
+Pasos para ver la funcionalidad principal sin configurar ningún servicio en la nube:
+
+1. **Levantar la aplicación** — desde la carpeta `nexocredit/` ejecutar en dos terminales separadas:
+   ```powershell
+   powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\iniciar-backend.ps1
+   powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\iniciar-frontend.ps1
+   ```
+   Abrir **http://127.0.0.1:5173** en el navegador.
+   *(Alternativamente con Docker: `.\scripts\docker.ps1 iniciar` → http://127.0.0.1:8080)*
+
+2. **Iniciar sesión local** — usar cualquier nombre de usuario y contraseña que se hayan creado con `scripts/crear_usuario_local.py`, o crear uno nuevo con ese script.
+
+3. **Evaluar un escenario de ejemplo** — ir a la sección **Evaluación**, ingresar:
+   - RFC: `AAAA010101AA1`
+   - Ingresos mensuales: `30,000`
+   - Gastos mensuales: `10,000`
+   - Deuda actual total: `50,000`
+   - Pagos mensuales de créditos: `2,500`
+   - Días de atraso: `0`
+   - Score capturado: `700`
+
+   Resultado esperado: **Riesgo Bajo** (margen 20,000 MXN; score 700 en rango Bajo por reglas demo v2). Además aparece una **segunda opinión del modelo académico UCI** (verde = sin incumplimiento predicho) con la advertencia de que el mapeo es aproximado.
+
+4. **Consultar el historial** — la evaluación queda guardada en PostgreSQL. Ir a la sección **Historial**, hacer clic en *Ver detalle* y asignar un estado de revisión (Pendiente / Aprobada / Rechazada) con observaciones.
+
+5. **Dashboard** — en la sección **Dashboard** ver el total de evaluaciones, margen promedio y distribución por nivel de riesgo. Se puede filtrar por fecha y por nivel.
+
+> **Sin PostgreSQL configurado:** el sistema funciona igual pero muestra "Evaluación sin guardar". El historial y el dashboard no estarán disponibles.
+
+## Uso de inteligencia artificial generativa
+
+Este proyecto fue desarrollado con el apoyo de **herramientas de IA generativa** (Google Antigravity / Gemini) para:
+
+- Generación de código de apoyo (scaffolding de endpoints, componentes React, scripts de infraestructura).
+- Redacción y revisión de documentación y comentarios en código.
+- Diagnóstico de errores y sugerencias de refactorización.
+- Asistencia en la elaboración del mapeo entre variables del formulario y las 19 variables UCI del modelo académico.
+
+Todo el código generado fue revisado, ajustado e integrado por el alumno. El uso de estas herramientas se declara de forma voluntaria para dar transparencia a la entrega; no modifica los criterios de evaluación según lo indicado por la coordinación del programa.
+
+
 Accesos de Windows: [operacion](operacion/README.md). Documentación: [índice](docs/README.md), [PRD](docs/producto/PRD_NEXOCREDIT.md) y [MVP](docs/producto/MVP_NEXOCREDIT.md). Para una vista limpia en VS Code, abrir [NexoCredit.code-workspace](../NexoCredit.code-workspace) desde la raíz exterior.
 
 ## Tecnologías obligatorias
