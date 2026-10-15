@@ -8,6 +8,7 @@ from psycopg import Error as DatabaseError
 from backend.app.validacion_datos.credito import SolicitudCredito
 from backend.app.validacion_datos.revision import RevisionManual
 from backend.app.evaluacion_crediticia.scoring import evaluar_credito
+from backend.app.evaluacion_crediticia.segunda_opinion import obtener_segunda_opinion
 from backend.app.persistencia_postgresql.repositorio import obtener_repositorio, ConflictoSolicitud
 from backend.app.autenticacion_entra_id.seguridad import usuario_actual
 
@@ -47,6 +48,8 @@ def dashboard(desde: date | None = None, hasta: date | None = None,
 @router.post("/api/v1/evaluar")
 def evaluar(solicitud: SolicitudCredito, repositorio=Depends(obtener_repositorio), idempotency_key: UUID | None = Header(default=None)):
     resultado = evaluar_credito(solicitud)
+    segunda_opinion = obtener_segunda_opinion(solicitud)
+    resultado['segunda_opinion_ml'] = segunda_opinion
     if repositorio is None:
         return {**resultado, 'guardado': False}
     try:
