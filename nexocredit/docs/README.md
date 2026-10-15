@@ -31,7 +31,7 @@ Corte de preparación del 14/10/2026: [verificación de entrega](evidencias/2026
 | desarrollo | [Responsabilidad de GitHub Actions](desarrollo/GITHUB_ACTIONS.md) |
 | evidencias | Registros de pruebas por fecha |
 | estadia | [Información académica existente](estadia/ALUMNO.md) |
-| archivo | Originales y documento PRD/MVP combinado anterior; no se usan para ejecutar |
+| archivo | PRD/MVP combinado histórico; la plantilla y dependencias obsoletas fueron retiradas |
 
 Las fechas y resultados históricos se conservan. Cambiar la ubicación de un documento no acredita pruebas nuevas, aceptación o ejecución Scrum. El [backlog](../gestion_proyecto/scrum/BACKLOG_CIERRE.md) permanece junto a la gestión del proyecto.
 

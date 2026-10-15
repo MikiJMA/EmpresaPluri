@@ -12,6 +12,8 @@ Python, FastAPI, React.js, Azure OpenAI Service, Azure Machine Learning, Azure A
 
 ## Estado real
 
+Limpieza local del 14/10/2026: retirados a la Papelera la plantilla y dependencias antiguas de `docs/archivo`, `.venv-roto`, temporales de pruebas sin referencias y cachés Python (aproximadamente 35,7 MB). Se conservan el entorno activo, las dependencias frontend, credenciales, PostgreSQL, reportes, modelos, documentación y evidencias. No se alteraron imports ni rutas de ejecución. El PRD/MVP combinado histórico permanece como antecedente.
+
 ### Preparación de entrega — 14/10/2026
 
 [GitHub Actions del código](docs/evidencias/2026-10-14/github-actions.md) aprobó ambos trabajos con 197/129. ZIP candidato real revisado; la copia final se acompaña de manifiesto de integridad, sin datos privados. Power BI conserva sus definiciones pero requiere el refresco manual pendiente, sin control automático de ventanas.

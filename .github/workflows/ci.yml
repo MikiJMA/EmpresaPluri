@@ -19,7 +19,7 @@ jobs:
     timeout-minutes: 15
     defaults:
       run:
-        working-directory: empresa - copia
+        working-directory: nexocredit
     services:
       postgres:
         image: postgres:17-alpine
@@ -66,7 +66,7 @@ jobs:
     timeout-minutes: 15
     defaults:
       run:
-        working-directory: empresa - copia/frontend
+        working-directory: nexocredit/frontend
     steps:
       - uses: actions/checkout@v4
         with:
@@ -75,7 +75,7 @@ jobs:
         with:
           node-version: '24'
           cache: npm
-          cache-dependency-path: empresa - copia/frontend/package-lock.json
+          cache-dependency-path: nexocredit/frontend/package-lock.json
       - run: npm ci
       - name: Dependencias sin vulnerabilidades altas conocidas
         run: npm audit --audit-level=high
