@@ -1,7 +1,7 @@
 import ScoreAyuda from './ScoreAyuda'
+import PerfilMexico from './PerfilMexico'
 import { erroresFinancieros } from '../servicios/coherenciaFinanciera.mjs'
 
-// Campos financieros del formulario de evaluación crediticia.
 const financialFields = [
   { name: 'ingresos_mensuales', label: 'Ingresos mensuales', placeholder: '30,000.00', min: '0.01' },
   { name: 'gastos_mensuales', label: 'Gastos mensuales', placeholder: '10,000.00', min: '0' },
@@ -45,6 +45,7 @@ export default function EvaluationForm({ form, busy, error, change, submit, iden
             <input id="score_buro_actual" name="score_buro_actual" type="number" min="0" max="1000" step="1" placeholder="Ej. 700" value={form.score_buro_actual} onChange={change} required aria-describedby="score-help score-help-disclaimer" />
             <ScoreAyuda valor={form.score_buro_actual} />
           </div>
+          <PerfilMexico perfil={form.perfil_enif} change={change} />
           <button type="submit" disabled={inconsistencias.length > 0} aria-describedby={inconsistencias.length ? 'financial-errors' : undefined}><span>{busy ? 'Evaluando escenario…' : 'Evaluar escenario'}</span><span aria-hidden="true">{busy ? '◌' : '→'}</span></button>
           <p className="form-footnote">Al guardar, se generará automáticamente una explicación con el proveedor configurado: Azure OpenAI, Ollama o reglas locales. Solo usa ingresos, gastos, score y resultado, sin RFC. Azure puede generar consumo de pago; Ollama ejecuta el modelo en tu equipo. Usa solo datos ficticios.</p>
           <p className="form-footnote">RFC y datos financieros obligatorios. La CURP es opcional y solo se usa para revisar.</p>

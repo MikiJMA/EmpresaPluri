@@ -1,39 +1,18 @@
 // Resultados de la API y captura enviada; nunca cifras ficticias precargadas.
 import Explicacion from '../../azure_openai/Explicacion'
+import ResultadoMexico from './ResultadoMexico'
 import { importe, valorCapturado } from './metricasEscenario.mjs'
 import { esEvaluacion } from '../servicios/contratos.mjs'
 const riskClasses = { Bajo: 'risk-low', Medio: 'risk-medium', Alto: 'risk-high' }
 
-function SegundaOpinionML({ opinion }) {
-  if (!opinion) return (
-    <div className="segunda-opinion-ml" aria-label="Segunda opinión del modelo">
-      <h3>Segunda opinión · Modelo académico local</h3>
-      <p className="notice">Modelo no disponible. Verifica que el artefacto <code>modelo.json</code> esté presente y que el hash sea correcto.</p>
-    </div>
-  )
-  const incumple = opinion.incumplimiento_predicho
-  return (
-    <div className={`segunda-opinion-ml ${incumple ? 'risk-high' : 'risk-low'}`} aria-label="Segunda opinión del modelo académico">
-      <h3>Segunda opinión · Modelo académico local</h3>
-      <p className="segunda-opinion-veredicto">
-        El modelo predice: <strong>{incumple ? 'riesgo de incumplimiento' : 'sin riesgo de incumplimiento'}</strong>
-        {' '}<span className={`risk-pill ${incumple ? 'risk-high' : 'risk-low'}`}>{incumple ? 'Incumplimiento' : 'Al corriente'}</span>
-      </p>
-      {opinion.variables_fuera_rango_entrenamiento?.length > 0 && (
-        <p className="notice">Variables fuera del rango de entrenamiento: {opinion.variables_fuera_rango_entrenamiento.join(', ')}.</p>
-      )}
-      <p className="enterprise-score-note">{opinion.advertencia}</p>
-    </div>
-  )
-}
-
-export default function EvaluationResult({ result, busy, submitted, explicacion }) {
+export default function EvaluationResult({ result, busy, submitted, explicacion, segundaOpinion, valoracionIA }) {
   if (result && !esEvaluacion(result, false)) return <section className="card" aria-label="Resultado del análisis"><p role="alert" className="error">No se puede mostrar un resultado con formato inválido. Vuelve a consultar; no se inventó una clasificación.</p></section>
   const captured = name => valorCapturado(result, submitted, name)
   const score = captured('score_buro_actual')
   return <section className="enterprise-result" aria-label="Resultado del análisis" aria-live="polite" aria-busy={busy}>
+    {!busy && <ResultadoMexico analisis={result?.analisis_mexico} />}
     <div className="card enterprise-risk-panel">
-      <div className="card-heading"><h2>Resumen de riesgo</h2><span className={`risk-pill ${riskClasses[result?.nivel_riesgo_preliminar] || ''}`}>{busy ? 'Procesando' : result ? `Riesgo ${result.nivel_riesgo_preliminar}` : 'Sin resultado'}</span></div>
+      <div className="card-heading"><h2>Comparación por reglas demo</h2><span className={`risk-pill ${riskClasses[result?.nivel_riesgo_preliminar] || ''}`}>{busy ? 'Procesando' : result ? `Riesgo ${result.nivel_riesgo_preliminar}` : 'Sin resultado'}</span></div>
       <div className="enterprise-risk-body">
         <div className="enterprise-score-heading"><span>Score capturado</span><strong>{score === null ? '—' : `${score} / 1000`}</strong></div>
         {score === null ? <div className="enterprise-score-track" aria-hidden="true" /> : <div className="enterprise-score-track" role="meter" aria-label="Score capturado, no verificado" aria-valuemin={0} aria-valuemax={1000} aria-valuenow={score}><div style={{ width: `${Math.max(0, Math.min(100, score / 10))}%` }} /></div>}
@@ -44,10 +23,11 @@ export default function EvaluationResult({ result, busy, submitted, explicacion 
         {result ? <><p className="applicant">Identificador: <strong>{result.rfc}</strong></p><ol className="factors">{result.factores.map(factor => <li key={factor}>{factor}</li>)}</ol><p className="notice">{result.mensaje}</p><p className="save-status">{result.guardado ? `Guardada en el historial · ${new Date(result.fecha).toLocaleString('es-MX')}` : 'Evaluación sin guardar: PostgreSQL no está configurado.'}</p><p className="model-version">Versión: {result.version_modelo}</p></>
           : <p className="notice">Aquí aparecerán las reglas aplicadas. Sin resultados precargados: esta demostración no autoriza créditos.</p>}
         <p className="enterprise-risk-disclaimer">Probabilidad de incumplimiento no disponible. Las reglas demo no calculan probabilidades ni sustituyen la revisión humana.</p>
-        {result && !busy && <SegundaOpinionML opinion={result.segunda_opinion_ml ?? null} />}
+        {result && !result.analisis_mexico && <p className="notice">Sin modelo mexicano: no se capturó un perfil ENIF. Este resultado es sólo de reglas; no se transformaron ni inventaron datos.</p>}
       </div>
     </div>
+    {result?.guardado && result?.id && !busy && valoracionIA}
+    {result?.guardado && result?.id && !busy && segundaOpinion && <details className="card segunda-opinion"><summary>Experimento UCI independiente (opcional)</summary>{segundaOpinion}</details>}
     {result?.guardado && result?.id && !busy && <Explicacion estado={explicacion} />}
   </section>
 }
-

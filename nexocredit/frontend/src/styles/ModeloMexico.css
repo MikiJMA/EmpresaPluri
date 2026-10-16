@@ -1,0 +1,14 @@
+.perfil-mexico { margin-block: 1.5rem; padding: 1.25rem; border: 1px solid #bac7e6; border-left: 4px solid #4940de; background: #f8faff; }
+.perfil-mexico h3 { margin-top: 0; }
+.perfil-mexico .modelo-mexico-toggle, .perfil-mexico .productos-mexico label { display: flex; align-items: flex-start; gap: .65rem; text-transform: none; letter-spacing: normal; }
+.perfil-mexico input[type=checkbox] { width: 1.1rem; height: 1.1rem; min-height: 1.1rem; flex: 0 0 auto; margin-top: .15rem; accent-color: #4940de; }
+.perfil-mexico select { width: 100%; padding: .8rem; background: white; color: #17243c; border: 1px solid #bac7e6; border-radius: 0; font: inherit; }
+.perfil-mexico .productos-mexico { display: grid; gap: .7rem; margin-top: 1rem; padding: .8rem; border: 1px solid #bac7e6; }
+.resultado-mexico { border-top: 4px solid #4940de; margin-bottom: 1rem; border-radius: 0; }
+.resultado-mexico .model-version { overflow-wrap: anywhere; }
+.resultado-mexico details { margin-block: 1rem; }
+.resultado-mexico summary { cursor: pointer; font-weight: 600; }
+.comparacion-piloto { width: 100%; table-layout: fixed; border-collapse: collapse; font-size: .8rem; }
+.comparacion-piloto th, .comparacion-piloto td { padding: .5rem .25rem; border-bottom: 1px solid #bac7e6; text-align: left; overflow-wrap: anywhere; }
+.comparacion-piloto th:first-child { width: 40%; }
+.comparacion-piloto caption { text-align: left; margin-block: .5rem; }

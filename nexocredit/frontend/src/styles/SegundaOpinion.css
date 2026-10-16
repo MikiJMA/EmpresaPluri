@@ -1,0 +1,17 @@
+.segunda-opinion { padding: 24px; margin-top: 24px; border-top: 3px solid var(--accent, #2f5bff); }
+.segunda-opinion h2 { font-size: 19px; line-height: 1.4; margin: 0 0 16px; }
+.segunda-opinion p { line-height: 1.65; }
+.segunda-opinion details { margin-block: 20px; }
+.segunda-opinion summary { color: var(--accent-dark, #1d3fbf); font-weight: 700; cursor: pointer; line-height: 1.5; }
+.segunda-opinion-comparacion { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-block: 20px; }
+.segunda-opinion-comparacion > div { padding: 16px; border: 1px solid var(--line, #dfe6f5); background: #f6f8ff; display: grid; gap: 8px; }
+.segunda-opinion-comparacion span, .segunda-opinion-comparacion small { color: var(--muted, #4b5a78); }
+.segunda-opinion-comparacion strong { font-size: 18px; overflow-wrap: anywhere; }
+.segunda-opinion-campos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-block: 16px; }
+.segunda-opinion-campos label { display: grid; gap: 8px; font-size: 12px; font-weight: 700; }
+.segunda-opinion-campos input { min-width: 0; width: 100%; padding: 12px; border: 1px solid var(--line, #dfe6f5); background: #fff; color: inherit; font: inherit; }
+.segunda-opinion button { white-space: normal; line-height: 1.4; padding: 12px 16px; }
+.segunda-opinion .segunda-opinion-secundario { color: var(--accent-dark, #1d3fbf); background: #eef2ff; border: 1px solid var(--line, #dfe6f5); }
+.segunda-opinion-resultado { padding: 16px; background: #eef6ff; border-left: 3px solid var(--accent, #2f5bff); margin-top: 20px; overflow-wrap: anywhere; }
+.segunda-opinion-resultado h3 { line-height: 1.5; }
+@media (max-width: 600px) { .segunda-opinion-comparacion { grid-template-columns: 1fr; } }

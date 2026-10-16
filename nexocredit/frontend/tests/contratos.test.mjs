@@ -125,7 +125,7 @@ test('cliente HTTP real rechaza resultados falsos antes de devolverlos a App',as
   t.after(()=>{globalThis.qaCreditoFetch=old})
   const path=new URL('../src/evaluacion_crediticia/servicios/creditApi.js',import.meta.url)
   const contrato=new URL('../src/evaluacion_crediticia/servicios/contratos.mjs',import.meta.url).href
-  const source=(await readFile(path,'utf8')).replace("import { fetchAutenticado as fetch } from '../../autenticacion/cliente'",'const fetch = (...args) => globalThis.qaCreditoFetch(...args)').replace('import.meta.env.VITE_API_URL',"'/'").replace("'./contratos.mjs'",JSON.stringify(contrato))
+  const source=(await readFile(path,'utf8')).replace("import { fetchAutenticado as fetch } from '../../autenticacion/cliente'",'const fetch = (...args) => globalThis.qaCreditoFetch(...args)').replace('import.meta.env.VITE_API_URL',"'/'").replace("'./contratos.mjs'",JSON.stringify(contrato)).replace("'./modeloMexico.mjs'", JSON.stringify(new URL('../src/evaluacion_crediticia/servicios/modeloMexico.mjs', import.meta.url).href))
   const client=await import(`data:text/javascript;base64,${Buffer.from(source).toString('base64')}`)
   globalThis.qaCreditoFetch=async()=>({ok:true,json:async()=>({})})
   await assert.rejects(client.evaluarCredito({rfc:'DEMO'},id),/formato esperado/)

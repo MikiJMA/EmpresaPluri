@@ -1,5 +1,6 @@
 import { fetchAutenticado as fetch } from '../../autenticacion/cliente'
 import { leerRespuesta, validarEvaluacion, validarHistorial, validarDetalle, validarRevision, validarDashboard } from './contratos.mjs'
+import { prepararPerfilMexico } from './modeloMexico.mjs'
 
 const api = (import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000').replace(/\/$/, '')
 
@@ -20,8 +21,8 @@ export async function consultarDashboard(filters, signal) {
   return leerRespuesta(response, validarDashboard, 'dashboard')
 }
 
-/** Cliente HTTP de evaluación: envía el escenario y conserva los errores de validación. */
 export async function evaluarCredito(form, clave) {
+  const perfil = prepararPerfilMexico(form.perfil_enif)
   const response = await fetch(`${api}/api/v1/evaluar`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Idempotency-Key': clave },
@@ -34,6 +35,7 @@ export async function evaluarCredito(form, clave) {
       deuda_actual: Number(form.deuda_actual),
       pagos_mensuales_creditos: Number(form.pagos_mensuales_creditos),
       dias_atraso_actual: Number(form.dias_atraso_actual),
+      ...(perfil ? { perfil_enif: perfil } : {}),
     }),
   })
 

@@ -69,7 +69,8 @@ test('la explicación solo aparece para evaluaciones guardadas, no mientras se e
 
 test('el formulario conserva siete entradas, validación y aviso de consumo', () => {
   const html = render(Formulario, { form, busy: false, error: '', change: () => {}, submit: () => {} })
-  assert.equal((html.match(/<input /g) || []).length, 7)
+  assert.equal((html.match(/<input (?!type="checkbox")/g) || []).length, 7)
+  assert.match(html, /Incluir análisis estadístico mexicano/)
   assert.equal((html.match(/required=""/g) || []).length, 7)
   assert.match(html, /id="score_buro_actual"[^>]*max="1000"/)
   assert.match(html, /generará automáticamente una explicación/)

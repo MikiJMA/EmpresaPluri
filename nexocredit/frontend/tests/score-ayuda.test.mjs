@@ -60,7 +60,7 @@ test('el campo enlaza su explicación accesible y conserva los siete campos y la
   assert.match(html, /id="score-help"/)
   assert.match(html, /id="score-help-disclaimer"/)
   assert.match(html, /Tu score 0 está en 0–499/)
-  assert.equal((html.match(/<input /g) || []).length, 7)
+  assert.equal((html.match(/<input (?!type="checkbox")/g) || []).length, 7)
 })
 
 test('el significado del margen conserva exactamente los cortes de la API', () => {

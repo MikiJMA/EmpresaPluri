@@ -2,6 +2,7 @@ import { useContext, useEffect, useRef, useState } from 'react'
 import { UsuarioContext } from '../../autenticacion/contexto'
 import { consultarDetalle, guardarRevision } from '../servicios/creditApi'
 import { presentarResponsable } from './presentarResponsable.mjs'
+import ResultadoMexico from './ResultadoMexico'
 import '../../styles/Detail.css'
 
 const fields = { ingresos_mensuales: 'Ingresos mensuales', gastos_mensuales: 'Gastos mensuales', deuda_actual: 'Deuda actual', pagos_mensuales_creditos: 'Pagos mensuales de créditos', dias_atraso_actual: 'Días de atraso', score_buro_actual: 'Score capturado' }
@@ -41,6 +42,7 @@ export default function EvaluationDetail({ id, close }) {
     {!data && !error && <p role="status">Cargando detalle…</p>}
     {data && <>
       <p>Solicitante: <strong>{data.rfc}</strong> · {new Date(data.fecha).toLocaleString('es-MX')}</p>
+      <ResultadoMexico analisis={data.analisis_mexico} />
       <dl className="detail-fields">{Object.entries(fields).map(([key, label]) => <div key={key}><dt>{label}</dt><dd>{data.solicitud[key] == null ? 'No capturado' : key.includes('dias') || key.includes('score') ? data.solicitud[key] : new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(data.solicitud[key])}</dd></div>)}</dl>
       <p>Riesgo demo: <strong>{data.nivel_riesgo_preliminar}</strong> · Modelo: {data.version_modelo}</p>
       <p>Estado manual: <strong>{data.estado_revision}</strong> · Revisión {data.version_revision}</p>

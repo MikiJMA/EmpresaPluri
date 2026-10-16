@@ -1,18 +1,4 @@
 /* Diseño compartido por todas las secciones autenticadas de NexoCredit. */
-
-/* Segunda opinión del modelo académico local */
-.segunda-opinion-ml {
-  margin-top: 1.25rem;
-  padding: 1rem 1.25rem;
-  border-radius: 10px;
-  border: 1.5px solid var(--line);
-  background: rgba(255,255,255,0.6);
-}
-.segunda-opinion-ml.risk-high { border-color: #f87171; background: rgba(254,226,226,0.5); }
-.segunda-opinion-ml.risk-low  { border-color: #34d399; background: rgba(209,250,229,0.5); }
-.segunda-opinion-ml h3 { font-size: .85rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; margin: 0 0 .6rem; color: var(--muted); }
-.segunda-opinion-veredicto { font-size: 1rem; margin: 0 0 .5rem; }
-
 .enterprise-app {
   --accent: #2f5bff;
   --accent-dark: #1d3fbf;

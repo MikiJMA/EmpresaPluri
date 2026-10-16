@@ -1,4 +1,4 @@
-// Validación de respuestas antes de incorporarlas al estado de React.
+import { esAnalisisMexico } from './modeloMexico.mjs'
 const riesgos = ['Bajo', 'Medio', 'Alto']
 const estados = ['Pendiente', 'Aprobada', 'Rechazada']
 const uuid = value => typeof value === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value)
@@ -29,7 +29,8 @@ export function esEvaluacion(data, persistida = true) {
   return objeto(data) && texto(data.rfc, 8192) && margen(data.margen_libre) && riesgos.includes(data.nivel_riesgo_preliminar) &&
     (!persistida || data.modo === 'demostracion') && texto(data.version_modelo, 120) && data.version_modelo.length > 0 && texto(data.mensaje) &&
     Array.isArray(data.factores) && data.factores.length > 0 && data.factores.length <= 30 && data.factores.every(i => texto(i)) &&
-    typeof data.guardado === 'boolean' && (!data.guardado || !persistida || (uuid(data.id) && fecha(data.fecha)))
+    typeof data.guardado === 'boolean' && (!data.guardado || !persistida || (uuid(data.id) && fecha(data.fecha))) &&
+    (data.analisis_mexico == null || esAnalisisMexico(data.analisis_mexico))
 }
 export function validarEvaluacion(data) { comprobar(esEvaluacion(data), 'evaluación'); return data }
 
