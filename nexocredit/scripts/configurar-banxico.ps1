@@ -116,7 +116,7 @@ if (-not $dockerPath -or -not (Test-Path -LiteralPath $dockerPath -PathType Leaf
     Write-Host 'Token guardado. Falta Docker: abre Docker Desktop y reinicia el backend para aplicarlo.'
     exit 1
 }
-$composeArguments = @('compose', '--project-name', 'plurione-docker', '--project-directory', $composeDir, '--env-file', $envFile, '-f', (Join-Path $composeDir 'docker-compose.yml'))
+$composeArguments = @('compose', '--project-directory', $composeDir, '--env-file', $envFile, '-f', (Join-Path $composeDir 'docker-compose.yml'))
 try {
     Invoke-BanxicoStartup $dockerPath $composeArguments
 } catch {

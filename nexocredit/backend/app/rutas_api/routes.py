@@ -2,13 +2,14 @@
 from uuid import UUID, uuid4
 from datetime import date
 from typing import Literal
-from fastapi import APIRouter, Depends, Header, HTTPException, Query
+from fastapi import APIRouter, Depends, Header, HTTPException, Query, Response
 from psycopg import Error as DatabaseError
 
 from backend.app.validacion_datos.credito import SolicitudCredito
 from backend.app.validacion_datos.revision import RevisionManual
 from backend.app.evaluacion_crediticia.scoring import evaluar_credito
-from backend.app.evaluacion_crediticia.segunda_opinion import obtener_segunda_opinion
+from backend.app.integraciones.prediccion_mexico.cliente import evaluar_perfil, metadatos
+from backend.app.integraciones.prediccion_mexico.piloto import estado_piloto
 from backend.app.persistencia_postgresql.repositorio import obtener_repositorio, ConflictoSolicitud
 from backend.app.autenticacion_entra_id.seguridad import usuario_actual
 
@@ -48,8 +49,8 @@ def dashboard(desde: date | None = None, hasta: date | None = None,
 @router.post("/api/v1/evaluar")
 def evaluar(solicitud: SolicitudCredito, repositorio=Depends(obtener_repositorio), idempotency_key: UUID | None = Header(default=None)):
     resultado = evaluar_credito(solicitud)
-    segunda_opinion = obtener_segunda_opinion(solicitud)
-    resultado['segunda_opinion_ml'] = segunda_opinion
+    if solicitud.perfil_enif is not None:
+        resultado['analisis_mexico'] = evaluar_perfil(solicitud.perfil_enif)
     if repositorio is None:
         return {**resultado, 'guardado': False}
     try:
@@ -58,6 +59,17 @@ def evaluar(solicitud: SolicitudCredito, repositorio=Depends(obtener_repositorio
         raise HTTPException(409, 'La clave de reintento ya pertenece a otra solicitud.') from None
     except DatabaseError:
         raise HTTPException(503, 'No se pudo guardar la evaluación. Verifica PostgreSQL e intenta nuevamente.') from None
+
+
+@router.get('/api/v1/modelo-mexico')
+def modelo_mexico():
+    return metadatos()
+
+
+@router.get('/api/v1/modelo-mexico/piloto')
+def piloto_mexico(response: Response):
+    response.headers['Cache-Control'] = 'no-store'
+    return estado_piloto()
 
 
 @router.get('/api/v1/evaluaciones')

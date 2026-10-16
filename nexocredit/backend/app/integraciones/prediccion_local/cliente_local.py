@@ -20,7 +20,8 @@ def numero(value):
     return type(value) in (int, float) and math.isfinite(value)
 
 
-def validar_modelo(modelo):
+def _validar_contrato(modelo):
+    """Verifica la identidad y el esquema fijo del artefacto numérico."""
     claves = {'formato', 'modelo_id', 'algoritmo', 'columnas', 'clases', 'umbral', 'media', 'escala',
               'coeficientes', 'intercepto', 'rangos_entrenamiento', 'metricas'}
     if (not isinstance(modelo, dict) or set(modelo) != claves
@@ -29,37 +30,70 @@ def validar_modelo(modelo):
             or modelo['algoritmo'] != 'StandardScaler + LogisticRegression (scikit-learn)'
             or not numero(modelo['intercepto'])):
         raise ValueError('Contrato del modelo no válido.')
+
+
+def _validar_vectores(modelo):
     for campo in ('media', 'escala', 'coeficientes'):
         vector = modelo[campo]
         if not isinstance(vector, list) or len(vector) != 19 or not all(numero(n) for n in vector):
             raise ValueError('Vector no válido.')
     if not all(n > 0 for n in modelo['escala']):
         raise ValueError('Escala no válida.')
-    rangos = modelo['rangos_entrenamiento']
-    if (not isinstance(rangos, list) or len(rangos) != 19 or any(
-            not isinstance(r, list) or len(r) != 2 or not all(type(n) is int for n in r) or r[0] > r[1]
-            for r in rangos)):
+
+
+def _rango_valido(rango):
+    return (isinstance(rango, list) and len(rango) == 2
+            and all(type(valor) is int for valor in rango) and rango[0] <= rango[1])
+
+
+def _validar_rangos(rangos):
+    if (not isinstance(rangos, list) or len(rangos) != len(FEATURES)
+            or not all(_rango_valido(rango) for rango in rangos)):
         raise ValueError('Rangos no válidos.')
-    metricas = modelo['metricas']
+
+
+def _fila_matriz_valida(fila):
+    return (isinstance(fila, list) and len(fila) == 2
+            and all(type(valor) is int and valor >= 0 for valor in fila))
+
+
+def _validar_matriz(matriz, filas):
+    if (not isinstance(matriz, list) or len(matriz) != 2
+            or not all(_fila_matriz_valida(fila) for fila in matriz)
+            or sum(sum(fila) for fila in matriz) != filas):
+        raise ValueError('Matriz no válida.')
+
+
+def _validar_metricas_conjunto(metricas, filas):
+    if not isinstance(metricas, dict) or metricas.get('filas') != filas:
+        raise ValueError('Métricas no válidas.')
+    for campo in ('auc', 'exactitud', 'sensibilidad', 'precision', 'f1', 'baseline_exactitud'):
+        valor = metricas.get(campo)
+        if not numero(valor) or not 0 <= valor <= 1:
+            raise ValueError('Métrica no finita o fuera de rango.')
+    matriz = metricas.get('matriz_confusion')
+    _validar_matriz(matriz, filas)
+    tn, tp = matriz[0][0], matriz[1][1]
+    fn = matriz[1][0]
+    exactitud_coherente = math.isclose(metricas['exactitud'], (tn + tp) / filas, abs_tol=1e-12)
+    sensibilidad_coherente = math.isclose(metricas['sensibilidad'], tp / (tp + fn), abs_tol=1e-12)
+    if not exactitud_coherente or not sensibilidad_coherente:
+        raise ValueError('Métricas contradictorias.')
+
+
+def _validar_metricas(metricas):
     if not isinstance(metricas, dict) or set(metricas) != {'validacion', 'prueba'}:
         raise ValueError('Falta evaluación independiente.')
     for nombre, filas in (('validacion', 6136), ('prueba', 5955)):
-        m = metricas[nombre]
-        if not isinstance(m, dict) or m.get('filas') != filas:
-            raise ValueError('Métricas no válidas.')
-        for campo in ('auc', 'exactitud', 'sensibilidad', 'precision', 'f1', 'baseline_exactitud'):
-            if not numero(m.get(campo)) or not 0 <= m[campo] <= 1:
-                raise ValueError('Métrica no finita o fuera de rango.')
-        matriz = m.get('matriz_confusion')
-        if (not isinstance(matriz, list) or len(matriz) != 2 or any(
-                not isinstance(r, list) or len(r) != 2 or any(type(n) is not int or n < 0 for n in r)
-                for r in matriz) or sum(sum(r) for r in matriz) != filas):
-            raise ValueError('Matriz no válida.')
-        tn, fp = matriz[0]
-        fn, tp = matriz[1]
-        if (not math.isclose(m['exactitud'], (tn + tp) / filas, abs_tol=1e-12)
-                or not math.isclose(m['sensibilidad'], tp / (tp + fn), abs_tol=1e-12)):
-            raise ValueError('Métricas contradictorias.')
+        _validar_metricas_conjunto(metricas[nombre], filas)
+
+
+def validar_modelo(modelo):
+    """Comprueba contrato, dimensiones y métricas sin cambiar la inferencia ni su huella."""
+    _validar_contrato(modelo)
+    _validar_vectores(modelo)
+    _validar_rangos(modelo['rangos_entrenamiento'])
+    _validar_metricas(modelo['metricas'])
     return modelo
 
 

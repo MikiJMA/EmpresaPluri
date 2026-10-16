@@ -30,8 +30,12 @@ class PaqueteEntregaTests(unittest.TestCase):
         self.write('backend/app/integraciones/prediccion_local/artefactos/entrenamiento.json', b'{"semilla":12}')
         self.github = self.outer / '.github' / 'workflows'
         self.github.mkdir(parents=True)
-        (self.github / 'ci.yml').write_text('jobs:\n  backend:\n    working-directory: empresa - copia\n'
-                                          '  frontend:\n    working-directory: empresa - copia/frontend\n', encoding='utf-8')
+        for relative in paquete.ROOT_PUBLIC_FILES:
+            (self.outer / relative).write_text('Documento publico\n', encoding='utf-8')
+        (self.outer / 'LEEME_PRIMERO.md').write_text(
+            'NO IA generativa\ndocker.ps1 iniciar\nmodo-local.ps1 -Accion usuario\n', encoding='utf-8')
+        (self.github / 'ci.yml').write_text('jobs:\n  backend:\n    working-directory: nexocredit\n'
+                                          '  frontend:\n    working-directory: nexocredit/frontend\n', encoding='utf-8')
         (self.outer / 'NexoCredit.code-workspace').write_text(json.dumps({
             'folders': [{'path': paquete.PROJECT_DIR}, {'path': '.github'}]}), encoding='utf-8')
         self.git = patch.object(paquete, 'referencia_git', return_value='a' * 40)
@@ -76,6 +80,7 @@ class PaqueteEntregaTests(unittest.TestCase):
                     'modelo/entrenamiento.json', 'analitica/reporte.pbix.pbip',
                     'analitica/reporte.pbix.SemanticModel/definition/model.tmdl',
                     'infraestructura/contenedores_docker/inicializar_postgresql.sql',
+                    'infraestructura/contenedores_docker/nginx.conf',
                     'backend/app/persistencia_postgresql/migraciones/001_evaluaciones.sql',
                     str(paquete.BACKGROUND), 'frontend/public/favicon.svg')
         excluded = ('.env', '.env.privado', '.env.local', '.env.example.backup',
@@ -86,6 +91,7 @@ class PaqueteEntregaTests(unittest.TestCase):
                     'analitica/.pbi-respaldo/settings.json', 'modelo/model.pkl',
                     'modelo/modelo.pickle', 'base.dump', 'base.sql.gz', 'datos/prueba.csv',
                     'datos/dump.sql', 'backend/backup.sql', 'db.sql',
+                    'infraestructura/privado.conf', 'backend/credenciales.conf',
                     'reporte.pbix', 'reporte.abf', 'docs/evidencias/dashboard.jpg',
                     'docs/evidencias/dashboard.png', 'frontend/public/captura.png')
         for path in included:
@@ -158,7 +164,7 @@ class PaqueteEntregaTests(unittest.TestCase):
         names = {record.ruta for record in records}
         for relative in ('.gitignore', '.dockerignore', 'plantillas/.env.example',
                          'infraestructura/contenedores_docker/.env.example'):
-            self.assertIn(f'NexoCredit/empresa - copia/{relative}', names)
+            self.assertIn(f'NexoCredit/nexocredit/{relative}', names)
         self.assertFalse(any('no_leer.py' in name for name in names))
 
     def test_zip_wrapper_manifiesto_huellas_y_modelo_incluido(self):
@@ -175,6 +181,9 @@ class PaqueteEntregaTests(unittest.TestCase):
             self.assertIn('NexoCredit/.github/workflows/ci.yml', names)
             self.assertIn('NexoCredit/NexoCredit.code-workspace', names)
             self.assertIn('NexoCredit/LEEME_PRIMERO.md', names)
+            self.assertIn('NexoCredit/README.md', names)
+            self.assertIn('NexoCredit/.gitignore', names)
+            self.assertIn('NexoCredit/nexocredit/infraestructura/contenedores_docker/nginx.conf', names)
             for file in manifest['archivos']:
                 data = archive.read(file['ruta'])
                 self.assertEqual(file['sha256'], hashlib.sha256(data).hexdigest())
@@ -183,7 +192,7 @@ class PaqueteEntregaTests(unittest.TestCase):
                 self.assertNotIn('..', PurePosixPath(file['ruta']).parts)
             for basename in ('modelo.json', 'entrenamiento.json'):
                 self.assertTrue(any(name.endswith('/artefactos/' + basename) for name in names))
-            plan = archive.read('NexoCredit/empresa - copia/' + str(paquete.PLAN))
+            plan = archive.read('NexoCredit/nexocredit/' + str(paquete.PLAN))
             self.assertNotIn(b'PERSONAL_SENTINEL', plan)
             checklist = archive.read('NexoCredit/LEEME_PRIMERO.md').decode()
             self.assertIn('NO IA generativa', checklist)
@@ -202,10 +211,50 @@ class PaqueteEntregaTests(unittest.TestCase):
                 self.assertEqual(existing.read_bytes(), b'NO_CAMBIAR')
                 existing.unlink()
 
+    def test_copia_configuracion_editor_portable_sin_leer_original(self):
+        private_editor = self.project / '.vscode' / 'settings.json'
+        private_editor.parent.mkdir()
+        private_editor.write_text('PRIVATE_SENTINEL', encoding='utf-8')
+        records = paquete.recopilar_archivos(self.outer, self.project)
+        generated = [record for record in records if '/.vscode/' in record.ruta]
+        self.assertEqual(len(generated), 2)
+        for record in generated:
+            settings = json.loads(record.contenido)
+            self.assertNotIn(b'PRIVATE_SENTINEL', record.contenido)
+            self.assertIn('${workspaceFolder}/', settings['python.defaultInterpreterPath'])
+            self.assertTrue(settings['files.exclude']['**/node_modules'])
+            self.assertEqual(record.origen, 'configuracion-generada')
+
+    def test_rutas_largas_se_leen_sin_relajar_limites_ni_alterar_rutas_zip(self):
+        relative = Path('backend') / ('nivel_publico_' * 8) / ('subnivel_' * 9) / 'archivo.py'
+        source = self.project / relative
+        native = Path(paquete._ruta_nativa(source))
+        native.parent.mkdir(parents=True)
+        native.write_bytes(b'PUBLICO_LARGO')
+        # Quitar sólo estos tres destinos conocidos con el mismo prefijo nativo;
+        # el cleanup estándar de tempfile puede tener el mismo límite Win32.
+        self.addCleanup(native.parent.parent.rmdir)
+        self.addCleanup(native.parent.rmdir)
+        self.addCleanup(native.unlink)
+        self.assertGreater(len(str(source)), 260)
+        self.assertEqual(paquete.leer_publico(source, self.project), b'PUBLICO_LARGO')
+        records = paquete.recopilar_archivos(self.outer, self.project)
+        expected = 'NexoCredit/nexocredit/' + relative.as_posix()
+        self.assertEqual(next(record.contenido for record in records if record.ruta == expected), b'PUBLICO_LARGO')
+        self.assertTrue(all('\\\\?\\' not in record.ruta for record in records))
+        with self.assertRaises(paquete.EntregaError):
+            paquete.leer_publico(source, self.project / 'frontend')
+
     def test_validacion_estructura_no_produce_archivos_si_falta_modelo(self):
         (self.project / 'backend/app/integraciones/prediccion_local/artefactos/modelo.json').unlink()
         with self.assertRaises(paquete.EntregaError):
             paquete.crear_paquete(self.outer, self.project, 'incompleto')
+        self.assertFalse((self.outer / 'output').exists())
+
+    def test_validacion_rechaza_entrega_sin_configuracion_nginx(self):
+        (self.project / 'infraestructura/contenedores_docker/nginx.conf').unlink()
+        with self.assertRaises(paquete.EntregaError):
+            paquete.crear_paquete(self.outer, self.project, 'sin_nginx')
         self.assertFalse((self.outer / 'output').exists())
 
     def test_workspace_ci_y_raiz_activa_deben_ser_relativos(self):

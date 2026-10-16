@@ -5,6 +5,11 @@ $tokens = $null
 $errors = $null
 $ast = [Management.Automation.Language.Parser]::ParseFile($source, [ref]$tokens, [ref]$errors)
 if ($errors.Count) { throw 'El configurador tiene errores de sintaxis.' }
+$sourceText = $ast.Extent.Text
+if (-not $sourceText.Contains('& $dockerExe @composeArgs exec backend python scripts/crear_usuario_local.py') -or
+    $sourceText -match 'plurione-docker-backend|nexocredit-demo-backend') {
+    throw 'La creacion de cuenta debe resolver el servicio backend con Compose, no un contenedor fijo.'
+}
 foreach ($name in @('Set-NexoPrivateValues', 'Initialize-NexoLocalConfig', 'Get-NexoLocalValues')) {
     $definition = $ast.Find({ param($node) $node -is [Management.Automation.Language.FunctionDefinitionAst] -and $node.Name -eq $name }, $true)
     if (-not $definition) { throw 'Falta una funcion del configurador.' }
@@ -61,6 +66,7 @@ try {
     Initialize-NexoLocalConfig $testFile
     Set-NexoPrivateValues $testFile (Get-NexoLocalValues $testFile)
     if (-not [IO.File]::ReadAllText($testFile).Contains('ML_PROVEEDOR=local')) { throw 'El modo local no activo el modelo UCI incluido.' }
+    if (-not [IO.File]::ReadAllText($testFile).Contains('VALORACION_IA_PROVEEDOR=ollama')) { throw 'El modo local no activo la valoracion IA de la solicitud.' }
     $blank = [IO.File]::ReadAllText($testFile)
     if ($blank -notmatch '(?m)^LOCAL_AUTH_SECRET=[a-f0-9]{64}\r?$' -or -not $blank.Contains('OLLAMA_MODEL=llama3.1:8b')) { throw 'Los valores vacios no se inicializaron.' }
     if (-not $blank.Contains('LOCAL_AUTH_TOKEN_SECONDS=1800') -or -not $blank.Contains('AZURE_OPENAI_API_KEY=ficticio-azure')) { throw 'Se altero una variable vecina a un campo vacio.' }

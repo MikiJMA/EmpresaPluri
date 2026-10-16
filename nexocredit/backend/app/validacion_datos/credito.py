@@ -1,6 +1,7 @@
 """Validación Pydantic de los datos de entrada de una evaluación crediticia."""
 import unicodedata
 from pydantic import BaseModel, ConfigDict, Field, field_validator
+from .perfil_enif import PerfilENIF
 
 
 class SolicitudCredito(BaseModel):
@@ -13,6 +14,7 @@ class SolicitudCredito(BaseModel):
     deuda_actual: float | None = Field(default=None, ge=0, le=1_000_000_000, strict=True)
     pagos_mensuales_creditos: float | None = Field(default=None, ge=0, le=1_000_000_000, strict=True)
     dias_atraso_actual: int | None = Field(default=None, ge=0, le=36500, strict=True)
+    perfil_enif: PerfilENIF | None = None
 
     @field_validator('rfc')
     @classmethod

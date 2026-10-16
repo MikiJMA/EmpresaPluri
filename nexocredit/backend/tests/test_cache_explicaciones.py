@@ -32,6 +32,30 @@ class ClaveCacheTests(unittest.TestCase):
 
 @unittest.skipUnless(os.getenv('RUN_POSTGRES_TESTS') == '1', 'Requiere PostgreSQL temporal de la suite.')
 class CachePostgreSQLTests(unittest.TestCase):
+    def test_valoracion_de_la_misma_solicitud_en_cache_sin_reescribir_reglas(self):
+        from backend.app.evaluacion_crediticia import valoracion_ia
+        ident = uuid4()
+        solicitud = {**PAYLOAD, 'deuda_actual': 50000, 'pagos_mensuales_creditos': 2500, 'dias_atraso_actual': 0}
+        self.repo.guardar(ident, solicitud, RESULTADO)
+        antes = self.repo.obtener(ident)
+        datos = valoracion_ia.datos_del_registro(antes)
+        respuesta_ia = {'nivel_riesgo_ia': 'Medio', 'datos_evaluados': datos, 'proveedor': 'ollama'}
+        generar = Mock(return_value=respuesta_ia)
+        key = valoracion_ia.clave(datos)
+        primera = self.cache.obtener_o_generar(ident, key, 'valoracion-ia:' + self.user, generar)
+        segunda = CacheExplicaciones().obtener_o_generar(ident, key, 'valoracion-ia:' + self.user, generar)
+        self.assertEqual(primera, respuesta_ia)
+        self.assertEqual(segunda, respuesta_ia)
+        generar.assert_called_once()
+        self.assertEqual(self.repo.obtener(ident), antes)
+        with conectar() as conn:
+            self.assertEqual(conn.execute('SELECT count(*) AS n FROM evaluaciones').fetchone()['n'], 1)
+            self.assertEqual(conn.execute('SELECT count(*) AS n FROM revisiones').fetchone()['n'], 0)
+        # Explicación y valoración tienen cuotas independientes, pero comparten infraestructura segura.
+        self.cache.obtener_o_generar(ident, 'b' * 64, self.user, self.generar)
+        with conectar() as conn:
+            self.assertEqual(conn.execute('SELECT count(*) AS n FROM cuotas_explicaciones').fetchone()['n'], 2)
+
     def setUp(self):
         self.url = database_url()
         self.schema = 'test_cache_'+uuid4().hex

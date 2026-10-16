@@ -1,0 +1,209 @@
+{
+  "baseline_prueba": {
+    "auc_roc": 0.5,
+    "average_precision": 0.23371647509578544,
+    "brier": 0.1790991365626808,
+    "exactitud": 0.23371647509578544,
+    "f1": 0.37888198757763975,
+    "filas": 783,
+    "matriz_confusion": [
+      [
+        0,
+        600
+      ],
+      [
+        0,
+        183
+      ]
+    ],
+    "positivos": 183,
+    "precision_positiva": 0.23371647509578544,
+    "prevalencia_muestral": 0.23371647509578544,
+    "sensibilidad": 1.0
+  },
+  "coeficientes": [
+    0.04231710073470486,
+    0.03540325492700767,
+    -0.05672991087444036,
+    0.009995040652554176,
+    -0.017772843148753447,
+    -0.043420254190844644,
+    0.043420254190844686,
+    0.005437195897220491,
+    -0.005437195897220245,
+    -0.15375520802813208,
+    0.15375520802813208,
+    0.17426530695356215,
+    0.08900997462683088,
+    0.03053470439522769,
+    -0.13090898654766844,
+    -0.20114129677295073,
+    0.14764793340955146,
+    0.09372396372347681,
+    -0.0757626078656126,
+    0.043557466355976716,
+    -0.03830709594125969,
+    0.2220954746987574,
+    -0.015634009054708443,
+    0.06607350305161583,
+    -0.12533487253531223
+  ],
+  "columnas": [
+    "log_ingreso",
+    "periodicidad_1",
+    "periodicidad_2",
+    "periodicidad_3",
+    "periodicidad_4",
+    "ingreso_variable_1",
+    "ingreso_variable_2",
+    "presupuesto_1",
+    "presupuesto_2",
+    "gastos_cubiertos_1",
+    "gastos_cubiertos_2",
+    "ahorro_emergencia_1",
+    "ahorro_emergencia_2",
+    "ahorro_emergencia_3",
+    "ahorro_emergencia_4",
+    "ahorro_emergencia_5",
+    "credito_departamental",
+    "credito_bancaria",
+    "credito_nomina",
+    "credito_personal",
+    "credito_automotriz",
+    "credito_vivienda",
+    "credito_grupal",
+    "credito_aplicacion",
+    "credito_otro"
+  ],
+  "escala": [
+    1.1723525729151163,
+    0.4999944422588597,
+    0.37876190099511975,
+    0.4688175494454807,
+    0.05064762419242635,
+    0.4979508852762583,
+    0.4979508852762583,
+    0.48254824664127893,
+    0.48254824664127893,
+    0.4830102451961675,
+    0.4830102451961675,
+    0.40824195242384465,
+    0.37426774571810345,
+    0.4668783750606411,
+    0.3524095649176695,
+    0.360832842597822,
+    0.4934986162716309,
+    0.49512471802692715,
+    0.3076740652837339,
+    0.3352203389026267,
+    0.21825443129989572,
+    0.41358987427704713,
+    0.24143093770094143,
+    0.19664197832188485,
+    0.02069900808855508
+  ],
+  "formato": "nexocredit-enif-logistica-json-v1",
+  "fuente": "https://www.inegi.org.mx/contenidos/programas/enif/2024/microdatos/enif_2024_bd_csv.zip",
+  "fuente_sha256": "00e4b0b42775276b2da236a5bba8c64dc5a92c289908a4727dec93dc7684f039",
+  "intercepto": -1.2610237453049045,
+  "limites": "Asociación transversal con atrasos autodeclarados entre junio de 2023 y la entrevista de 2024; no predice impagos futuros, no consulta Buró ni verifica identidad. Sólo personas con ingreso laboral positivo declarado y al menos un crédito formal. Muestra de casos completos, sin ponderar por factores de expansión; no estima tasas nacionales. No validado para decisiones crediticias; no causal ni calibrado prospectivamente.",
+  "media": [
+    8.359251715305763,
+    0.4976425203600514,
+    0.17359622803257607,
+    0.3261894556365195,
+    0.002571795970852979,
+    0.5452207458208316,
+    0.4547792541791685,
+    0.3690527218174025,
+    0.6309472781825975,
+    0.6292327475353622,
+    0.3707672524646378,
+    0.21131590227175312,
+    0.16845263609087013,
+    0.3210458636948135,
+    0.1453064723531933,
+    0.15387912558936992,
+    0.5803686240891556,
+    0.4303471924560652,
+    0.10587226746678097,
+    0.12901843120445777,
+    0.05015002143163309,
+    0.21903129018431206,
+    0.062151735962280324,
+    0.04029147021003,
+    0.0004286326618088298
+  ],
+  "metricas": {
+    "entrenamiento": {
+      "auc_roc": 0.6572113553359773,
+      "average_precision": 0.3688594455938486,
+      "brier": 0.16982810862280953,
+      "exactitud": 0.4800685812258894,
+      "f1": 0.4187829420220412,
+      "filas": 2333,
+      "matriz_confusion": [
+        [
+          683,
+          1099
+        ],
+        [
+          114,
+          437
+        ]
+      ],
+      "positivos": 551,
+      "precision_positiva": 0.2845052083333333,
+      "prevalencia_muestral": 0.23617659665666524,
+      "sensibilidad": 0.7931034482758621
+    },
+    "prueba": {
+      "auc_roc": 0.6054963570127504,
+      "average_precision": 0.3340503462885197,
+      "brier": 0.17486584767851823,
+      "exactitud": 0.47509578544061304,
+      "f1": 0.38930163447251115,
+      "filas": 783,
+      "matriz_confusion": [
+        [
+          241,
+          359
+        ],
+        [
+          52,
+          131
+        ]
+      ],
+      "positivos": 183,
+      "precision_positiva": 0.2673469387755102,
+      "prevalencia_muestral": 0.23371647509578544,
+      "sensibilidad": 0.7158469945355191
+    },
+    "validacion": {
+      "auc_roc": 0.639333444047234,
+      "average_precision": 0.4025021915673632,
+      "brier": 0.17363668415935232,
+      "exactitud": 0.48227848101265824,
+      "f1": 0.4231311706629055,
+      "filas": 790,
+      "matriz_confusion": [
+        [
+          231,
+          368
+        ],
+        [
+          41,
+          150
+        ]
+      ],
+      "positivos": 191,
+      "precision_positiva": 0.28957528957528955,
+      "prevalencia_muestral": 0.2417721518987342,
+      "sensibilidad": 0.7853403141361257
+    }
+  },
+  "modelo_id": "nexocredit-enif2024-logistica-v1",
+  "objetivo": "algun_atraso_reportado",
+  "pais": "México",
+  "umbral": 0.18
+}

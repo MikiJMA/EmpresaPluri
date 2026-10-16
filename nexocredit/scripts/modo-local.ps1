@@ -37,6 +37,7 @@ function Initialize-NexoLocalConfig([string]$EnvFile) {
 function Get-NexoLocalValues([string]$EnvFile) {
     $values = @{
         EXPLICACIONES_PROVEEDOR = 'ollama'; DOCUMENTOS_PROVEEDOR = 'local'; ML_PROVEEDOR = 'local'
+        VALORACION_IA_PROVEEDOR = 'ollama'
         OLLAMA_URL = 'http://host.docker.internal:11434'
     }
     # Solo un valor en la misma linea cuenta como modelo configurado.
@@ -70,13 +71,14 @@ if ($Accion -ne 'usuario') {
 $command = Get-Command docker.exe -ErrorAction SilentlyContinue
 $dockerExe = if ($command) { $command.Source } else { Join-Path $env:LOCALAPPDATA 'Programs\DockerDesktop\resources\bin\docker.exe' }
 if (-not (Test-Path -LiteralPath $dockerExe)) { throw 'No se encontro Docker Desktop.' }
+$composeArgs = @('compose', '--project-directory', $composeDir, '--env-file', $privateFile, '-f', (Join-Path $composeDir 'docker-compose.yml'))
 if ($Accion -eq 'usuario') {
     $usuarioLocal = Read-Host 'Usuario local nuevo (3 a 64 caracteres; letras, numeros, punto, guion o guion bajo)'
     $nombreLocal = Read-Host 'Nombre que aparecera en NexoCredit'
-    & $dockerExe exec -it plurione-docker-backend-1 python scripts/crear_usuario_local.py --usuario $usuarioLocal --nombre $nombreLocal
+    # Compose identifica el servicio de ESTA instalacion sin depender del nombre del contenedor.
+    & $dockerExe @composeArgs exec backend python scripts/crear_usuario_local.py --usuario $usuarioLocal --nombre $nombreLocal
     if ($LASTEXITCODE -ne 0) { throw 'No se creo la cuenta. Revisa el mensaje anterior.' }
 } else {
-    $composeArgs = @('compose', '--project-directory', $composeDir, '--env-file', $privateFile, '-f', (Join-Path $composeDir 'docker-compose.yml'))
     & $dockerExe @composeArgs up -d --no-build --pull never --wait --wait-timeout 180 backend
     if ($LASTEXITCODE -ne 0) { throw 'Configuracion guardada; no se pudo iniciar el backend. No se borraron datos.' }
     Write-Host 'Modo aplicado. Recarga http://localhost:8080/. Ollama debe estar abierto para generar explicaciones locales.'

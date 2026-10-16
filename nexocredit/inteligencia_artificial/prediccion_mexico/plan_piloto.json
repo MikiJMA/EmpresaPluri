@@ -1,0 +1,25 @@
+{
+  "protocolo": "nexocredit-piloto-comparacion-v1",
+  "semilla": 20261016,
+  "datos": "ENIF 2024: mismos casos completos y variables del modelo v1",
+  "objetivo": "Asociación con atrasos reportados, no impago futuro empresarial",
+  "particion": "Sólo 3123 casos de desarrollo; excluir los 783 de prueba histórica ya observada con GroupShuffleSplit semilla 20261015",
+  "validacion_externa": "5 folds StratifiedGroupKFold por UPM_DIS, shuffle=true",
+  "validacion_interna": "3 folds StratifiedGroupKFold por UPM_DIS, shuffle=true",
+  "candidatos": {
+    "logistica": {"C": 10.0, "max_iter": 2000, "preprocesado": "StandardScaler"},
+    "bosque": {"n_estimators": 200, "max_depth": 6, "min_samples_leaf": 20, "n_jobs": 2},
+    "gradient_boosting": {"n_estimators": 120, "max_depth": 2, "min_samples_leaf": 30, "learning_rate": 0.05}
+  },
+  "seleccion_interna": "Average precision de probabilidades OOF internas; no usar fold externo",
+  "calibracion": "Sigmoide sobre logit de probabilidades OOF internas; ajustar sin etiquetas del fold externo",
+  "umbral": "F1 en desarrollo interno, provisional para comparar; no política de aprobación",
+  "bootstrap": "300 remuestreos por UPM_DIS de predicciones externas; intervalos percentiles 95% aproximados",
+  "promocion_automatica": false,
+  "restricciones": [
+    "No consultar ni retocar hiperparámetros contra la prueba histórica",
+    "No comparar AUC de validación cruzada de desarrollo como si fuera mejora sobre AUC de prueba 0.605",
+    "No sustituir automáticamente el artefacto servido",
+    "No habilitar decisiones o uso con clientes reales sin validación empresarial independiente"
+  ]
+}

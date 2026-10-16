@@ -1,0 +1,5 @@
+# Entorno real de la comparación agrupada del piloto; no modifica el modelo v1.
+numpy==2.5.4
+pandas==3.0.6
+scikit-learn==1.9.1
+pydantic>=2.9,<3

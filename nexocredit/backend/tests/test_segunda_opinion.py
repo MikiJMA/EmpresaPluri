@@ -1,125 +1,155 @@
-"""Tests para segunda_opinion.py: mapeo, integración con /evaluar y resiliencia ante modelo ausente."""
+"""Comparación académica autenticada: no recalcula, persiste ni convierte MXN a UCI."""
+import copy
 import os
 import unittest
-from unittest.mock import patch, MagicMock
+from unittest.mock import AsyncMock, Mock, call, patch
+from uuid import UUID
 
 from fastapi import HTTPException
 from fastapi.testclient import TestClient
+from psycopg import OperationalError
 
-from backend.app.main import app
 from backend.app.autenticacion_entra_id.seguridad import usuario_actual
-from backend.app.evaluacion_crediticia.segunda_opinion import mapear_a_uci, obtener_segunda_opinion, _atraso_a_codigo_uci
-from backend.app.validacion_datos.credito import SolicitudCredito
+from backend.app.integraciones.prediccion_azure_ml.cliente_ml import FEATURES
+from backend.app.integraciones.prediccion_local import cliente_local
+from backend.app.main import app
+from backend.app.persistencia_postgresql.repositorio import obtener_repositorio
+
+RUTA_PREDICCION = 'backend.app.rutas_api.segunda_opinion.predecir'
 
 
-def solicitud(**kwargs):
-    base = dict(rfc='AAAA010101AA1', ingresos_mensuales=30000, gastos_mensuales=10000,
-                score_buro_actual=700, deuda_actual=50000, pagos_mensuales_creditos=2500,
-                dias_atraso_actual=0)
-    return SolicitudCredito(**{**base, **kwargs})
-
-
-class MapeoUCITests(unittest.TestCase):
-    def test_estructura_tiene_19_features(self):
-        from backend.app.integraciones.prediccion_azure_ml.cliente_ml import FEATURES
-        resultado = mapear_a_uci(solicitud())
-        self.assertEqual(set(resultado.keys()), set(FEATURES))
-
-    def test_todos_son_enteros(self):
-        for v in mapear_a_uci(solicitud()).values():
-            self.assertIsInstance(v, int)
-
-    def test_deuda_cero_produce_limit_bal_positivo(self):
-        uci = mapear_a_uci(solicitud(deuda_actual=0))
-        self.assertGreater(uci['LIMIT_BAL'], 0)  # modelo exige LIMIT_BAL > 0
-
-    def test_atraso_cero_produce_codigo_puntual(self):
-        uci = mapear_a_uci(solicitud(dias_atraso_actual=0))
-        self.assertEqual(uci['PAY_0'], -1)
-
-    def test_atraso_30_dias_produce_codigo_al_menos_1(self):
-        # 30 días → código de retraso (>=1), nunca -1 (puntual)
-        codigo = _atraso_a_codigo_uci(30)
-        self.assertGreaterEqual(codigo, 1)
-        self.assertLessEqual(codigo, 9)
-
-    def test_atraso_muy_alto_se_satura_en_9(self):
-        self.assertEqual(_atraso_a_codigo_uci(999), 9)
-
-    def test_pagos_mapean_a_pay_amt1(self):
-        uci = mapear_a_uci(solicitud(pagos_mensuales_creditos=3000))
-        self.assertEqual(uci['PAY_AMT1'], 3000)
-
-    def test_bill_amt_del_mes_1_igual_a_deuda(self):
-        uci = mapear_a_uci(solicitud(deuda_actual=50000))
-        self.assertEqual(uci['BILL_AMT1'], 50000)
-
-
-class SegundaOpinionIntegracionTests(unittest.TestCase):
-    def test_devuelve_dict_cuando_modelo_disponible(self):
-        resultado = obtener_segunda_opinion(solicitud())
-        # Si el artefacto está presente debe devolver dict; si no, None
-        self.assertTrue(resultado is None or isinstance(resultado, dict))
-
-    def test_no_lanza_excepcion_si_modelo_falla(self):
-        with patch('backend.app.evaluacion_crediticia.segunda_opinion.obtener_segunda_opinion',
-                   return_value=None):
-            # La función no debe propagar excepciones
-            from backend.app.evaluacion_crediticia.segunda_opinion import obtener_segunda_opinion as f
-            try:
-                resultado = f(solicitud())
-                self.assertTrue(resultado is None or isinstance(resultado, dict))
-            except Exception as exc:
-                self.fail(f'obtener_segunda_opinion lanzó excepción inesperada: {exc}')
-
-    def test_si_modelo_falla_retorna_none(self):
-        with patch('backend.app.integraciones.prediccion_local.cliente_local.predecir',
-                   side_effect=HTTPException(503, 'artefacto no disponible')):
-            resultado = obtener_segunda_opinion(solicitud())
-            self.assertIsNone(resultado)
-
-
-class EndpointEvaluarConSegundaOpinionTests(unittest.TestCase):
+class SegundaOpinionTests(unittest.TestCase):
     def setUp(self):
-        self.env = patch.dict(os.environ, {'DATABASE_URL': '', 'ML_PROVEEDOR': 'local'})
-        self.env.start()
-        self.addCleanup(self.env.stop)
-        app.dependency_overrides[usuario_actual] = lambda: {'id': 'qa', 'roles': ['Analista']}
+        self.entorno = patch.dict(os.environ, {'ML_PROVEEDOR': 'local', 'DATABASE_URL': ''})
+        self.entorno.start()
+        self.addCleanup(self.entorno.stop)
         self.addCleanup(app.dependency_overrides.clear)
+        app.dependency_overrides[usuario_actual] = lambda: {'id': 'qa', 'roles': ['Analista']}
+        self.repositorio = Mock()
+        self.identificador = UUID('00000000-0000-4000-8000-000000000123')
+        self.registro = {
+            'id': str(self.identificador), 'rfc': 'NO-ENVIAR-RFC',
+            'nivel_riesgo_preliminar': 'Bajo', 'version_modelo': 'reglas-demo-v2',
+            'solicitud': {'ingresos_mensuales': 30000, 'gastos_mensuales': 10000},
+        }
+        self.repositorio.obtener.return_value = self.registro
+        app.dependency_overrides[obtener_repositorio] = lambda: self.repositorio
+        self.valores = {nombre: 0 for nombre in FEATURES}
+        self.valores['LIMIT_BAL'] = 200000
+        self.valores.update({nombre: 3000 for nombre in FEATURES if nombre.startswith('PAY_AMT')})
         self.client = TestClient(app)
 
-    def _payload(self, **kwargs):
-        base = dict(rfc='AAAA010101AA1', ingresos_mensuales=30000, gastos_mensuales=10000,
-                    score_buro_actual=700, deuda_actual=50000, pagos_mensuales_creditos=2500,
-                    dias_atraso_actual=0)
-        return {**base, **kwargs}
+    def enviar(self, valores=None, identificador=None, **otros):
+        return self.client.post(
+            f'/api/v1/evaluaciones/{identificador or self.identificador}/segunda-opinion',
+            json={'valores': self.valores if valores is None else valores, **otros},
+        )
 
-    def test_respuesta_incluye_clave_segunda_opinion_ml(self):
-        response = self.client.post('/api/v1/evaluar', json=self._payload())
+    def test_compara_reglas_guardadas_y_modelo_real_sin_red_ni_escrituras(self):
+        original = copy.deepcopy(self.registro)
+        with patch('httpx.AsyncClient') as red, patch('pickle.load') as pickle:
+            response = self.enviar()
         self.assertEqual(response.status_code, 200)
-        self.assertIn('segunda_opinion_ml', response.json())
+        self.assertEqual(response.headers['cache-control'], 'no-store')
+        result = response.json()
+        self.assertEqual(set(result), {'evaluacion_id', 'riesgo_por_reglas', 'version_reglas',
+                                      'modelo', 'guardada', 'advertencia'})
+        self.assertEqual(result['evaluacion_id'], str(self.identificador))
+        self.assertEqual(result['riesgo_por_reglas'], 'Bajo')
+        self.assertEqual(result['version_reglas'], 'reglas-demo-v2')
+        self.assertIs(result['guardada'], False)
+        self.assertEqual(result['modelo']['proveedor'], 'local')
+        self.assertEqual(result['modelo']['modelo_configurado'], cliente_local.MODELO_ID)
+        self.assertIs(type(result['modelo']['incumplimiento_predicho']), bool)
+        self.assertNotIn('probabilidad', result['modelo'])
+        self.assertIn('NTD', result['advertencia'])
+        self.assertIn('no se guardan', result['advertencia'])
+        self.assertNotIn('NO-ENVIAR-RFC', response.text)
+        self.repositorio.obtener.assert_called_once_with(self.identificador)
+        self.assertEqual(self.repositorio.mock_calls, [call.obtener(self.identificador)])
+        self.assertEqual(self.registro, original)
+        red.assert_not_called()
+        pickle.assert_not_called()
 
-    def test_segunda_opinion_es_dict_o_none(self):
-        # El modelo está disponible → devuelve dict; si no estuviera, None
-        body = self.client.post('/api/v1/evaluar', json=self._payload()).json()
-        opinion = body['segunda_opinion_ml']
-        self.assertTrue(opinion is None or isinstance(opinion, dict))
-
-    def test_evaluacion_principal_no_se_ve_afectada_si_modelo_falla(self):
-        with patch('backend.app.rutas_api.routes.obtener_segunda_opinion', return_value=None):
-            response = self.client.post('/api/v1/evaluar', json=self._payload())
+    def test_conserva_resultado_historico_v1_sin_recalcularlo(self):
+        # El score actual no interviene: la respuesta reproduce exclusivamente el resultado guardado.
+        self.registro.update(nivel_riesgo_preliminar='Medio', version_modelo='reglas-demo-v1')
+        with patch('backend.app.evaluacion_crediticia.scoring.evaluar_credito') as reglas:
+            response = self.enviar()
         self.assertEqual(response.status_code, 200)
-        body = response.json()
-        self.assertEqual(body['nivel_riesgo_preliminar'], 'Bajo')
-        self.assertIsNone(body['segunda_opinion_ml'])
+        self.assertEqual(response.json()['riesgo_por_reglas'], 'Medio')
+        self.assertEqual(response.json()['version_reglas'], 'reglas-demo-v1')
+        reglas.assert_not_called()
 
-    def test_segunda_opinion_none_cuando_modelo_no_disponible(self):
-        with patch('backend.app.rutas_api.routes.obtener_segunda_opinion', return_value=None):
-            body = self.client.post('/api/v1/evaluar', json=self._payload()).json()
-        self.assertIsNone(body['segunda_opinion_ml'])
+    def test_reutiliza_19_campos_uci_estrictos_y_no_admite_campos_de_identidad(self):
+        incompleto = dict(self.valores)
+        incompleto.pop('PAY_AMT6')
+        casos = [incompleto, {}, {**self.valores, 'RFC': 123}, {**self.valores, 'SEX': 1}]
+        for campo, valor in (('LIMIT_BAL', 0), ('PAY_AMT1', -1), ('PAY_0', -3), ('PAY_6', 10),
+                             ('BILL_AMT1', True), ('BILL_AMT1', '1'), ('BILL_AMT1', 1.5),
+                             ('BILL_AMT1', 2147483648)):
+            casos.append({**self.valores, campo: valor})
+        with patch(RUTA_PREDICCION, new_callable=AsyncMock) as modelo:
+            for valores in casos:
+                with self.subTest(valores=valores):
+                    self.assertEqual(self.enviar(valores).status_code, 422)
+            self.assertEqual(self.enviar(rfc='NO-ENVIAR-RFC').status_code, 422)
+            modelo.assert_not_called()
+        self.repositorio.obtener.assert_not_called()
 
-    def test_ejemplo_del_readme_produce_riesgo_bajo(self):
-        """El ejemplo exacto de la sección 'Ruta rápida para el revisor' del README."""
-        body = self.client.post('/api/v1/evaluar', json=self._payload()).json()
-        self.assertEqual(body['nivel_riesgo_preliminar'], 'Bajo')
-        self.assertEqual(body['rfc'], 'AAAA010101AA1')
+    def test_no_invoca_modelo_para_uuid_invalido_o_evaluacion_ausente(self):
+        with patch(RUTA_PREDICCION, new_callable=AsyncMock) as modelo:
+            self.assertEqual(self.enviar(identificador='no-es-uuid').status_code, 422)
+            self.repositorio.obtener.assert_not_called()
+            self.repositorio.obtener.return_value = None
+            self.assertEqual(self.enviar().status_code, 404)
+            modelo.assert_not_called()
+
+    def test_base_no_configurada_o_inaccesible_no_invoca_modelo(self):
+        with patch(RUTA_PREDICCION, new_callable=AsyncMock) as modelo:
+            app.dependency_overrides[obtener_repositorio] = lambda: None
+            self.assertEqual(self.enviar().status_code, 503)
+            app.dependency_overrides[obtener_repositorio] = lambda: self.repositorio
+            self.repositorio.obtener.side_effect = OperationalError('NO-ENVIAR-CONEXION')
+            response = self.enviar()
+            self.assertEqual(response.status_code, 503)
+            self.assertNotIn('NO-ENVIAR-CONEXION', response.text)
+            modelo.assert_not_called()
+
+    def test_requiere_autenticacion(self):
+        app.dependency_overrides.pop(usuario_actual)
+        with patch(RUTA_PREDICCION, new_callable=AsyncMock) as modelo:
+            self.assertEqual(self.enviar().status_code, 401)
+            modelo.assert_not_called()
+            self.repositorio.obtener.assert_not_called()
+
+    def test_errores_del_proveedor_no_se_convierten_en_prediccion(self):
+        for codigo in (502, 503, 504):
+            with self.subTest(codigo=codigo), patch(RUTA_PREDICCION, new_callable=AsyncMock) as modelo:
+                modelo.side_effect = HTTPException(codigo, 'Proveedor no disponible.')
+                response = self.enviar()
+                self.assertEqual(response.status_code, codigo)
+                self.assertNotIn('modelo', response.json())
+
+    def test_azure_explicito_preserva_contrato_y_no_envia_datos_del_solicitante(self):
+        prediccion = {'incumplimiento_predicho': True, 'origen': 'Azure Machine Learning',
+                      'modelo_configurado': 'modelo-academico-test', 'modo': 'academico',
+                      'advertencia': 'Clasificación académica, no probabilidad ni autorización de crédito.'}
+        with patch.dict(os.environ, {'ML_PROVEEDOR': 'azure'}), patch(
+                'backend.app.integraciones.prediccion_azure_ml.cliente_ml.predecir',
+                new_callable=AsyncMock, return_value=prediccion) as azure:
+            response = self.enviar()
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['modelo'], {**prediccion, 'proveedor': 'azure'})
+        azure.assert_awaited_once_with(self.valores)
+        self.assertNotIn('NO-ENVIAR-RFC', str(azure.call_args))
+
+    def test_proveedor_deshabilitado_no_simula_segunda_opinion(self):
+        with patch.dict(os.environ, {'ML_PROVEEDOR': 'deshabilitado'}):
+            response = self.enviar()
+        self.assertEqual(response.status_code, 503)
+        self.assertNotIn('modelo', response.json())
+
+
+if __name__ == '__main__':
+    unittest.main()

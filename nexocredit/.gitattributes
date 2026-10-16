@@ -1,2 +1,6 @@
 # La huella del modelo se comprueba por bytes; no convertir sus saltos en Windows.
 backend/app/integraciones/prediccion_local/artefactos/*.json text eol=lf
+backend/app/integraciones/prediccion_mexico/artefactos/*.json text eol=lf
+backend/app/integraciones/prediccion_mexico/piloto/**/*.json text eol=lf
+inteligencia_artificial/prediccion_mexico/plan_piloto.json text eol=lf
+inteligencia_artificial/prediccion_mexico/comparar_piloto.py text eol=lf

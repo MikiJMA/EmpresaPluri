@@ -43,6 +43,32 @@ class BackupTests(unittest.TestCase):
         self.assertEqual(path, self.folder.resolve())
         self.assertEqual(data['fingerprints'], FINGERPRINTS)
 
+    def test_origen_se_resuelve_por_servicio_compose_y_no_por_nombre_antiguo(self):
+        container = IDENTITY['container']
+        values = iter([backup.COMPOSE_PROJECT, 'postgres',
+                       '[{"HostIp":"127.0.0.1","HostPort":"55433"}]',
+                       'true', container, IDENTITY['image']])
+        with patch.object(backup, 'run', return_value=subprocess.CompletedProcess([], 0, container.encode())) as command, \
+                patch.object(backup, 'inspect_value', side_effect=lambda *_: next(values)) as inspect:
+            identity = backup.source_identity('docker-ficticio')
+        self.assertEqual(identity, IDENTITY)
+        self.assertEqual(command.call_args.args[0][-3:], ['ps', '--quiet', 'postgres'])
+        self.assertIn(str(backup.PROJECT / 'infraestructura/contenedores_docker/docker-compose.yml'),
+                      command.call_args.args[0])
+        self.assertTrue(all(call.args[1] == container for call in inspect.call_args_list))
+
+    def test_origen_compose_rechaza_multiples_ids_o_proyecto_ajeno(self):
+        for invalid in ('', 'contenedor-por-nombre', 'a' * 64 + '\n' + 'b' * 64):
+            with self.subTest(invalid=invalid), \
+                    patch.object(backup, 'run', return_value=subprocess.CompletedProcess([], 0, invalid.encode())), \
+                    patch.object(backup, 'inspect_value') as inspect, self.assertRaises(backup.BackupError):
+                backup.source_identity('docker-ficticio')
+            inspect.assert_not_called()
+        with patch.object(backup, 'run', return_value=subprocess.CompletedProcess([], 0, b'a' * 64)), \
+                patch.object(backup, 'inspect_value', side_effect=['proyecto-ajeno', 'postgres', '[]']), \
+                self.assertRaises(backup.BackupError):
+            backup.source_identity('docker-ficticio')
+
     def test_rechaza_manipulacion_antes_de_docker(self):
         self.archive.write_bytes(b'PGDMPdatos-distintos')
         with patch.object(backup, 'run') as command, self.assertRaises(backup.BackupError):

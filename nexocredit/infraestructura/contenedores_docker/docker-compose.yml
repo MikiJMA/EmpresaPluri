@@ -58,6 +58,7 @@ services:
       EXPLICACIONES_PROVEEDOR: ${EXPLICACIONES_PROVEEDOR:-azure}
       DOCUMENTOS_PROVEEDOR: ${DOCUMENTOS_PROVEEDOR:-azure}
       ML_PROVEEDOR: ${ML_PROVEEDOR:-azure}
+      VALORACION_IA_PROVEEDOR: ${VALORACION_IA_PROVEEDOR:-ollama}
       OLLAMA_URL: ${OLLAMA_URL:-http://host.docker.internal:11434}
       OLLAMA_MODEL: ${OLLAMA_MODEL:-llama3.1:8b}
     depends_on:

@@ -8,10 +8,14 @@ import psycopg
 
 ROOT = Path(__file__).resolve().parents[1]
 PRIVATE = ROOT / '.local' / 'powerbi' / '.env'
+COMPOSE_DIR = ROOT / 'infraestructura' / 'contenedores_docker'
 docker = shutil.which('docker') or str(Path(os.environ['LOCALAPPDATA']) / 'Programs/DockerDesktop/resources/bin/docker.exe')
 
 def sql(text):
-    result = subprocess.run([docker, 'exec', '-i', 'plurione-docker-postgres-1', 'psql', '-U', 'pluri_admin', '-d', 'pluri_credito', '-v', 'ON_ERROR_STOP=1', '-At'], input=text, text=True, capture_output=True, encoding='utf-8')
+    result = subprocess.run([docker, 'compose', '--project-directory', str(COMPOSE_DIR),
+                             '--env-file', str(COMPOSE_DIR / '.env'), '-f', str(COMPOSE_DIR / 'docker-compose.yml'),
+                             'exec', '-T', 'postgres', 'psql', '-U', 'pluri_admin', '-d', 'pluri_credito',
+                             '-v', 'ON_ERROR_STOP=1', '-At'], input=text, text=True, capture_output=True, encoding='utf-8')
     if result.returncode:
         raise RuntimeError('No se pudo configurar Power BI. Verifica PostgreSQL y sus migraciones; no se muestran detalles para proteger credenciales.')
     return result.stdout.strip()

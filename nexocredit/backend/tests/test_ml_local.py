@@ -111,7 +111,12 @@ class MLLocalTests(unittest.TestCase):
                         lambda m: m.update(coeficientes=[float('nan')] * 19),
                         lambda m: m.update(intercepto=True),
                         lambda m: m.update(media=[]),
+                        lambda m: m.update(rangos_entrenamiento=[[0, True]] * 19),
+                        lambda m: m.update(rangos_entrenamiento=[[1, 0]] * 19),
+                        lambda m: m.update(rangos_entrenamiento=[[0, 1]] * 18),
                         lambda m: m['metricas']['prueba'].update(exactitud=1),
+                        lambda m: m['metricas']['prueba'].update(matriz_confusion=[[True, 1278], [492, 767]]),
+                        lambda m: m['metricas']['prueba'].update(matriz_confusion=[[3418, 1278], [492]]),
                         lambda m: m['metricas']['prueba'].update(matriz_confusion=[[0, 0], [0, 0]])):
             modelo = copy.deepcopy(ml.cargar_modelo())
             cambiar(modelo)

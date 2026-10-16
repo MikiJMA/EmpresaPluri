@@ -31,6 +31,9 @@ PASSWORD_FIXTURE = 'Contrasena-ficticia-QA-123'
 SECRET_FIXTURE = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_entrega_fixture'
 BASE = {'rfc': 'DEMO-ENTREGA-NO-REAL', 'ingresos_mensuales': 30000, 'gastos_mensuales': 10000,
         'deuda_actual': 100.10, 'pagos_mensuales_creditos': 50.05, 'dias_atraso_actual': 0}
+PERFIL_ENIF = {'ingreso_laboral': 12000, 'periodicidad': 3, 'ingreso_variable': 1,
+               'presupuesto': 1, 'gastos_cubiertos': 1, 'ahorro_emergencia': 4,
+               'creditos': ['bancaria']}
 
 
 @unittest.skipUnless(os.getenv('RUN_POSTGRES_TESTS') == '1', 'Requiere la base PostgreSQL efímera de la suite.')
@@ -143,15 +146,23 @@ class EntregaDemoPostgreSQLTests(unittest.TestCase):
 
         with self.subTest(etapa='Evaluaciones v2, idempotencia, historial y revisión'):
             guardadas = {}
+            analisis_modelo = None
             for score, riesgo in ((200, 'Alto'), (900, 'Bajo')):
                 ident = str(uuid4())
-                payload = {**BASE, 'score_buro_actual': score}
+                payload = {**BASE, 'score_buro_actual': score, 'perfil_enif': PERFIL_ENIF}
                 data = self.pedir('POST', '/api/v1/evaluar', headers={**headers, 'Idempotency-Key': ident}, json=payload)
                 self.assertTrue(data['guardado'])
                 self.assertEqual(data['id'], ident)
                 self.assertEqual(data['version_modelo'], 'reglas-demo-v2')
                 self.assertEqual(data['nivel_riesgo_preliminar'], riesgo)
                 self.assertEqual(data['margen_libre'], 20000)
+                modelo = data['analisis_mexico']
+                self.assertEqual(modelo['modelo_id'], 'nexocredit-enif2024-logistica-v1')
+                self.assertIs(modelo['reglas_score_utilizadas'], False)
+                self.assertIs(modelo['control_uso']['decision_automatizada_habilitada'], False)
+                if analisis_modelo is not None:
+                    self.assertEqual(modelo, analisis_modelo)
+                analisis_modelo = modelo
                 self.assertEqual(self.pedir('POST', '/api/v1/evaluar', headers={**headers, 'Idempotency-Key': ident},
                                            json=payload), data)
                 guardadas[riesgo] = ident
@@ -170,7 +181,8 @@ class EntregaDemoPostgreSQLTests(unittest.TestCase):
             detalle = self.pedir('GET', f'/api/v1/evaluaciones/{bajo}', headers=headers)
             self.assertEqual(detalle['estado_revision'], 'Aprobada')
             self.assertEqual(detalle['version_revision'], 1)
-            self.assertEqual(detalle['solicitud'], {**BASE, 'score_buro_actual': 900})
+            self.assertEqual(detalle['solicitud'], {**BASE, 'score_buro_actual': 900, 'perfil_enif': PERFIL_ENIF})
+            self.assertEqual(detalle['analisis_mexico'], analisis_modelo)
 
         with self.subTest(etapa='Documentos, explicación NO IA, modelo local y fuentes simuladas'):
             documentos = self.pedir('GET', '/api/v1/azure-search/documentos', headers=headers)

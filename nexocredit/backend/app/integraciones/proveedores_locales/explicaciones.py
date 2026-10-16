@@ -4,6 +4,7 @@ import math
 import os
 import re
 import unicodedata
+from contextlib import contextmanager
 from threading import BoundedSemaphore
 from urllib.parse import urlsplit
 
@@ -11,6 +12,18 @@ import httpx
 from fastapi import HTTPException
 
 _slots = BoundedSemaphore(2)
+
+
+@contextmanager
+def reservar_ollama():
+    """Comparte el límite local entre explicaciones y valoraciones del escenario."""
+    if not _slots.acquire(blocking=False):
+        raise HTTPException(429, 'Ya hay generaciones Ollama en curso. Espera antes de intentar otra.')
+    try:
+        yield
+    finally:
+        _slots.release()
+
 HOSTS_LOCALES = {'localhost', '127.0.0.1', '::1', 'host.docker.internal'}
 CONTRATO_OLLAMA = 'hechos-servidor-comentario-academico-v3'
 INSTRUCCIONES = (
@@ -199,12 +212,8 @@ def explicar_ollama(registro, buscar):
     escenario = escenario_permitido(registro)
     hechos = hechos_calculados(escenario)
     doc = guia_reglas(buscar, escenario['version_modelo'])
-    if not _slots.acquire(blocking=False):
-        raise HTTPException(429, 'Ya hay explicaciones en curso. Espera antes de intentar otra.')
-    try:
+    with reservar_ollama():
         return _generar_ollama(url, modelo, escenario, doc, hechos)
-    finally:
-        _slots.release()
 
 
 def _generar_ollama(url, modelo, escenario, doc, hechos):

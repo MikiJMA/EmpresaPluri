@@ -1,0 +1,152 @@
+{
+  "modelo_id": "nexocredit-enif2024-logistica-v1",
+  "modelo_sha256": "1f6238b217583d0f5c00320d9caf3c331e422452104776b9b99b57a75440e621",
+  "fuente": "https://www.inegi.org.mx/contenidos/programas/enif/2024/microdatos/enif_2024_bd_csv.zip",
+  "zip_sha256": "00e4b0b42775276b2da236a5bba8c64dc5a92c289908a4727dec93dc7684f039",
+  "tmodulo_sha256": "5f1be142073f5758cbfb302fd7fb5dbf89c006b00729994207a9f05a46e1b8fd",
+  "entrevistas": 13502,
+  "casos_utilizados": 3906,
+  "excluidos": {
+    "sin_credito": 8254,
+    "atraso_desconocido": 13,
+    "perfil_incompleto": 1329
+  },
+  "sin_upm_compartidas": true,
+  "particion": "60/20/20 aproximado por UPM_DIS, aleatoria no temporal",
+  "semilla": 20261015,
+  "candidatos": [
+    {
+      "C": 0.1,
+      "auc_validacion": 0.6390362646295309
+    },
+    {
+      "C": 1.0,
+      "auc_validacion": 0.6392460383361448
+    },
+    {
+      "C": 10.0,
+      "auc_validacion": 0.639333444047234
+    }
+  ],
+  "seleccion": {
+    "C": 10.0,
+    "umbral": 0.18,
+    "criterio": "C por AUC y umbral por F1 sólo en validación"
+  },
+  "sin_variables_protegidas": true,
+  "excluidos_del_modelo": [
+    "RFC",
+    "CURP",
+    "nombre",
+    "edad",
+    "sexo",
+    "origen_etnico",
+    "discapacidad",
+    "P6_3_* (objetivo)",
+    "P6_4_*",
+    "P4_4_7",
+    "P4_6_2",
+    "P6_7",
+    "score_buro_actual",
+    "dias_atraso_actual"
+  ],
+  "error_maximo_exportacion": 0.0,
+  "filas_contrastadas": 3906,
+  "versiones": {
+    "python": "3.12.14",
+    "sklearn": "1.9.1",
+    "pandas": "3.0.1",
+    "numpy": "2.3.5"
+  },
+  "metricas": {
+    "entrenamiento": {
+      "filas": 2333,
+      "positivos": 551,
+      "prevalencia_muestral": 0.23617659665666524,
+      "auc_roc": 0.6572113553359773,
+      "average_precision": 0.3688594455938486,
+      "brier": 0.16982810862280953,
+      "exactitud": 0.4800685812258894,
+      "sensibilidad": 0.7931034482758621,
+      "precision_positiva": 0.2845052083333333,
+      "f1": 0.4187829420220412,
+      "matriz_confusion": [
+        [
+          683,
+          1099
+        ],
+        [
+          114,
+          437
+        ]
+      ]
+    },
+    "validacion": {
+      "filas": 790,
+      "positivos": 191,
+      "prevalencia_muestral": 0.2417721518987342,
+      "auc_roc": 0.639333444047234,
+      "average_precision": 0.4025021915673632,
+      "brier": 0.17363668415935232,
+      "exactitud": 0.48227848101265824,
+      "sensibilidad": 0.7853403141361257,
+      "precision_positiva": 0.28957528957528955,
+      "f1": 0.4231311706629055,
+      "matriz_confusion": [
+        [
+          231,
+          368
+        ],
+        [
+          41,
+          150
+        ]
+      ]
+    },
+    "prueba": {
+      "filas": 783,
+      "positivos": 183,
+      "prevalencia_muestral": 0.23371647509578544,
+      "auc_roc": 0.6054963570127504,
+      "average_precision": 0.3340503462885197,
+      "brier": 0.17486584767851823,
+      "exactitud": 0.47509578544061304,
+      "sensibilidad": 0.7158469945355191,
+      "precision_positiva": 0.2673469387755102,
+      "f1": 0.38930163447251115,
+      "matriz_confusion": [
+        [
+          241,
+          359
+        ],
+        [
+          52,
+          131
+        ]
+      ]
+    }
+  },
+  "baseline_prueba": {
+    "filas": 783,
+    "positivos": 183,
+    "prevalencia_muestral": 0.23371647509578544,
+    "auc_roc": 0.5,
+    "average_precision": 0.23371647509578544,
+    "brier": 0.1790991365626808,
+    "exactitud": 0.23371647509578544,
+    "sensibilidad": 1.0,
+    "precision_positiva": 0.23371647509578544,
+    "f1": 0.37888198757763975,
+    "matriz_confusion": [
+      [
+        0,
+        600
+      ],
+      [
+        0,
+        183
+      ]
+    ]
+  },
+  "limites": "Asociación transversal con atrasos autodeclarados entre junio de 2023 y la entrevista de 2024; no predice impagos futuros, no consulta Buró ni verifica identidad. Sólo personas con ingreso laboral positivo declarado y al menos un crédito formal. Muestra de casos completos, sin ponderar por factores de expansión; no estima tasas nacionales. No validado para decisiones crediticias; no causal ni calibrado prospectivamente."
+}

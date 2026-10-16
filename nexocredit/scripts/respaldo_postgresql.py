@@ -22,7 +22,8 @@ from dotenv import dotenv_values
 
 PROJECT = Path(__file__).resolve().parents[1]
 BACKUPS = PROJECT / '.local' / 'respaldos_postgresql'
-SOURCE = 'plurione-docker-postgres-1'
+SOURCE = 'postgres'  # Servicio Compose, nunca un nombre de contenedor de otra instalación.
+COMPOSE_PROJECT = 'plurione-docker'  # Instalación existente: conserva su volumen; la entrega usa nexocredit-demo.
 DATABASE = 'pluri_credito'
 TEST_LABEL = 'io.plurione.restore-test'
 
@@ -57,17 +58,23 @@ def inspect_value(docker, container, template):
 
 
 def source_identity(docker):
-    project = inspect_value(docker, SOURCE, '{{index .Config.Labels "com.docker.compose.project"}}')
-    service = inspect_value(docker, SOURCE, '{{index .Config.Labels "com.docker.compose.service"}}')
-    port = inspect_value(docker, SOURCE, '{{json (index .NetworkSettings.Ports "5432/tcp")}}')
-    if project != 'plurione-docker' or service != 'postgres':
+    compose_dir = PROJECT / 'infraestructura/contenedores_docker'
+    container = run([docker, 'compose', '--project-directory', str(compose_dir),
+                     '--env-file', str(compose_dir / '.env'), '-f', str(compose_dir / 'docker-compose.yml'),
+                     'ps', '--quiet', SOURCE], timeout=15).stdout.decode().strip()
+    if not re.fullmatch(r'[a-f0-9]{64}', container):
+        raise BackupError('No se encontró un único PostgreSQL de esta instalación Compose.')
+    project = inspect_value(docker, container, '{{index .Config.Labels "com.docker.compose.project"}}')
+    service = inspect_value(docker, container, '{{index .Config.Labels "com.docker.compose.service"}}')
+    port = inspect_value(docker, container, '{{json (index .NetworkSettings.Ports "5432/tcp")}}')
+    if project != COMPOSE_PROJECT or service != SOURCE:
         raise BackupError('El contenedor no pertenece al PostgreSQL de esta demostracion.')
     if json.loads(port) != [{'HostIp': '127.0.0.1', 'HostPort': '55433'}]:
         raise BackupError('El puerto PostgreSQL no coincide con el destino local esperado.')
-    if inspect_value(docker, SOURCE, '{{.State.Running}}') != 'true':
+    if inspect_value(docker, container, '{{.State.Running}}') != 'true':
         raise BackupError('PostgreSQL no esta iniciado; no se reiniciara automaticamente.')
-    return {'container': inspect_value(docker, SOURCE, '{{.Id}}'),
-            'image': inspect_value(docker, SOURCE, '{{.Image}}')}
+    return {'container': inspect_value(docker, container, '{{.Id}}'),
+            'image': inspect_value(docker, container, '{{.Image}}')}
 
 
 def private_directory(path):
@@ -190,7 +197,7 @@ def create_backup(docker):
         fingerprints = conn.execute(fingerprint_query(tables)).fetchone()[0]
         archive = directory / 'base.dump'
         with archive.open('xb') as stream:
-            run([docker, 'exec', SOURCE, 'pg_dump', '-U', 'pluri_admin', '-d', DATABASE,
+            run([docker, 'exec', identity['container'], 'pg_dump', '-U', 'pluri_admin', '-d', DATABASE,
                  '--format=custom', '--no-owner', '--no-acl', '--lock-wait-timeout=10000',
                  '--snapshot=' + snapshot], stdout=stream)
             stream.flush()
