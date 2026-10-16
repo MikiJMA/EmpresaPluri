@@ -2,7 +2,7 @@ name: Validacion NexoCredit
 
 on:
   push:
-    branches: [main, codex/cierre-nexocredit-demo]
+    branches: [main, 'codex/**']
   pull_request:
   workflow_dispatch:
 

@@ -2,6 +2,12 @@
 
 Actualizado: 12/10/2026. Alternativa adicional a Azure Machine Learning para continuar la demostración sin una suscripción Azure. No sustituye el requisito tecnológico original ni es un modelo aprobado para crédito real.
 
+## Adenda de uso — segunda opinión principal — 15/10/2026
+
+El mismo modelo puede consultarse opcionalmente en **«Segunda opinión IA (académica)»**, junto al resultado de una evaluación guardada. El [recorrido vigente de operación](OPERACION.md) explica cómo cargar el ejemplo UCI independiente, consultar explícitamente y distinguir la clase del modelo del riesgo por reglas. Son escenarios diferentes: no se convierten los datos MXN del solicitante a NTD ni se valida su riesgo con este experimento.
+
+`POST /api/v1/evaluaciones/{identificador}/segunda-opinion` exige sesión, UUID existente y las mismas 19 entradas UCI estrictas. Devuelve riesgo/versión originales y modelo con `guardada: false`: no persiste la comparación ni recalcula v1/v2. Se mantienen el laboratorio separado, los límites UCI/Taiwán 2005 y Azure como proveedor explícito adicional; esta adenda no acredita una nueva consulta cloud ni modifica las métricas históricas siguientes.
+
 ## Cómo usarlo
 
 1. Mantén Docker Desktop abierto y entra en `http://localhost:8080/`. Si la pantalla sigue mostrando el diseño anterior, recarga con `Ctrl+F5` y vuelve a iniciar sesión con tu propia cuenta.

@@ -4,17 +4,72 @@
 
 | Dato de control | Valor |
 |---|---|
-| Versión | 1.4 |
-| Fecha de edición | 13/10/2026 |
+| Versión | 1.8 |
+| Fecha de edición | 15/10/2026 |
 | Línea base técnica | 04/10/2026 |
-| Incremento actual | 13/10/2026: reglas-demo-v2 y resúmenes sin decimales; Azure y campos de keys conservados |
+| Incremento actual | 15/10/2026: piloto empresarial en sombra y comparación rigurosa; historial empresarial aún no disponible |
 | Estado | Propuesta de alcance y aceptación; núcleo técnico comprobado |
 | Documento complementario | [PRD — NexoCredit](PRD_NEXOCREDIT.md) |
 | Documento anterior | [PRD/MVP combinado, conservado](../archivo/PRD_MVP_NEXOCREDIT.md) |
-| Entorno objetivo | Demo local existente; sin alojamiento o acceso remoto |
+| Entorno objetivo | Piloto empresarial local controlado, sin decisiones reales ni alojamiento remoto |
 | Aceptación formal | Pendiente de revisión y registro |
 
 Este documento define qué debe contener la entrega mínima, cómo priorizarla y cómo verificarla. No autoriza nuevas llamadas de pago, cambios cloud, publicación, uso de datos reales ni instalación para el asesor. La prioridad de una función no determina si ya está implementada.
+
+### Adenda 1.8 — MoSCoW de piloto empresarial
+
+| Prioridad | Alcance | Estado y aceptación |
+|---|---|---|
+| Must — M17 | Comparación de algoritmos con datos disponibles | Ejecutada: anidada 5×3, calibración interna e intervalos agrupados; test histórico excluido y sin mejora concluyente |
+| Must — M18 | Control del piloto en sombra | API protegida y pantalla: sin decisiones automatizadas/clientes reales habilitados, motivos pendientes, sin promoción por mayor AUC |
+| Must | Datos, límites e historial honestos | No inventar historiales ni aceptar sintéticos como validación empresarial; conservar resultados y fuentes anteriores |
+| Should — M19 | Contrato del historial futuro | Validador offline implementado/pruebas con fixtures; sin CSV empresarial procesado ni entrenamiento empresarial |
+| Could | Nuevo modelo con datos de la empresa | Condicionado a autorización, desenlace definido, madurez y validación temporal/por persona |
+| Won't en este incremento | Uso productivo, aprobaciones/rechazos automáticos o declarar fiabilidad demostrada | No hay evidencia empresarial que lo respalde |
+
+El objetivo actual es una prueba de empresa; el origen académico permanece como historial y no se falsean aceptaciones. [Resultados y condiciones para avanzar](../desarrollo/PILOTO_EMPRESARIAL.md). El éxito del MVP técnico no aprueba el modelo para operar con clientes reales.
+
+### Adenda 1.7 — MoSCoW de modelo mexicano integrado
+
+| Prioridad | Alcance | Criterio |
+|---|---|---|
+| Must — M16 | Inferencia de modelo entrenado con microdatos mexicanos en el POST principal | Perfil ENIF explícito, artefacto numérico verificado, resultado persistido y visible primero en evaluación y detalle; sin depender de Azure/Ollama |
+| Must | Calidad y origen honestos | Fuente INEGI/CNBV, métricas reales y capacidad limitada visibles; salida de encuesta no presentada como riesgo validado o impago futuro |
+| Must | Integridad y compatibilidad | No reescribir registros antiguos, rellenar desconocidos por cero o mapear MXN a UCI; fallo cerrado si cambia/falta artefacto |
+| Should | Reproducción y comparación | Entrenamiento por UPM, selección sólo en validación, prueba independiente, contraste JSON–sklearn y baseline; reglas conservadas como comparación |
+| Could | Mejorar el modelo con otra fuente autorizada | Requiere variables compatibles, validación independiente y nueva versión; no optimizar sobre la prueba ya observada |
+| Won't | Predictor bancario prospectivo o aprobaciones automáticas | No existen desenlaces longitudinales de préstamos en ENIF ni validación para tales decisiones |
+
+Estado: modelo académico entrenado e integrado. AUC 0.605496 de prueba, 26.73 % de precisión positiva: no promocionado como sustituto fiable de un motor crediticio. [Ficha completa](../../inteligencia_artificial/prediccion_mexico/README.md). Aceptación humana/asesor pendiente; no se presume.
+
+### Adenda 1.6 - MoSCoW de valoración IA del mismo escenario
+
+| Prioridad | Alcance | Criterio |
+|---|---|---|
+| Must - M15 | Valoración generativa automática de la solicitud guardada | Mismos seis datos financieros, UUID correcto, categoría y factores Ollama, sin formulario UCI adicional |
+| Must | Privacidad e integridad | Servidor lee fuente guardada; sin RFC/CURP o riesgo por reglas al LLM; no sobrescribir resultado histórico |
+| Must | Fallos y honestidad | Sin resultado simulado, probabilidad inventada o fallback Azure; revisión humana impuesta por código; distinguir IA generativa de scoring predictivo |
+| Should | Uso acotado y recuperación | Caché 24 h, diez valoraciones/h/cuenta, límite compartido de dos generaciones Ollama simultáneas; reintento manual, deduplicación y respuestas tardías descartadas |
+| Could | Modelo predictivo compatible con estos mismos datos | Futuro dataset autorizado y validación independiente, no etiquetas sintéticas para aparentar precisión |
+| Won't en este incremento | Decisiones crediticias reales o reemplazar reglas históricas | Sin aprobaciones, rechazos, Buró o uso de métricas UCI como precisión de Ollama |
+
+La presencia de IA en el flujo del mismo escenario queda separada de la validación estadística: la primera no prueba la segunda. Se mantienen las trece tecnologías obligatorias y las evidencias históricas, sin nueva CI remota. [PRD-RF17](PRD_NEXOCREDIT.md), [operación](../manuales/OPERACION.md).
+
+### Adenda 1.5 — MoSCoW de la segunda opinión académica — 15/10/2026
+
+| Prioridad | Alcance | Criterio de aceptación |
+|---|---|---|
+| Must — M14 | Modelo visible junto al resultado principal guardado | Mostrar riesgo/versión de reglas y clase/origen/modelo UCI en bloques distintos; no presentar la clase como riesgo del solicitante |
+| Must — integridad y privacidad | Escenario independiente con exactamente 19 enteros UCI, sin RFC/CURP o conversión MXN→NTD | Reutilizar validación UCI estricta; no derivar variables de la solicitud ni enviar sus datos al proveedor |
+| Must — seguridad y trazabilidad | Endpoint con autenticación, UUID existente y proveedor explícito | 401 sin sesión; 422 para UUID/entradas inválidos; 404 sin invocar modelo si no existe; error explícito por base/proveedor |
+| Must — compatibilidad | Resultado guardado v1/v2 intacto, comparación temporal | Leer riesgo y versión sin recalcular; `guardada: false`; no persistir entradas/salida ni alterar revisión, dashboard o Power BI |
+| Should | Ejemplo ficticio e indicación de consulta/configuración | Cargar ejemplo no llama al modelo; consultar exige acción explícita y disponibilidad, sin fallback automático |
+| Could | Ampliar explicación didáctica de las diferencias entre métodos | Sólo mejora de comprensión, sin inventar equivalencia de poblaciones o validación crediticia |
+| Won't en este incremento | Scoring predictivo mexicano, probabilidad calibrada o decisiones automáticas | Mantener límites UCI/Taiwán 2005/NTD y revisión humana; no prometer predicción individual sobre el formulario MXN |
+
+El endpoint protegido `POST /api/v1/evaluaciones/{identificador}/segunda-opinion` devuelve `evaluacion_id`, `riesgo_por_reglas`, `version_reglas`, `modelo`, `guardada: false` y `advertencia`. La consulta puede usar scikit-learn local sin Azure; el modo Azure sigue disponible y requiere configuración/recursos vigentes. La continuidad local no elimina ninguna de las trece tecnologías obligatorias, adaptadores o evidencias históricas.
+
+La consulta en la pantalla principal es **opcional para cada evaluación**; el Must exige que la capacidad esté disponible y se pueda demostrar sin convertir la comparación en una predicción válida para México. Esta adenda documenta alcance y pruebas exigibles, no una suite nueva ejecutada, nueva CI o aceptación formal. [Requisitos UC12/PRD-RF16](PRD_NEXOCREDIT.md), [operación](../manuales/OPERACION.md).
 
 ### Adenda 1.4 — MoSCoW del cambio de reglas — 13/10/2026
 
@@ -63,7 +118,7 @@ Para operar/verificar: [seguimiento](../manuales/SEGUIMIENTO_CREDITICIO.md), [ev
 
 ## 1. Definición del MVP
 
-El MVP de NexoCredit es una demostración académica local y autenticada en la que se puede capturar un escenario ficticio, obtener un riesgo demo mediante reglas explícitas, conservarlo, recibir una explicación automática fundamentada y registrar una revisión humana. Debe ser posible recuperar el registro, consultar analítica y demostrar las integraciones obligatorias sin presentarlas como capacidades crediticias productivas.
+El MVP de NexoCredit es una demostración académica local y autenticada en la que se puede capturar un escenario ficticio, obtener un riesgo demo mediante reglas explícitas, conservarlo, recibir una explicación automática fundamentada y registrar una revisión humana. El resultado añade una segunda opinión opcional del modelo sobre un escenario UCI independiente, sin convertirla en riesgo del solicitante o reemplazar las reglas. Debe ser posible recuperar el registro, consultar analítica y demostrar las integraciones obligatorias sin presentarlas como capacidades crediticias productivas.
 
 La unidad mínima de valor es una **evaluación ficticia guardada, comprensible y revisable**. Un resultado que solo aparece en pantalla, sin persistencia o sin distinguir su explicación de una decisión, no completa esa unidad.
 
@@ -121,13 +176,14 @@ Las mejoras de seguridad, validación crediticia y operación necesarias para cl
 | M04 | Revisión humana versionada | Separar clasificación y juicio humano | Implementada; no auditoría integral |
 | M05 | Explicación automática OpenAI con contexto Search | Cumplir IA generativa sin botón adicional | Implementada; consulta real observada |
 | M06 | Catálogo y búsqueda Azure AI Search | Fundamentación y documentos accesibles | Dos guías / catorce secciones observadas |
-| M07 | Laboratorio Azure ML separado | Demostrar tecnología sin atribuir validación crediticia | Endpoint conectado; límites documentados |
+| M07 | Laboratorio UCI con Azure ML o scikit-learn local explícito | Demostrar inferencia sin atribuir validación crediticia | Azure conserva evidencia histórica; modelo local incluido; escenarios separados de MXN |
 | M08 | Indicadores Banxico y Banco Mundial | Contexto económico público con procedencia | Integraciones comprobadas |
 | M09 | Dashboard React y Power BI Desktop | Consulta agregada y analítica obligatoria | Comprobación local fechada |
 | M10 | Docker, migraciones y GitHub Actions | Ejecución y verificación reproducibles | Comprobados |
 | M11 | Respaldo y restauración aislada | Proteger trabajo y verificar recuperación | Ensayo manual comprobado |
 | M12 | Identidad NexoCredit y mensajes de alcance | Evitar marca anterior y expectativas incorrectas | Presentación adaptada |
 | M13 | Documentación, evidencia, revisión y proceso Scrum real | Entrega académica verificable | Documentos/backlog; aceptación y eventos pendientes |
+| M14 | Segunda opinión académica UCI junto a reglas guardadas | Hacer visible inferencia real sin atribuirla al solicitante MXN | Código incorporado; aceptación según adenda 1.5 y verificación de esta versión |
 
 ### 4.2 Should have
 
@@ -250,18 +306,18 @@ Se presentan las dos guías y catorce secciones académicas, con fuentes y versi
 
 **Límite:** son guías demo propias, no políticas empresariales aprobadas.
 
-### M07 — Laboratorio Azure ML
+### M07 — Laboratorio UCI con proveedor explícito
 
-El laboratorio utiliza diecinueve variables UCI y presenta una clase booleana remota.
+El laboratorio utiliza diecinueve variables UCI y presenta una clase booleana del proveedor explícito local o Azure. M14 incorpora la consulta opcional junto al resultado principal, manteniendo separación de datos y no persistencia.
 
 **Criterios de aceptación:**
 
 1. Tipos, orden y límites de variables se validan.
-2. La configuración y el resultado remoto se distinguen.
+2. La configuración y la consulta realizada se distinguen; los errores no cambian el proveedor.
 3. Se muestran población Taiwán/2005 y unidades NTD.
 4. No se llama probabilidad a una etiqueta.
 5. No se guarda ni modifica una evaluación principal.
-6. El fallo remoto afecta solo el laboratorio.
+6. El fallo del proveedor afecta sólo a la consulta académica, no al riesgo guardado.
 
 **Evidencia mínima:** contrato probado, metadatos fechados y prueba de integración ya registrada. La comparación binaria S04 sigue pendiente.
 
@@ -632,6 +688,8 @@ Este guion es una propuesta para una sesión acordada. No crea cuentas, no inici
 
 Ingresar DEMO-A01 con ingresos 30,000, gastos 10,000 y score 700; deuda/pagos/atraso ficticios válidos. Mostrar margen 20,000, riesgo Bajo y versión. Confirmar guardado antes de presentar la explicación automática.
 
+En el mismo resultado, demostrar «Segunda opinión IA (académica)»: cargar el ejemplo UCI independiente, comprobar que cargar no consulta y ejecutar el proveedor seleccionado. Contrastar los dos bloques sin atribuir la clase al solicitante MXN; señalar modelo/origen y `guardada: false`. Si no está disponible, mostrar el fallo explícito sin cambiar las reglas guardadas. No se requiere Azure para el recorrido con scikit-learn local.
+
 Abrir el detalle y recuperar la misma evaluación. Registrar una revisión demo con motivo claro. Mostrar identidad del responsable y versión, sin revelar token. Explicar que el riesgo original permanece.
 
 Mostrar historial y dashboard con filtros. Si se compara Power BI, utilizar corte equivalente e identificar actualización manual.
@@ -716,4 +774,4 @@ La referencia CI es [la ejecución final registrada](https://github.com/MikiJMA/
 
 La siguiente decisión es revisar y aprobar el alcance de estos documentos y acordar la validación pendiente. El núcleo técnico no necesita fingir un cierre académico: puede presentarse con sus pruebas y límites, mientras se registran de forma real aceptación y Scrum.
 
-Esta edición únicamente desarrolla documentación separada. No modifica código, datos, base, permisos, secretos, recursos Azure ni publicación.
+**Nota histórica de la edición original:** aquella edición únicamente desarrolló documentación separada, sin modificar código, datos, base, permisos, secretos, recursos Azure o publicación. Se conserva como antecedente, no como descripción de todos los incrementos. La edición 1.5 añade el alcance y aceptación exigible de la segunda opinión implementada en código; las ejecuciones de prueba se acreditan por separado en QA y evidencia fechada.

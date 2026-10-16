@@ -1,6 +1,44 @@
 # Reporte QA — prototipo 0.1
 
+## Instalación actualizada y regresión final — 15/10/2026
+
+247 backend/PostgreSQL y 168 frontend aprobadas, sin omisiones; recorrido integral con ENIF, revisión, seguimiento y pagos. Respaldo/restauración de doce tablas comprobados antes de actualizar sólo API/web; datos, cuenta y configuración privada conservados. Ensayo visual propio con cinco capturas, revisión humana y abonos exactos por API; temporales retirados. [Evidencia, primer intento del test y límites](../evidencias/2026-10-15/actualizacion-local.md). Sin push, CI remota, control de ventanas o validación crediticia empresarial.
+
+## Piloto empresarial en sombra — comprobación 15/10/2026
+
+**247 backend/PostgreSQL y 168 frontend aprobadas**, sin omisiones; migraciones repetidas, cinco pruebas PowerShell, lint/build y npm audit con cero vulnerabilidades reportadas. Comparación real anidada de tres modelos sobre desarrollo ENIF (no sobre el test ya observado), control de estado sin aprobaciones desde cliente e integridad del informe. Nuevas pruebas del contrato de historial con fixtures: fechas, madurez/censura, duplicados, tipos/valores y rechazo de columnas de identidad; sin procesar un archivo de clientes.
+
+E2E real en instalación efímera/headless propio: estado de piloto y comparación visibles, persistencia de metadatos, idempotencia/conflicto, historial y vista móvil sin overflow. Tres contenedores/dos redes retirados; instalación y base originales conservadas. El modelo servido no cambió: las diferencias entre candidatos no fueron concluyentes. Esto no acredita fiabilidad empresarial, aceptación operativa o uso con clientes reales. [Detalle y evidencias](../evidencias/2026-10-15/piloto-empresarial.md).
+
+## Modelo mexicano integrado — comprobación final 15/10/2026
+
+**236 pruebas backend/PostgreSQL y 165 frontend aprobadas**, sin omisiones; migraciones repetidas, cinco pruebas PowerShell, lint/build y npm audit sin vulnerabilidades reportadas. Modelo ENIF real en el POST principal con perfil opcional validado; inferencia sin red/LLM, protección SHA y campos desconocidos no imputados. Se probaron ambas clases con perfiles sintéticos, sin atribuirles valor de validación estadística. Entrenamiento repetido produjo exactamente el mismo SHA-256 de artefacto.
+
+QA E2E en instalación efímera propia: captura del perfil, predicción real, PostgreSQL, reintento idempotente, conflicto 409, consulta de modelo en historial, score que sólo cambia las reglas y modo sin perfil explícito. Capturas de escritorio/móvil inspeccionadas; sin errores JS ni desbordamiento a 390 px. Recursos temporales retirados y servicios originales conservados. Sin control del navegador del usuario, push o CI remota. [Evidencia y límites](../evidencias/2026-10-15/modelo-mexico-enif.md).
+
+El éxito funcional no acredita aptitud predictiva: **AUC ENIF de prueba 0.605496 y precisión positiva 26.73 %**, capacidad limitada. Es asociación de encuesta contemporánea, no impagos futuros ni autorización de crédito. Las cifras y adendas históricas siguientes mantienen su fecha.
+
 ## Cómo leer este reporte
+
+Comprobación local del **15/10/2026** en la copia académica reorganizada: **211 pruebas backend/PostgreSQL y 146 frontend aprobadas**, sin omisiones, cinco archivos PowerShell, lint, build y auditoría npm con cero vulnerabilidades reportadas. Se reconstruyeron las imágenes de verificación y se retiró la base efímera aislada; no se modificó la instalación de desarrollo. [Alcance, commits y resultados](../evidencias/2026-10-15/mejoras-evaluacion-academica.md). Por elección del usuario no se subió la rama ni se ejecutó CI remota nueva.
+
+Prueba integral posterior con navegador headless propio: acceso local, guardado ficticio, consulta UCI explícita real HTTP 200, `guardada: false` y detalle PostgreSQL idéntico antes/después. Cuatro capturas locales de escritorio/móvil revisadas, sin desbordamiento ni excepciones JavaScript. Entorno temporal retirado y servicios originales intactos. No acredita Azure, Ollama generativo o precisión crediticia mexicana.
+
+### Segunda opinión académica — criterios del incremento del 15/10/2026
+
+La evaluación principal permite consultar el modelo UCI junto a reglas guardadas, con **19 entradas ficticias independientes en NTD**, no una conversión del solicitante MXN. La suite local identificada arriba verifica estos criterios; no acredita una nueva CI ni cambia los resultados históricos descritos abajo.
+
+| Área que debe verificarse | Criterio exigible |
+|---|---|
+| Autenticación y existencia | Endpoint sin sesión → 401; UUID inválido → 422; registro inexistente → 404 sin llamar al modelo |
+| Captura UCI | Exactamente 19 int32; rechazar campos extra, bool/string/fracciones, límite no positivo, pago negativo o código PAY fuera de −2…9 |
+| Integridad histórica | Reproducir riesgo y versión guardados v1/v2 sin llamar al scoring; no efectuar escrituras o mutaciones |
+| Proveedores | Local usa el artefacto validado; Azure se prueba con mocks sin nuevas llamadas reales; deshabilitado/fallo → error, nunca resultado inventado |
+| Contrato y privacidad | UUID coincidente; respuesta con `modelo`, `guardada: false` y advertencias; no enviar RFC/CURP o solicitud MXN al proveedor |
+| Interfaz | Modelo visible junto a reglas, ejemplo sin inferencia automática, consulta explícita, fallos visibles y cancelación de respuestas obsoletas al cambiar de evaluación |
+| Alcance | Clase booleana académica, no probabilidad ni riesgo individual mexicano; comparación temporal sin cambios a revisión, dashboard o Power BI |
+
+Las regresiones backend del endpoint están en [test_segunda_opinion.py](../../backend/tests/test_segunda_opinion.py). El refactor de validación del artefacto conserva algoritmo, SHA-256 y rechazo cerrado de datos corruptos, con casos en [test_ml_local.py](../../backend/tests/test_ml_local.py). Tener pruebas escritas no equivale a ejecutarlas ni acredita conectividad Azure, precisión en México o aceptación formal. [Requisitos](../producto/PRD_NEXOCREDIT.md), [manual vigente](../manuales/OPERACION.md).
 
 Corte 14/10/2026: [verificación de entrega](../evidencias/2026-10-14/entrega-demo.md), suite local final 197 backend/129 frontend, cinco archivos PowerShell, audit npm cero vulnerabilidades conocidas, lint y build. Explicación Ollama corregida comprobada en vivo y restauración aislada de doce tablas aprobada. Las pruebas aisladas se distinguen de las consultas reales y del refresco Power BI todavía pendiente; los resultados anteriores no se reescriben.
 

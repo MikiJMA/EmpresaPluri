@@ -1,5 +1,27 @@
 # Tecnologías obligatorias del proyecto
 
+## Piloto empresarial en sombra — 15/10/2026
+
+Alcance vigente solicitado: prueba empresarial controlada. Python/scikit-learn comparan tres algoritmos con validación anidada y calibración interna; FastAPI expone estado y métricas con autenticación; PostgreSQL conserva estos metadatos con el resultado; React muestra gobernanza, comparación y límites. Validador offline preparado para un historial futuro autorizado. Sin nuevas llamadas Azure, borrado de keys o modificación del modelo servido: no se demostró una mejora consistente ni hay datos/validación empresarial. Las trece tecnologías obligatorias se mantienen. [Protocolo, resultados y pendientes](docs/desarrollo/PILOTO_EMPRESARIAL.md).
+
+## Modelo mexicano integrado — 15/10/2026
+
+Python/scikit-learn entrenan un modelo ENIF 2024 real; FastAPI lo ejecuta en `/api/v1/evaluar` cuando se captura su perfil y PostgreSQL conserva su salida numérica/versionada junto a las reglas. React muestra el modelo mexicano antes de la comparación por reglas y lo recupera en el historial. Inferencia local sin Azure, Ollama o conexión externa. [Fuente, variables, métricas y reproducción](inteligencia_artificial/prediccion_mexico/README.md). AUC 0.605496 de prueba: experimental, capacidad limitada; clasifica patrones de atrasos declarados, no impagos futuros. No sustituye la obligación Azure ML, elimina sus adaptadores/keys ni acredita disponibilidad cloud actual.
+
+## Valoración IA del mismo escenario - 15/10/2026
+
+Ollama añade una valoración generativa automática tras guardar: usa los mismos ingresos, gastos, deuda, pagos, atraso y score capturados, no el escenario UCI. FastAPI recupera los datos originales; no recibe cifras modificables desde el navegador ni envía RFC/CURP/nombre. El LLM elige categoría y factores relevantes; el servidor calcula cifras y exige revisión humana. Se conserva el riesgo por reglas y el laboratorio estadístico UCI aparte.
+
+Esto **no es** un modelo predictivo entrenado/validado para crédito mexicano. No se atribuyen AUC, precisión UCI o probabilidades a esta valoración de Ollama. Azure/Entra, scikit-learn, PostgreSQL, Power BI, Docker, GitHub Actions, APIs financieras y Scrum conservan sus funciones y estado; no hay sustitución de las trece tecnologías obligatorias o nueva evidencia cloud. [Operación y contrato](docs/manuales/OPERACION.md).
+
+## Incremento de segunda opinión — 15/10/2026
+
+Python/FastAPI y React incorporan en el resultado principal una **segunda opinión académica opcional** del proveedor ML explícito, local scikit-learn o Azure ML. El usuario aporta un escenario UCI ficticio adicional de 19 enteros, con importes NTD; no se convierten ni reutilizan los ingresos/deudas/atrasos MXN o la identidad del solicitante. El modelo aparece junto a las reglas, pero no constituye una predicción válida de ese solicitante mexicano ni una probabilidad calibrada.
+
+`POST /api/v1/evaluaciones/{identificador}/segunda-opinion` requiere `usuario_actual`, reutiliza validación UCI estricta y comprueba que la evaluación exista en PostgreSQL antes de inferir. Retorna categoría/versión guardadas, contrato del modelo, advertencia y `guardada: false`. No recalcula registros `reglas-demo-v1`/`reglas-demo-v2`, no guarda entradas/salida ni cambia revisiones, dashboard o Power BI; no requiere nueva migración. Los errores no generan predicciones ficticias o cambio automático de proveedor.
+
+Se conservan **Python, FastAPI, React.js, Azure OpenAI Service, Azure Machine Learning, Azure AI Search, PostgreSQL, Power BI, Docker, GitHub Actions, Microsoft Entra ID, APIs financieras y Scrum**. Azure conserva adaptadores implementados, campos privados de configuración y evidencias fechadas; no se afirma disponibilidad o suscripción actual. Esta nota documenta el incremento, no acredita una nueva suite completa, CI, llamada cloud, aceptación o ceremonia Scrum. [Operación vigente](docs/manuales/OPERACION.md), [requisitos PRD-RF16](docs/producto/PRD_NEXOCREDIT.md) y [arquitectura](docs/desarrollo/ARQUITECTURA_Y_DATOS.md).
+
 Corte de preparación del 14/10/2026: [entrega y verificaciones actuales](docs/evidencias/2026-10-14/entrega-demo.md). Suite local final 197 backend/PostgreSQL y 129 frontend aprobada; el código Azure/Entra y sus plantillas de configuración permanecen. Las alternativas locales no sustituyen requisitos ni una prueba histórica certifica conectividad o suscripción actual.
 
 Por indicación del alumno, el sistema final debe utilizar todas las tecnologías siguientes. Este requisito sustituye la interpretación anterior de que eran opcionales. Crear una carpeta no significa que su integración esté implementada.

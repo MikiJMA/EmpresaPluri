@@ -4,12 +4,12 @@
 
 | Dato de control | Valor |
 |---|---|
-| Versión | 1.4 |
-| Fecha de edición | 13/10/2026 |
+| Versión | 1.8 |
+| Fecha de edición | 15/10/2026 |
 | Línea base técnica | 04/10/2026 |
-| Seguimiento funcional | 13/10/2026: reglas-demo-v2 y resúmenes en pesos; IA local y Azure conservados |
+| Seguimiento funcional | 15/10/2026: piloto empresarial en sombra, comparación anidada, gobernanza y contrato de historial futuro |
 | Estado | Borrador para revisión y aceptación |
-| Producto | NexoCredit: demostración académica local de análisis crediticio |
+| Producto | NexoCredit: piloto empresarial local de análisis crediticio, aún no validado para decisiones reales |
 | Documento complementario | [MVP y matriz MoSCoW](MVP_NEXOCREDIT.md) |
 | Documento anterior | [PRD/MVP combinado, conservado](../archivo/PRD_MVP_NEXOCREDIT.md) |
 | Aprobación de usuario/asesor | Pendiente de registro; no se presume |
@@ -17,6 +17,42 @@
 Este documento define necesidades, comportamiento, restricciones y criterios de éxito. No concede autorización para tratar expedientes reales, contratar servicios, publicar la aplicación, modificar políticas crediticias ni acreditar horas o ceremonias que no hayan ocurrido.
 
 “Comprobado” significa que existe evidencia identificable de la línea base, no que se haya repetido la prueba al redactar esta edición. “Propuesto” identifica requisitos o actividades que todavía deben validarse. Los ejemplos son ficticios.
+
+### Adenda 1.8 — Alcance empresarial y fiabilidad
+
+El objetivo vigente solicitado es un **piloto empresarial en sombra**, no una presentación académica. Las adendas históricas siguientes se conservan como antecedentes. No se presume que un cambio de denominación, una suite de software o un AUC validen la predicción de impagos en la empresa. El usuario confirmó que todavía no existe un historial empresarial autorizado con resultados posteriores.
+
+RF19 / UC15: comparar logística, Random Forest y Gradient Boosting mediante validación anidada 5×3 por UPM, calibración interna e intervalos agrupados, excluyendo los 783 casos de prueba ya observada. Mostrar resultados de desarrollo separados de la prueba histórica y no promocionar automáticamente. Resultado: AUC 0.642/0.648/0.647, sin mejora consistente; modelo servido conservado.
+
+RF20 / UC16: estado `piloto_sombra` en servidor/resultado/pantalla con decisión automática y uso con clientes reales no habilitados, motivos pendientes y ausencia de endpoint de aprobación. Registros previos compatibles, sin reescritura. Estos estados informan el alcance y la ausencia de automatismos; no constituyen DLP ni autorización de datos.
+
+RF21 / UC17: validador offline de contrato para un futuro historial anonimizado/autorizado. Fechas al origen, corte/horizonte/umbral explícitos, identificadores opacos, duplicados, seguimiento y madurez; no convertir desconocidos/censura en negativos ni reflejar contenido de filas en errores. No existe todavía entrenamiento empresarial ni datos reales ingresados. [Diseño, resultados y condiciones de avance](../desarrollo/PILOTO_EMPRESARIAL.md).
+
+### Adenda 1.7 — Modelo entrenado con datos mexicanos — 15/10/2026
+
+RF18 / UC14: al completar el perfil ENIF en el formulario principal, `/api/v1/evaluar` ejecuta `nexocredit-enif2024-logistica-v1` y persiste perfil, clase, estimación asociativa, SHA-256, métricas y límites junto con la evaluación. React muestra primero el resultado mexicano y después la comparación por reglas. El detalle recupera el resultado guardado sin recalcularlo. El perfil es opcional para compatibilidad y casos no elegibles; si se selecciona exige todas sus respuestas y al menos un crédito formal. No se infieren datos ENIF desde score, deuda o identidad ni se rellenan vacíos por cero.
+
+Criterios de aceptación: inferencia numérica real sin Azure/Ollama/red; cambiar sólo score no altera ENIF; integridad fallida del artefacto devuelve 503 sin guardar silenciosamente sólo reglas; entradas inválidas 422 saneado; versión conservada con idempotencia y sin reescribir el historial. Modelo entrenado con 3,906 casos completos públicos de INEGI/CNBV, partición por UPM_DIS sin conglomerados compartidos. Prueba independiente 783 casos: AUC 0.605496 y precisión positiva 26.73 %. **Capacidad limitada, no aprobado como motor de decisiones ni predictor de impagos futuros**. No se establece una meta de precisión ficticia ni se convierte la encuesta transversal en historial longitudinal. [Ficha técnica y reproducción](../../inteligencia_artificial/prediccion_mexico/README.md).
+
+Esta adenda amplía el prototipo académico; no reemplaza retrospectivamente el significado de los riesgos demo almacenados ni elimina las integraciones obligatorias Azure. La captura ENIF es una adaptación explícita de las preguntas fuente, no una consulta de información de la persona ante INEGI.
+
+### Adenda 1.6 - Valoración generativa del mismo escenario - 15/10/2026
+
+**UC13 / PRD-RF17:** tras guardar una solicitud ficticia completa, Ollama debe valorar sus mismos seis datos financieros, sin exigir otro formulario ni las 19 variables UCI. La API lee la solicitud original, calcula margen y cocientes y envía sólo la allowlist numérica al modelo local. No transmite RFC/CURP, nombre, comentarios o clasificación por reglas. La categoría Bajo/Medio/Alto y selección de factores son del LLM; las cifras y textos del catálogo son del servidor. La revisión humana es obligatoria por código, aunque el modelo no la sugiera.
+
+Criterios: generación automática deduplicada por UUID; errores visibles y reintento explícito; no inventar datos ausentes o resultados si falla Ollama; contraste visible entre IA y reglas sin sobrescribir historial v1/v2; caché de generación 24 h, fallos un minuto y cuota separada de diez valoraciones/hora/cuenta. Al cambiar captura no mostrar una respuesta antigua. Sin Azure o descargas automáticas para esta función.
+
+La capacidad es **valoración cualitativa generativa**, no scoring predictivo entrenado con población mexicana. No satisface por sí sola el objetivo de validar precisión, calibración o sesgos de un modelo de impago; no se le atribuyen las métricas del laboratorio UCI ni autoriza créditos. Configuración `VALORACION_IA_PROVEEDOR=ollama|deshabilitado`; claves Azure y sus integraciones permanecen. [Operación](../manuales/OPERACION.md).
+
+### Adenda 1.5 — Segunda opinión académica en la evaluación — 15/10/2026
+
+**PRD-RF16:** después de guardar una evaluación, presentar junto a su riesgo por reglas una consulta opcional al modelo académico. No se deriva una predicción del solicitante: el usuario captura un **escenario UCI ficticio independiente de 19 enteros**, con importes NTD, o carga el ejemplo identificado como tal. No se convierten ingresos, deudas o atrasos MXN; no se envían RFC, CURP ni identidad al modelo. Mostrar ambos resultados en la misma pantalla no los convierte en estimaciones comparables de una misma población.
+
+FastAPI ofrece `POST /api/v1/evaluaciones/{identificador}/segunda-opinion`, protegido por `usuario_actual`, y reutiliza `EscenarioUCI` y el proveedor ML seleccionado explícitamente (`local`, `azure` o `deshabilitado`). Antes de inferir comprueba que el UUID exista en PostgreSQL. Responde con `evaluacion_id`, `riesgo_por_reglas`, `version_reglas`, `modelo`, `guardada: false` y `advertencia`; el objeto `modelo` identifica proveedor/origen/modelo configurado y una clase booleana, no una probabilidad calibrada.
+
+El resultado por reglas se lee del registro, **sin recalcular v1 o v2**. La consulta no modifica evaluación, revisión, dashboard ni Power BI; tampoco persiste sus diecinueve entradas o su respuesta. Cambiar de evaluación o recargar no equivale a conservar esta comparación. Faltas de autenticación, entrada inválida, registro ausente, base caída o fallo del proveedor deben mostrarse sin fabricar una predicción ni cambiar de proveedor automáticamente.
+
+El modelo scikit-learn continúa siendo un experimento UCI/Taiwán 2005, no validado para México ni para autorizar o rechazar créditos. Azure OpenAI, Azure ML, Azure AI Search, Entra y las otras tecnologías obligatorias se conservan; sus evidencias históricas no certifican disponibilidad actual. Esta edición describe código y criterios, **no una nueva ejecución completa, CI o aceptación formal**. [Operación](../manuales/OPERACION.md), [contrato y arquitectura](../desarrollo/ARQUITECTURA_Y_DATOS.md).
 
 ### Adenda 1.4 — Reglas versionadas y presentación monetaria — 13/10/2026
 
@@ -70,7 +106,7 @@ La actualización no acredita políticas oficiales, fuentes privadas, representa
 
 NexoCredit reúne en una aplicación el registro de escenarios financieros ficticios, una clasificación mediante reglas explícitas, su explicación con inteligencia artificial y el seguimiento de una revisión humana. El usuario captura datos en React; FastAPI valida y calcula el resultado; PostgreSQL conserva la evaluación y sus revisiones. Azure AI Search recupera documentación demo y Azure OpenAI redacta una explicación automática después del guardado.
 
-La solución incorpora dos recorridos adicionales, separados del cálculo principal: indicadores económicos públicos de Banxico y Banco Mundial, y un laboratorio de Azure Machine Learning basado en un conjunto académico UCI. Power BI Desktop permite analizar agregados desde una vista PostgreSQL de lectura limitada.
+La solución incorpora indicadores económicos públicos de Banxico y Banco Mundial y un laboratorio académico UCI con proveedor Azure ML o scikit-learn local. Desde la adenda 1.5, la evaluación también permite consultar ese modelo como segunda opinión visible junto a las reglas, con un escenario UCI independiente y temporal. No reemplaza el cálculo principal. Power BI Desktop permite analizar agregados desde una vista PostgreSQL de lectura limitada.
 
 El producto no predice de forma acreditada la probabilidad de incumplimiento de una persona. Las categorías Bajo, Medio y Alto son resultados de reglas de demostración. Los estados Aprobada y Rechazada pertenecen a la revisión demo y no autorizan operaciones financieras.
 
@@ -283,11 +319,11 @@ Si Banxico no está configurado o falla, Banco Mundial puede seguir mostrándose
 
 **Postcondición:** contexto público sin datos de solicitantes y sin alterar riesgo.
 
-### UC09 — Ejecutar el laboratorio Azure ML
+### UC09 — Ejecutar el laboratorio UCI con proveedor explícito
 
-**Actor:** usuario autorizado. **Precondición:** endpoint académico configurado.
+**Actor:** usuario autorizado. **Precondición:** proveedor académico local o Azure configurado y disponible.
 
-El usuario captura las diecinueve variables UCI admitidas. El servidor valida enteros, orden y límites, llama al endpoint y presenta una clase booleana junto con las advertencias del experimento.
+El usuario captura las diecinueve variables UCI admitidas. El servidor valida enteros, orden y límites, ejecuta el modelo local o consulta Azure según la selección explícita y presenta una clase booleana junto con las advertencias del experimento. Esta selección no cambia automáticamente por un fallo.
 
 No se envían campos del formulario principal por conversión implícita. Una etiqueta no se transforma en probabilidad. El escenario del laboratorio no se guarda como evaluación ni modifica revisiones.
 
@@ -313,6 +349,14 @@ El ensayo no debe sobrescribir la base de trabajo. El volumen Docker no sustituy
 
 **Postcondición:** evidencia técnica vinculada a una versión y datos de origen preservados.
 
+### UC12 — Consultar segunda opinión académica junto a una evaluación
+
+**Actor:** usuario autenticado. **Precondiciones:** evaluación guardada con UUID existente, proveedor ML explícitamente disponible y escenario UCI ficticio completo e independiente.
+
+El usuario abre «Segunda opinión IA (académica)» en el resultado principal, revisa unidades y límites, completa las diecinueve entradas o carga el ejemplo y pulsa «Consultar segunda opinión». Cargar el ejemplo no ejecuta inferencia. El servidor conserva la categoría y versión del registro y obtiene la clase del proveedor seleccionado. La interfaz distingue «Reglas demo» de «Modelo académico», muestra origen/modelo y advierte que no se está evaluando al solicitante MXN.
+
+**Postcondición:** comparación temporal con `guardada: false` o error explícito; no hay nueva fila, recálculo histórico, revisión o decisión crediticia. Si falta o falla el modelo, el riesgo guardado sigue visible y sin cambios.
+
 ## 8. Requisitos funcionales
 
 Los identificadores PRD-RF son propios de esta edición; no reemplazan retroactivamente los RF del plan previo. La relación con MoSCoW se detalla en el documento MVP.
@@ -328,12 +372,13 @@ Los identificadores PRD-RF son propios de esta edición; no reemplazan retroacti
 | PRD-RF07 | Explicar automáticamente solo registros confirmados | UC04 |
 | PRD-RF08 | Recuperar catálogo y fragmentos con procedencia | UC06 |
 | PRD-RF09 | Consultar indicadores públicos con fallos independientes | UC08 |
-| PRD-RF10 | Separar laboratorio UCI y clasificación principal | UC09 |
+| PRD-RF10 | Separar datos y clasificación UCI de reglas MXN, también cuando comparten pantalla | UC09, UC12 |
 | PRD-RF11 | Calcular dashboard sobre la población filtrada completa | UC07 |
 | PRD-RF12 | Exponer una vista limitada para Power BI Desktop | UC10 |
 | PRD-RF13 | Operar localmente con migraciones y pruebas aisladas | UC11 |
 | PRD-RF14 | Respaldar y probar restauración sin afectar el origen | UC11 |
 | PRD-RF15 | Mantener identidad NexoCredit y límites visibles | Todos |
+| PRD-RF16 | Presentar segunda opinión UCI independiente junto a reglas, autenticada y no persistida | UC12 |
 
 ## 9. Datos de entrada y reglas de negocio
 
@@ -395,7 +440,8 @@ Microsoft Entra ID ⇄ React + MSAL
                  Nginx → FastAPI
                          ├─ PostgreSQL → vista limitada → Power BI Desktop
                          ├─ Azure AI Search → contexto → Azure OpenAI
-                         ├─ Azure ML — laboratorio UCI separado
+                         ├─ scikit-learn local / Azure ML — UCI independiente
+                         │  laboratorio y segunda opinión temporal junto a reglas
                          └─ Banxico / Banco Mundial — contexto público
 
 Docker Compose: frontend, backend, PostgreSQL y migraciones
@@ -442,6 +488,9 @@ Todos los siguientes contratos están bajo /api/v1. La tabla resume responsabili
 | GET /evaluaciones/{id} | Detalle de evaluación y revisiones |
 | POST /evaluaciones/{id}/revisiones | Crear revisión con versión e identidad |
 | POST /evaluaciones/{id}/explicacion | Explicar desde datos persistidos |
+| POST /evaluaciones/{identificador}/segunda-opinion | Comparar reglas guardadas con inferencia UCI independiente, sin persistir ni recalcular |
+| GET /ml/estado | Describir proveedor ML seleccionado; no acredita una consulta nueva |
+| POST /ml/predecir | Inferencia del laboratorio con el mismo contrato UCI estricto |
 | GET /dashboard | Agregados de la población coincidente |
 | GET /azure-search/documentos | Catálogo documental validado |
 | POST /azure-search/buscar | Búsqueda textual controlada |
@@ -507,7 +556,7 @@ La caché es por proveedor y proceso: una hora para datos válidos y un minuto p
 | PostgreSQL | No confirmar guardado ni revisión |
 | Search | Informar fallo documental y no inventar contexto |
 | OpenAI | Mantener evaluación y mostrar fallo de explicación |
-| Azure ML | Mostrar fallo solo del laboratorio |
+| Azure ML / scikit-learn local | Mostrar fallo de consulta académica sin cambiar la evaluación guardada |
 | Un proveedor financiero | Mantener resultados válidos del otro |
 | Power BI sin actualizar | Identificar corte; no afirmar sincronización |
 
@@ -646,4 +695,4 @@ El núcleo técnico de la demo está comprobado en la línea base. La aprobació
 - [Autenticación Entra](../../backend/app/autenticacion_entra_id/README.md).
 - [Integraciones backend](../../backend/app/integraciones/README.md).
 
-Esta edición amplía y organiza documentación. No ejecuta pruebas nuevas, no modifica código, datos, secretos, permisos, recursos cloud ni despliegues.
+**Nota histórica de la edición original:** aquella edición amplió y organizó documentación sin ejecutar pruebas nuevas ni modificar código, datos, secretos, permisos, recursos cloud o despliegues. Se conserva como antecedente, no como descripción de todo cambio posterior. La edición 1.5 incorpora además los requisitos y contratos del incremento de segunda opinión implementado en código; sus verificaciones deben acreditarse por separado en QA y evidencia fechada.

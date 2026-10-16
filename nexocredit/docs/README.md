@@ -2,6 +2,10 @@
 
 ## Lectura recomendada
 
+Alcance vigente: [piloto empresarial en sombra](desarrollo/PILOTO_EMPRESARIAL.md), con resultados de comparación, controles y contrato del historial futuro. Aún sin datos empresariales ni aprobación para decisiones reales; lo académico previo se conserva como antecedente.
+
+Incremento local del 15/10/2026: [modelo mexicano ENIF integrado](../inteligencia_artificial/prediccion_mexico/README.md), [verificación](evidencias/2026-10-15/modelo-mexico-enif.md). Entrenamiento real y salida asociativa en evaluación/detalle; capacidad limitada, sin decisiones reales ni push a GitHub.
+
 Corte de preparación del 14/10/2026: [verificación de entrega](evidencias/2026-10-14/entrega-demo.md). Distingue suites aisladas, consultas reales, resultados históricos y pendientes; el ZIP no incluye credenciales ni datos de trabajo.
 
 1. [Entrega demo](entrega/ENTREGA_DEMO.md): alcance comprobado y pendientes.

@@ -52,12 +52,19 @@ if (Test-Path -LiteralPath (Join-Path $projectRoot '.github/workflows/README.md'
 if (-not (Test-Path -LiteralPath (Join-Path $gitRoot '.github/workflows/ci.yml') -PathType Leaf)) {
     throw 'Falta el workflow de la raiz Git.'
 }
+$ci = Get-Content -LiteralPath (Join-Path $gitRoot '.github/workflows/ci.yml') -Raw
+if (-not $ci.Contains('working-directory: nexocredit') -or
+    -not $ci.Contains('working-directory: nexocredit/frontend') -or
+    -not $ci.Contains('cache-dependency-path: nexocredit/frontend/package-lock.json') -or
+    -not $ci.Contains("'codex/**'")) { throw 'CI no cubre la estructura o ramas academicas actuales.' }
+$compose = Get-Content -LiteralPath (Join-Path $projectRoot 'infraestructura/contenedores_docker/docker-compose.yml') -Raw
+if ($compose -notmatch '(?m)^name: plurione-docker\r?$') { throw 'La instalación existente debe conservar la identidad Compose y su volumen.' }
 $workspace = Get-Content -LiteralPath (Join-Path $gitRoot 'NexoCredit.code-workspace') -Raw | ConvertFrom-Json
-if ($workspace.folders.Count -ne 2 -or $workspace.folders[0].path -ne 'empresa - copia' -or $workspace.folders[1].path -ne '.github') {
+if ($workspace.folders.Count -ne 2 -or $workspace.folders[0].path -ne 'nexocredit' -or $workspace.folders[1].path -ne '.github') {
     throw 'El workspace debe apuntar a la aplicacion y al CI originales.'
 }
 $outerSettings = Get-Content -LiteralPath (Join-Path $gitRoot '.vscode/settings.json') -Raw | ConvertFrom-Json
-if ($outerSettings.'python.defaultInterpreterPath' -ne '${workspaceFolder}/empresa - copia/.venv/Scripts/python.exe') {
+if ($outerSettings.'python.defaultInterpreterPath' -ne '${workspaceFolder}/nexocredit/.venv/Scripts/python.exe') {
     throw 'El interprete exterior apunta a una carpeta equivocada.'
 }
 foreach ($settings in @($workspace.settings, $outerSettings,

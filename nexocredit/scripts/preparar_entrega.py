@@ -21,7 +21,7 @@ from zipfile import ZIP_DEFLATED, ZipFile
 
 
 WRAPPER = 'NexoCredit'
-PROJECT_DIR = 'empresa - copia'
+PROJECT_DIR = 'nexocredit'
 EXTENSIONS = frozenset({
     '.py', '.ps1', '.cmd', '.js', '.jsx', '.mjs', '.cjs', '.ts', '.tsx',
     '.html', '.css', '.md', '.txt', '.json', '.sql', '.yml', '.yaml',
@@ -47,12 +47,17 @@ REQUIRED_PROJECT = frozenset({
     'infraestructura/contenedores_docker/docker-compose.yml',
     'infraestructura/contenedores_docker/backend.Dockerfile',
     'infraestructura/contenedores_docker/frontend.Dockerfile',
+    'infraestructura/contenedores_docker/nginx.conf',
     'infraestructura/contenedores_docker/.env.example',
     'scripts/docker.ps1', 'scripts/modo-local.ps1', 'scripts/crear_usuario_local.py',
     'backend/app/integraciones/prediccion_local/artefactos/modelo.json',
     'backend/app/integraciones/prediccion_local/artefactos/entrenamiento.json',
+    'backend/app/integraciones/prediccion_mexico/artefactos/modelo.json',
+    'backend/app/integraciones/prediccion_mexico/artefactos/entrenamiento.json',
+    'backend/app/integraciones/prediccion_mexico/piloto/comparacion-v1/comparacion.json',
     str(PLAN), str(BACKGROUND),
 })
+ROOT_PUBLIC_FILES = frozenset({'README.md', 'LEEME_PRIMERO.md', '.gitignore'})
 WINDOWS_RESERVED = frozenset({'con', 'prn', 'aux', 'nul', 'clock$',
                              *('com' + str(i) for i in range(1, 10)),
                              *('lpt' + str(i) for i in range(1, 10))})
@@ -110,6 +115,9 @@ def permitir_archivo(ruta):
         return relative == BACKGROUND
     if relative.suffix.casefold() == '.svg':
         return relative.parts[0] == 'frontend'
+    if relative.suffix.casefold() == '.conf':
+        # Únicamente esta configuración pública; no incluir otros .conf privados.
+        return relative == PurePosixPath('infraestructura/contenedores_docker/nginx.conf')
     if relative.suffix.casefold() == '.sql':
         # No empaquetar un dump de texto por tener la misma extensión que SQL fuente.
         return (relative in {PurePosixPath('infraestructura/contenedores_docker/inicializar_postgresql.sql'),
@@ -119,8 +127,28 @@ def permitir_archivo(ruta):
     return relative.suffix.casefold() in EXTENSIONS
 
 
+def _ruta_nativa(path):
+    """Prefijo Win32 sólo para E/S de rutas largas; no cambia las rutas del ZIP."""
+    absolute = os.path.abspath(path)
+    if os.name == 'nt' and len(absolute) >= 248 and not absolute.startswith('\\\\?\\'):
+        if absolute.startswith('\\\\'):
+            return '\\\\?\\UNC\\' + absolute[2:]
+        return '\\\\?\\' + absolute
+    return path
+
+
+def _resolver(path):
+    resolved = Path(_ruta_nativa(path)).resolve(strict=True)
+    text = str(resolved)
+    if os.name == 'nt' and text.startswith('\\\\?\\UNC\\'):
+        return Path('\\\\' + text[8:])
+    if os.name == 'nt' and text.startswith('\\\\?\\'):
+        return Path(text[4:])
+    return resolved
+
+
 def _sin_enlace(path):
-    info = os.lstat(path)
+    info = os.lstat(_ruta_nativa(path))
     if stat.S_ISLNK(info.st_mode) or getattr(info, 'st_file_attributes', 0) & REPARSE_POINT:
         raise EntregaError('Se rechazó un enlace simbólico o junction; no se leyó su destino.')
     return info
@@ -130,13 +158,14 @@ def _cadena_segura(path):
     """Comprobar todos los componentes existentes antes de resolver una ruta."""
     absolute = Path(os.path.abspath(path))
     for component in reversed((absolute, *absolute.parents)):
-        if os.path.lexists(component):
+        if os.path.lexists(_ruta_nativa(component)):
             _sin_enlace(component)
     return absolute
 
 
 def _dentro(path, root):
-    candidate = _cadena_segura(path).resolve(strict=True)
+    candidate = _resolver(_cadena_segura(path))
+    root = _resolver(_cadena_segura(root))
     try:
         candidate.relative_to(root)
     except ValueError as error:
@@ -158,7 +187,7 @@ def leer_publico(path, root):
     before = _sin_enlace(candidate)
     _regular(before)
     flags = os.O_RDONLY | getattr(os, 'O_BINARY', 0) | getattr(os, 'O_NOFOLLOW', 0)
-    descriptor = os.open(candidate, flags)
+    descriptor = os.open(_ruta_nativa(candidate), flags)
     try:
         opened = os.fstat(descriptor)
         _regular(opened)
@@ -178,11 +207,11 @@ def leer_publico(path, root):
 
 def recorrer_publicos(root):
     """Podar por nombre antes de consultar/recorrer cualquier carpeta privada."""
-    root = _cadena_segura(root).resolve(strict=True)
+    root = _resolver(_cadena_segura(root))
 
     def walk(directory, relative):
         _dentro(directory, root)
-        with os.scandir(directory) as entries:
+        with os.scandir(_ruta_nativa(directory)) as entries:
             ordered = sorted(entries, key=lambda entry: entry.name.casefold())
         for entry in ordered:
             rel = relative / entry.name
@@ -224,97 +253,16 @@ def _alumno_placeholder():
             'No contiene firmas, aprobación, participantes o horas acreditadas.\n').encode('utf-8')
 
 
-def _leeme():
-    return r'''# LEEME PRIMERO — NexoCredit, entrega local
-
-Esta copia contiene código y documentación pública depurada, no una base de datos,
-cuentas, secretos, imágenes Docker, dependencias instaladas, datasets UCI o modelos
-Ollama. No es un instalador offline/autocontenido ni una aplicación ya publicada.
-Los hashes verifican integridad respecto del manifiesto; no son firma digital ni
-certifican ausencia de secretos pegados accidentalmente en archivos públicos.
-
-## Estructura y revisión antes de ejecutar
-
-Extrae el ZIP sin aplanar carpetas. Dentro de NexoCredit/ están .github/,
-NexoCredit.code-workspace y empresa - copia/, la raíz activa del proyecto. Así se
-conservan los working-directory de CI. El JSON del manifiesto se entrega junto
-al ZIP e incluye rutas, tamaños y SHA-256 del contenido copiado y del ZIP; el
-Git SHA es referencia histórica, no prueba de un árbol limpio o de CI nueva.
-
-Revisa primero empresa - copia/README.md, REQUISITOS_TECNOLOGICOS.md y
-docs/entrega/ENTREGA_DEMO.md. Las evidencias están fechadas: no garantizan
-conectividad actual, suscripción vigente, crédito real o aceptación formal.
-Los datos de identificación del plan se redactaron sólo en la copia; el archivo
-docs/estadia/ALUMNO.md es un marcador, no la ficha privada original.
-
-## Instalación inicial en Windows: primero construir con Docker
-
-1. Instala/abre Docker Desktop y espera su motor. Esta secuencia es para un
-   equipo sin una instalación NexoCredit existente, con puertos locales libres.
-   Una carpeta nueva NO crea por sí sola un proyecto/volumen Docker independiente:
-   Compose conserva el nombre plurione-docker. Si ya existe, no ejecutes esta
-   copia como instalación nueva ni borres su volumen o .env; conserva el entorno
-   original y consulta el manual de operación antes de cambiarlo.
-   La primera construcción necesita Internet para imágenes y dependencias.
-   No desactives TLS, autenticación o antivirus para corregir descargas.
-2. Abre PowerShell en NexoCredit/empresa - copia/ y ejecuta:
-
-```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\docker.ps1 iniciar
-```
-
-El lanzador crea un .env privado con contraseñas aleatorias nuevas y construye
-la aplicación. No copies .env.example encima del archivo privado generado.
-No se incluyen datos, usuarios, contraseñas o llaves de la computadora original.
-
-3. Después de construir, activa los proveedores y acceso locales:
-
-```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\modo-local.ps1 -Accion local
-```
-
-4. Para explicaciones generativas, instala/abre Ollama y utiliza un modelo que
-   quepa en la memoria del equipo. El modo local propone llama3.1:8b: si no está
-   instalado, descargarlo es una operación adicional con Internet y espacio.
-   No se ejecuta ni descarga nada por extraer este paquete.
-   Sin modelo, puedes editar exclusivamente EXPLICACIONES_PROVEEDOR=local en
-   infraestructura/contenedores_docker/.env y volver a aplicar el backend con
-   operacion/aplicacion/Actualizar NexoCredit.cmd. Esa opción es una **plantilla
-   de reglas, NO IA generativa**. DOCUMENTOS_PROVEEDOR=local y ML_PROVEEDOR=local
-   mantienen las guías y el modelo numérico scikit-learn incluido.
-5. Crea tu cuenta propia; no existe una contraseña predeterminada:
-
-```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\modo-local.ps1 -Accion usuario
-```
-
-La consola pide usuario, nombre y contraseña oculta. No compartas la contraseña.
-Abre http://localhost:8080/ y entra con esa cuenta. El laboratorio scikit-learn es
-UCI/NTD independiente: no modifica el score capturado o reglas-demo-v2 en MXN.
-Ollama explica; no es el modelo predictivo del laboratorio.
-
-## Credenciales y límites de esta copia
-
-Azure OpenAI/ML/Search y Microsoft Entra conservan adaptadores y campos de keys
-en .env.example, pero **no incluye credenciales**. Azure requiere recursos,
-configuración y suscripción vigentes; no hay fallback cloud automático. La guía
-v2 está preparada localmente pero pendiente de carga/verificación en Azure
-Search. Banxico/otros proveedores y Entra requieren su configuración e Internet.
-Los datos locales no constituyen historial Buró o identidad SAT verificada.
-
-Sólo los nuevos escenarios usan reglas-demo-v2; los registros anteriores no se
-recalculan. Los resúmenes monetarios redondean pesos, no borran centavos de los
-cálculos. La IA, las revisiones y los pagos ficticios no autorizan crédito real.
-
-Power BI requiere Desktop y una conexión nueva de lectura limitada: no se
-incluyen PBIX/ABF, cachés o credenciales. Las definiciones PBIP/TMDL son fuente,
-no una garantía de actualización o resultado en un equipo nuevo. Entrenar UCI
-requiere obtener los datos autorizados por separado; no incluye sus CSV/pickle.
-
-Revisa la documentación de respaldo/soporte antes de operar datos. No publiques
-la aplicación, abras puertos o compartas .env, dumps, tokens y capturas privadas.
-No se acredita capacitación, horas, Scrum, aceptación o firma por esta entrega.
-'''.encode('utf-8')
+def _vscode_settings(prefix=''):
+    """Generar sólo ajustes portables; no abrir la configuración privada del editor."""
+    hidden = {f'**/{name}': True for name in
+              ('.venv', '.venv-roto', '.local', '.tmp', '__pycache__', 'node_modules', 'dist')}
+    return (json.dumps({
+        'python.defaultInterpreterPath': '${workspaceFolder}/' + prefix + '.venv/Scripts/python.exe',
+        'python.terminal.activateEnvironment': True,
+        'files.exclude': hidden,
+        'search.exclude': hidden,
+    }, ensure_ascii=False, indent=2) + '\n').encode('utf-8')
 
 
 def _validar_estructura(archivos):
@@ -322,6 +270,8 @@ def _validar_estructura(archivos):
     prefix = f'{WRAPPER}/{PROJECT_DIR}/'
     required = {prefix + relative for relative in REQUIRED_PROJECT}
     required |= {f'{WRAPPER}/.github/workflows/ci.yml', f'{WRAPPER}/NexoCredit.code-workspace'}
+    required |= {f'{WRAPPER}/{relative}' for relative in ROOT_PUBLIC_FILES}
+    required |= {f'{WRAPPER}/.vscode/settings.json', f'{prefix}.vscode/settings.json'}
     if required - set(by_path):
         raise EntregaError('Faltan archivos públicos obligatorios para la estructura de entrega.')
     workspace = json.loads(by_path[f'{WRAPPER}/NexoCredit.code-workspace'].contenido)
@@ -338,10 +288,10 @@ def _validar_estructura(archivos):
 
 
 def recopilar_archivos(outer_root, project_root):
-    outer = _cadena_segura(outer_root).resolve(strict=True)
+    outer = _resolver(_cadena_segura(outer_root))
     project = _dentro(project_root, outer)
-    if project != outer / PROJECT_DIR or not project.is_dir():
-        raise EntregaError('La raíz activa debe ser la carpeta interior empresa - copia.')
+    if project != outer / PROJECT_DIR or not Path(_ruta_nativa(project)).is_dir():
+        raise EntregaError('La raíz activa debe ser la carpeta interior nexocredit.')
     records = []
     for rel, path in recorrer_publicos(project):
         data = leer_publico(path, project)
@@ -355,9 +305,12 @@ def recopilar_archivos(outer_root, project_root):
         records.append(ArchivoPublico(f'{WRAPPER}/.github/{rel}', leer_publico(path, github)))
     workspace = outer / 'NexoCredit.code-workspace'
     records.append(ArchivoPublico(f'{WRAPPER}/NexoCredit.code-workspace', leer_publico(workspace, outer)))
+    for relative in sorted(ROOT_PUBLIC_FILES):
+        records.append(ArchivoPublico(f'{WRAPPER}/{relative}', leer_publico(outer / relative, outer)))
     records.extend((
         ArchivoPublico(f'{WRAPPER}/{PROJECT_DIR}/{ALUMNO}', _alumno_placeholder(), 'marcador-generado'),
-        ArchivoPublico(f'{WRAPPER}/LEEME_PRIMERO.md', _leeme(), 'guia-generada'),
+        ArchivoPublico(f'{WRAPPER}/.vscode/settings.json', _vscode_settings(PROJECT_DIR + '/'), 'configuracion-generada'),
+        ArchivoPublico(f'{WRAPPER}/{PROJECT_DIR}/.vscode/settings.json', _vscode_settings(), 'configuracion-generada'),
     ))
     _validar_estructura(records)
     return sorted(records, key=lambda record: record.ruta)
@@ -375,7 +328,7 @@ def referencia_git(outer):
 
 def _crear_destino(outer):
     destination = _cadena_segura(outer / 'output' / 'entregas')
-    destination.mkdir(parents=True, exist_ok=True)
+    Path(_ruta_nativa(destination)).mkdir(parents=True, exist_ok=True)
     destination = _dentro(destination, outer)
     if destination != outer / 'output' / 'entregas':
         raise EntregaError('El destino no está en output/entregas de la raíz exterior.')
@@ -386,18 +339,18 @@ def crear_paquete(outer_root, project_root, nombre):
     validar_nombre(nombre)
     # Completar selección, redacción y validación antes de crear archivos de salida.
     records = recopilar_archivos(outer_root, project_root)
-    outer = _cadena_segura(outer_root).resolve(strict=True)
+    outer = _resolver(_cadena_segura(outer_root))
     git_sha = referencia_git(outer)
     destination = _crear_destino(outer)
     zip_path = destination / (nombre + '.zip')
     manifest_path = destination / (nombre + '.manifest.json')
-    if os.path.lexists(zip_path) or os.path.lexists(manifest_path):
+    if os.path.lexists(_ruta_nativa(zip_path)) or os.path.lexists(_ruta_nativa(manifest_path)):
         raise EntregaError('Ya existe el ZIP o manifiesto; elige otro nombre. No se sobrescribe.')
     # Crear el manifiesto primero reserva ambos nombres sin reemplazar artefactos.
     # Si surge una carrera, queda sólo el archivo nuevo propio, sin borrar archivos.
     with ExitStack() as stack:
-        manifest_stream = stack.enter_context(manifest_path.open('x', encoding='utf-8', newline='\n'))
-        zip_stream = stack.enter_context(zip_path.open('x+b'))
+        manifest_stream = stack.enter_context(Path(_ruta_nativa(manifest_path)).open('x', encoding='utf-8', newline='\n'))
+        zip_stream = stack.enter_context(Path(_ruta_nativa(zip_path)).open('x+b'))
         with ZipFile(zip_stream, mode='x', compression=ZIP_DEFLATED, compresslevel=9) as archive:
             for record in records:
                 archive.writestr(record.ruta, record.contenido)

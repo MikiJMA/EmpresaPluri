@@ -1,49 +1,12 @@
-# NexoCredit — demostración de análisis de riesgo crediticio
+# NexoCredit — piloto empresarial de análisis de riesgo crediticio
 
-NexoCredit es una marca demostrativa, no una razón social ni una aprobación empresarial. Los identificadores técnicos existentes se conservan para mantener las conexiones; la documentación histórica del proyecto no se altera retrospectivamente.
+Alcance vigente: **piloto empresarial en sombra**, con pruebas controladas, no motor crediticio productivo. Se compararon tres modelos mediante validación anidada; no se demostró una mejora consistente y no se promocionó ningún candidato. Aún falta un historial autorizado de la empresa y validación temporal/operativa. [Protocolo, resultados, controles y contrato de datos](docs/desarrollo/PILOTO_EMPRESARIAL.md). Los apartados académicos anteriores se conservan como historial fechado, no como alcance objetivo actual.
 
-## Ruta rápida para el revisor (sin Azure, 3 a 5 minutos)
+Incremento local del 15/10/2026: el formulario principal incorpora un [modelo mexicano entrenado con ENIF 2024](inteligencia_artificial/prediccion_mexico/README.md), con resultado persistido, métricas reales y capacidad limitada explícita. No depende de Ollama/Azure, no reemplaza los riesgos históricos por reglas ni constituye un predictor validado de impagos futuros. [Pruebas y límites de este incremento](docs/evidencias/2026-10-15/modelo-mexico-enif.md).
 
-Pasos para ver la funcionalidad principal sin configurar ningún servicio en la nube:
+El código se organiza en `nexocredit/`. Esta instalación conserva Compose `plurione-docker` y su volumen para no perder datos; la copia pública de entrega usa `nexocredit-demo` y no comparte su configuración privada. Empezar por el [README de la raíz](../README.md), con operación, recorrido de cuatro pasos, procedencia y declaración de uso de IA. Los apartados fechados siguientes conservan el historial documental; no acreditan comprobaciones nuevas de esta actualización.
 
-1. **Levantar la aplicación** — desde la carpeta `nexocredit/` ejecutar en dos terminales separadas:
-   ```powershell
-   powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\iniciar-backend.ps1
-   powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\iniciar-frontend.ps1
-   ```
-   Abrir **http://127.0.0.1:5173** en el navegador.
-   *(Alternativamente con Docker: `.\scripts\docker.ps1 iniciar` → http://127.0.0.1:8080)*
-
-2. **Iniciar sesión local** — usar cualquier nombre de usuario y contraseña que se hayan creado con `scripts/crear_usuario_local.py`, o crear uno nuevo con ese script.
-
-3. **Evaluar un escenario de ejemplo** — ir a la sección **Evaluación**, ingresar:
-   - RFC: `AAAA010101AA1`
-   - Ingresos mensuales: `30,000`
-   - Gastos mensuales: `10,000`
-   - Deuda actual total: `50,000`
-   - Pagos mensuales de créditos: `2,500`
-   - Días de atraso: `0`
-   - Score capturado: `700`
-
-   Resultado esperado: **Riesgo Bajo** (margen 20,000 MXN; score 700 en rango Bajo por reglas demo v2). Además aparece una **segunda opinión del modelo académico UCI** (verde = sin incumplimiento predicho) con la advertencia de que el mapeo es aproximado.
-
-4. **Consultar el historial** — la evaluación queda guardada en PostgreSQL. Ir a la sección **Historial**, hacer clic en *Ver detalle* y asignar un estado de revisión (Pendiente / Aprobada / Rechazada) con observaciones.
-
-5. **Dashboard** — en la sección **Dashboard** ver el total de evaluaciones, margen promedio y distribución por nivel de riesgo. Se puede filtrar por fecha y por nivel.
-
-> **Sin PostgreSQL configurado:** el sistema funciona igual pero muestra "Evaluación sin guardar". El historial y el dashboard no estarán disponibles.
-
-## Uso de inteligencia artificial generativa
-
-Este proyecto fue desarrollado con el apoyo de **herramientas de IA generativa** (Google Antigravity / Gemini) para:
-
-- Generación de código de apoyo (scaffolding de endpoints, componentes React, scripts de infraestructura).
-- Redacción y revisión de documentación y comentarios en código.
-- Diagnóstico de errores y sugerencias de refactorización.
-- Asistencia en la elaboración del mapeo entre variables del formulario y las 19 variables UCI del modelo académico.
-
-Todo el código generado fue revisado, ajustado e integrado por el alumno. El uso de estas herramientas se declara de forma voluntaria para dar transparencia a la entrega; no modifica los criterios de evaluación según lo indicado por la coordinación del programa.
-
+NexoCredit es una marca demostrativa, no una razón social ni una aprobación empresarial. Se conservan los identificadores de esquema/modelos y los recursos Azure históricos; cambiar el nombre del proyecto Compose no migra su volumen ni su configuración privada.
 
 Accesos de Windows: [operacion](operacion/README.md). Documentación: [índice](docs/README.md), [PRD](docs/producto/PRD_NEXOCREDIT.md) y [MVP](docs/producto/MVP_NEXOCREDIT.md). Para una vista limpia en VS Code, abrir [NexoCredit.code-workspace](../NexoCredit.code-workspace) desde la raíz exterior.
 
@@ -152,7 +115,7 @@ Sin DATABASE_URL el formulario indica que no se guardó; si la base está config
 
 ## Ejecutar en Windows
 
-Desde la carpeta interior `empresa - copia`, que contiene `backend`, `frontend` y `scripts`:
+Desde la carpeta interior `nexocredit`, que contiene `backend`, `frontend` y `scripts`:
 
 ```powershell
 python -m venv .venv
@@ -192,7 +155,7 @@ Empezar por [ENTREGA_DEMO.md](docs/entrega/ENTREGA_DEMO.md): alcance comprobado,
 ## Organización de carpetas
 
 ```text
-empresa - copia/                         Raíz del proyecto (carpeta interior)
+nexocredit/                         Raíz del proyecto (carpeta interior)
 ├── backend/                             Python + FastAPI
 │   ├── app/
 │   │   ├── main.py                      Entrada de la API
