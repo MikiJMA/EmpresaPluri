@@ -88,7 +88,7 @@ test('el formulario anuncia errores de forma segura y bloquea la edición mientr
 
 test('el menú conserva secciones implementadas e identidad recibida sin afirmaciones inventadas', () => {
   const html = render(Marco, { user: { nombre: 'Usuario de prueba', roles: ['Analista'] }, seccion: 'evaluacion', onSeccionChange: () => {} })
-  for (const id of ['seguimiento', 'evaluacion', 'historial', 'laboratorio', 'documentos']) assert.ok(html.includes(`href="#${id}"`))
+  for (const ruta of ['/', '/evaluaciones', '/historial', '/laboratorio-ia', '/documentos']) assert.ok(html.includes(`href="${ruta}"`))
   assert.match(html, /Usuario de prueba/)
   assert.match(html, /NexoCredit/)
   assert.doesNotMatch(html, /PluriOne|S\.A\. de C\.V\./i)
@@ -117,7 +117,8 @@ test('cada sección mantiene su navegación y muestra una cabecera propia', () =
   for (const [seccion, heading] of Object.entries(headings)) {
     const html = render(Marco, { user: null, seccion, onSeccionChange: () => {} })
     assert.ok(html.includes(`<h1>${heading}</h1>`))
-    assert.match(html, new RegExp(`href="#${seccion}"[^>]*aria-current="location"`))
+    const rutas = { seguimiento: '/', evaluacion: '/evaluaciones', historial: '/historial', laboratorio: '/laboratorio-ia', indicadores: '/indicadores-financieros', documentos: '/documentos' }
+    assert.match(html, new RegExp(`href="${rutas[seccion]}"[^>]*aria-current="location"`))
     assert.match(html, /id="contenido-principal"/)
   }
 })

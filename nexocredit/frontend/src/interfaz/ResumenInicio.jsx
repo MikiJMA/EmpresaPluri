@@ -14,17 +14,17 @@ export default function ResumenInicio({ onSeccionChange, onNuevaEvaluacion, busy
     <div className="home-hero">
       <div><h2>Evalúa un escenario de riesgo</h2>
         <p>Captura ingresos, gastos y score. El resultado se confirma al evaluar y no autoriza créditos.</p></div>
-      <a className="home-new-evaluation" href="#evaluacion" aria-disabled={busy || undefined}
+      <a className="home-new-evaluation" href="/evaluaciones" aria-disabled={busy || undefined}
         onClick={event => {
           if (busy) { event.preventDefault(); return }
           if (onNuevaEvaluacion) onNuevaEvaluacion()
-          else onSeccionChange('evaluacion')
+          else onSeccionChange('evaluacion', event)
         }}>Nueva evaluación<span aria-hidden="true">→</span></a>
     </div>
     <div className="home-shortcuts">
       {accesos.map(([id, descripcion]) => {
-        const [, titulo, path] = SECCIONES.find(([key]) => key === id)
-        return <a className="home-shortcut" key={id} href={`#${id}`} onClick={() => onSeccionChange(id)}>
+        const [, titulo, path, ruta] = SECCIONES.find(([key]) => key === id)
+        return <a className="home-shortcut" key={id} href={ruta} onClick={event => onSeccionChange(id, event)}>
           <span className="home-shortcut-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" focusable="false">
             <path d={path} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
           </svg></span>

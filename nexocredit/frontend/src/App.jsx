@@ -28,13 +28,13 @@ import './styles/ModeloMexico.css'
 import EstadoProveedores from './interfaz/EstadoProveedores'
 import SeguimientoCreditos from './seguimiento_crediticio/SeguimientoCreditos'
 import ResumenInicio from './interfaz/ResumenInicio'
-import { seccionDesdeHash } from './interfaz/secciones.mjs'
+import { rutaDeSeccion, seccionDesdeHash, seccionDesdeRuta } from './interfaz/secciones.mjs'
 
 const initial = { rfc: '', ingresos_mensuales: '', gastos_mensuales: '', score_buro_actual: '', deuda_actual: '', pagos_mensuales_creditos: '', dias_atraso_actual: '', perfil_enif: perfilMexicoVacio() }
 
 export default function App() {
   const user = useContext(UsuarioContext)
-  const [seccion, setSeccion] = useState(() => seccionDesdeHash(window.location.hash) || 'seguimiento')
+  const [seccion, setSeccion] = useState(() => seccionDesdeHash(window.location.hash) || seccionDesdeRuta(window.location.pathname) || 'seguimiento')
   const [form, setForm] = useState(initial)
   const [result, setResult] = useState(null)
   const [error, setError] = useState('')
@@ -48,13 +48,35 @@ export default function App() {
   const intentoVisible = useRef(0)
 
   useEffect(() => {
-    function sincronizarSeccion() {
-      const destino = seccionDesdeHash(window.location.hash)
+    function sincronizarRuta() {
+      const destinoAnterior = seccionDesdeHash(window.location.hash)
+      const destino = destinoAnterior || seccionDesdeRuta(window.location.pathname)
+      if (destinoAnterior) window.history.replaceState(null, '', rutaDeSeccion(destinoAnterior))
       if (destino) setSeccion(destino)
+      else {
+        window.history.replaceState(null, '', '/')
+        setSeccion('seguimiento')
+      }
     }
-    window.addEventListener('hashchange', sincronizarSeccion)
-    return () => window.removeEventListener('hashchange', sincronizarSeccion)
+    sincronizarRuta()
+    window.addEventListener('popstate', sincronizarRuta)
+    window.addEventListener('hashchange', sincronizarRuta)
+    return () => {
+      window.removeEventListener('popstate', sincronizarRuta)
+      window.removeEventListener('hashchange', sincronizarRuta)
+    }
   }, [])
+
+  function irASeccion(destino, event) {
+    if (event) {
+      if (event.button && event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
+      event.preventDefault()
+    }
+    const ruta = rutaDeSeccion(destino)
+    if (window.location.pathname !== ruta || window.location.hash) window.history.pushState(null, '', ruta)
+    setSeccion(destino)
+    window.scrollTo({ top: 0, behavior: 'auto' })
+  }
 
   function nuevaEvaluacion() {
     if (busy) return
@@ -65,7 +87,7 @@ export default function App() {
     setExplicacion(null)
     setError('')
     clave.current = null
-    setSeccion('evaluacion')
+    irASeccion('evaluacion')
   }
 
   function change(event) {
@@ -106,23 +128,25 @@ export default function App() {
   }
 
   return (
-    <MarcoAplicacion user={user} seccion={seccion} onSeccionChange={setSeccion}>
-      <div id="seguimiento">
-        <ResumenInicio onSeccionChange={setSeccion} onNuevaEvaluacion={nuevaEvaluacion} busy={busy} />
+    <MarcoAplicacion user={user} seccion={seccion} onSeccionChange={irASeccion}>
+      {seccion === 'seguimiento' && <div id="seguimiento">
+        <ResumenInicio onSeccionChange={irASeccion} onNuevaEvaluacion={nuevaEvaluacion} busy={busy} />
         <Dashboard revision={revision} />
-      </div>
-      <IndicadoresEscenario result={result} submitted={submitted} />
-      <div className="workspace" id="evaluacion">
-        <EvaluationForm form={form} busy={busy} error={error} change={change} submit={submit} identidad={<RevisarIdentidad rfc={form.rfc} bloqueado={busy} />} />
-        <EvaluationResult result={result} busy={busy} submitted={submitted} explicacion={explicacion}
-          valoracionIA={result?.guardado && result?.id && !busy ? <ValoracionIASolicitud key={result.id} evaluacion={result} captura={submitted} generar={generarValoracionIA} /> : null}
-          segundaOpinion={result?.guardado && result?.id && !busy ? <SegundaOpinionModelo key={result.id} evaluacion={result} /> : null} />
-      </div>
-      <div id="historial"><EvaluationHistory revision={revision} /></div>
-      <SeguimientoCreditos activo={seccion === 'creditos'} revision={revision}/>
-      <div id="laboratorio"><AzureMLDemo /></div>
-      <IndicadoresFinancieros />
-      <BuscadorDocumentos />
+      </div>}
+      {seccion === 'evaluacion' && <>
+        <IndicadoresEscenario result={result} submitted={submitted} />
+        <div className="workspace" id="evaluacion">
+          <EvaluationForm form={form} busy={busy} error={error} change={change} submit={submit} identidad={<RevisarIdentidad rfc={form.rfc} bloqueado={busy} />} />
+          <EvaluationResult result={result} busy={busy} submitted={submitted} explicacion={explicacion}
+            valoracionIA={result?.guardado && result?.id && !busy ? <ValoracionIASolicitud key={result.id} evaluacion={result} captura={submitted} generar={generarValoracionIA} /> : null}
+            segundaOpinion={result?.guardado && result?.id && !busy ? <SegundaOpinionModelo key={result.id} evaluacion={result} /> : null} />
+        </div>
+      </>}
+      {seccion === 'historial' && <div id="historial"><EvaluationHistory revision={revision} /></div>}
+      {seccion === 'creditos' && <SeguimientoCreditos activo revision={revision}/>}
+      {seccion === 'laboratorio' && <div id="laboratorio"><AzureMLDemo /></div>}
+      {seccion === 'indicadores' && <IndicadoresFinancieros />}
+      {seccion === 'documentos' && <BuscadorDocumentos />}
       <div className="demo-banner"><span className="info-icon" aria-hidden="true">i</span><p><strong>Piloto empresarial en sombra</strong><span> Pruebas controladas con escenarios ficticios y datos públicos. Modelo ENIF, reglas y valoración Ollama se muestran por separado. Sin decisiones automatizadas ni validación empresarial de impagos futuros.</span></p></div>
       <EstadoProveedores />
     </MarcoAplicacion>

@@ -20,15 +20,15 @@ export default function MarcoAplicacion({ user, seccion, onSeccionChange, childr
     <a className="enterprise-skip" href="#contenido-principal">Ir al contenido</a>
     <aside className="enterprise-sidebar" aria-label="Navegación principal">
       <div>
-        <a className="enterprise-brand" href="#seguimiento" onClick={() => onSeccionChange('seguimiento')}>
+        <a className="enterprise-brand" href="/" onClick={event => onSeccionChange('seguimiento', event)}>
           <span className="enterprise-brand-icon" aria-hidden="true">
             <IconoMarca size={24} />
           </span>
           <span>{MARCA}<small>ANÁLISIS CREDITICIO</small></span>
         </a>
         <nav className="enterprise-navigation" aria-label="Secciones">
-          {SECCIONES.map(([id, label, path]) => <a key={id} href={`#${id}`} className={seccion === id ? 'active' : ''}
-            aria-current={seccion === id ? 'location' : undefined} onClick={() => onSeccionChange(id)}>
+          {SECCIONES.map(([id, label, path, ruta]) => <a key={id} href={ruta} className={seccion === id ? 'active' : ''}
+            aria-current={seccion === id ? 'location' : undefined} onClick={event => onSeccionChange(id, event)}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d={path} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>{label}
           </a>)}
         </nav>
