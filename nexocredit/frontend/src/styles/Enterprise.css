@@ -60,7 +60,7 @@
 .enterprise-app p { color: var(--muted); }
 .enterprise-app h2 { font-size: 18px; font-weight: 700; letter-spacing: -.02em; }
 .enterprise-app h3 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
-.enterprise-kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.enterprise-kpis { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
 .enterprise-kpi { min-width: 0; padding: 20px; border: 1px solid var(--line); border-radius: 16px; background: #fff; box-shadow: 0 6px 22px #1e3a8a0a; transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
 .enterprise-kpi:hover { transform: translateY(-3px); box-shadow: 0 10px 26px #0f172a14; border-color: #1e3a8a55; }
 .enterprise-kpi > span { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: .07em; font-weight: 700; color: var(--muted); }
@@ -70,9 +70,12 @@
 .enterprise-app .demo-banner p { color: #33456e; font-size: 12px; line-height: 1.5; }
 .enterprise-app .demo-banner strong { color: #1e3a8a; }
 .enterprise-app .info-icon { color: #1e3a8a; border-color: #93a5c4; }
-.enterprise-app .workspace { grid-template-columns: minmax(0, .55fr) minmax(0, .45fr); gap: 20px; margin-top: 22px; }
+.enterprise-app .workspace { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; margin-top: 22px; align-items: stretch; }
+.enterprise-app .workspace > section { display: flex; flex-direction: column; min-width: 0; }
+.enterprise-app .form-card, .enterprise-app .enterprise-risk-panel { padding: 0; flex: 1; display: flex; flex-direction: column; }
+.enterprise-app .enterprise-risk-body { flex: 1; display: flex; flex-direction: column; }
 .enterprise-app .card, .enterprise-app .finance-panel { padding: 24px; background: #fff; border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 8px 24px #17255408; }
-.enterprise-app .form-card, .enterprise-app .enterprise-risk-panel { padding: 0; }
+/* form-card and enterprise-risk-panel styled above */
 .enterprise-app .card-heading { display: flex; justify-content: space-between; gap: 12px; align-items: center; padding: 18px 22px; border-radius: 18px 18px 0 0; background: linear-gradient(120deg, #f8faff, #fff); border-bottom: 1px solid var(--line); margin: 0; }
 .enterprise-app .card-heading p { font-size: 11px; margin: 4px 0 0; }
 .enterprise-panel-tag { font: 600 10px var(--font-numeric); font-variant-numeric: tabular-nums; border-radius: 6px; color: var(--muted); background: #f1f5f9; padding: 4px 7px; }

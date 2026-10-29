@@ -14,8 +14,8 @@ export default function IndicadoresEscenario({ result, submitted }) {
   const version = result?.version_modelo ?? VERSION_REGLAS_ACTUAL
   const rangos = rangosParaVersion(version)
   const valores = [
-    ['Ingreso mensual', importe(valorCapturado(result, submitted, 'ingresos_mensuales')), 'Capturado · MXN'],
-    ['Deuda actual', importe(valorCapturado(result, submitted, 'deuda_actual')), 'Capturada · MXN'],
+    ['Ingreso mensual', importe(valorCapturado(result, submitted, 'ingresos_mensuales')), 'Capturado · MXN', 'Ingreso mensual comprobable capturado para evaluar capacidad de pago.'],
+    ['Deuda actual', importe(valorCapturado(result, submitted, 'deuda_actual')), 'Capturada · MXN', 'Saldo pendiente total capturado de créditos y obligaciones activas.'],
   ]
   return <section className="enterprise-kpis enterprise-kpis-explained" aria-label="Datos del último escenario evaluado">
     <div className="enterprise-kpi" aria-label="Score capturado y significado">
@@ -37,6 +37,6 @@ export default function IndicadoresEscenario({ result, submitted }) {
       {rangos && <Rangos titulo="Qué significa cada margen" rangos={rangos.margen} />}
       <p className="scenario-caution">Vista redondeada a pesos; el cálculo conserva centavos. Los límites se aplican al valor exacto de la API. Son reglas demo; no autorizan créditos.</p>
     </div>
-    {valores.map(([label, value, note]) => <div className="enterprise-kpi" key={label}><span>{label}</span><strong>{value}</strong><small>{note}</small></div>)}
+    {valores.map(([label, value, note, desc]) => <div className="enterprise-kpi" key={label}><span>{label}</span><strong>{value}</strong><small>{note}</small>{desc && <p className="scenario-reading">{desc}</p>}</div>)}
   </section>
 }

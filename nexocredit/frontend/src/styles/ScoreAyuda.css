@@ -5,7 +5,8 @@
 .score-help .score-help-disclaimer { margin: 7px 0 0; font-size: 10px; line-height: 1.5; color: #64748b; }
 
 /* Rangos siempre visibles junto a sus cifras, no en un desplegable del formulario. */
-.enterprise-kpis.enterprise-kpis-explained { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.enterprise-kpis.enterprise-kpis-explained { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.enterprise-kpis.enterprise-kpis-explained .enterprise-kpi { display: flex; flex-direction: column; justify-content: flex-start; min-height: 100%; }
 .enterprise-kpi .scenario-reading { margin: 14px 0 0; font-size: 12px; line-height: 1.7; color: #334155; }
 .scenario-guide { margin-top: 14px; padding-top: 12px; border-top: 1px solid #dfe6f5; }
 .enterprise-kpi .scenario-guide h3 { margin: 0 0 10px; font-size: 10px; color: #4b5a78; }
