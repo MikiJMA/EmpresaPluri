@@ -1,5 +1,70 @@
 # Reporte QA — prototipo 0.1
 
+## Recorrido de 4 pasos — instalación limpia (28/10/2026)
+
+Recorrido sobre la instalación de trabajo con datos ficticios. Mismos pasos que el [README de la raíz](../../README.md#recorrido-para-el-revisor--4-pasos). Capturas pendientes en `../evidencias/2026-10-28/`.
+
+### Paso 1 — Evaluación sólo con reglas
+
+Datos ingresados: RFC `AAAA010101AA1`, ingresos `30000`, gastos `10000`, deuda `0`, pagos `0`, atraso `0`, score `900`. Perfil mexicano ENIF no incluido.
+
+| Elemento | Resultado |
+|---|---|
+| Margen mensual | $20,000 (30000 − 10000) |
+| Score 900 → reglas-demo-v2 | 680–1000 = **Bajo** |
+| Margen $20,000 → reglas-demo-v2 | > $15,000 = **Bajo** |
+| Riesgo final por reglas | **Bajo** |
+| Modelo ENIF | No aplica — se anuncia «sólo reglas» porque no se proporcionó perfil |
+
+Captura: `paso-1-solo-reglas.png`
+
+### Paso 2 — Evaluación con modelo mexicano ENIF
+
+Mismos datos del paso 1, añadiendo el perfil mexicano:
+- Ingreso laboral: `12000`, periodo: **Mes**, ingreso: **Fijo**
+- Presupuesto: **Sí**, gastos cubiertos: **Sí**
+- Ahorros: **Tres meses a menos de seis meses**
+- Producto de crédito: **Tarjeta bancaria** (solo uno marcado)
+
+| Elemento | Resultado |
+|---|---|
+| Modelo mexicano ENIF | Aparece primero: versión del artefacto, resultado asociativo (clase 0 o 1), métricas (AUC 0.605) y advertencia de capacidad limitada |
+| Reglas demo v2 | Mismo riesgo **Bajo** del paso 1 |
+| Inferencia | Local, sin Azure ni Ollama — usa parámetros JSON del artefacto verificado |
+
+Captura: `paso-2-con-enif.png`
+
+### Paso 3 — Cambio de score a 200
+
+Repetir el paso 2 cambiando sólo el score a `200`.
+
+| Elemento | Resultado |
+|---|---|
+| Modelo ENIF | **No cambia** — no usa el score del formulario; misma clase que el paso 2 |
+| Score 200 → reglas-demo-v2 | 0–499 = **Alto** |
+| Margen $20,000 → reglas-demo-v2 | > $15,000 = **Bajo** |
+| Riesgo final por reglas | **Alto** (peor de score y margen) |
+| Observación | Reglas y modelo son independientes: el score afecta sólo las reglas |
+
+Captura: `paso-3-score-200.png`
+
+### Paso 4 — Historial, revisión y módulos
+
+- **Historial**: las evaluaciones de los pasos 1–3 aparecen con fecha, RFC y riesgo
+- **Detalle**: al abrir una evaluación se ven todos los campos capturados, el resultado ENIF (si aplica) y las reglas
+- **Revisión**: se registra estado Pendiente/Aprobada/Rechazada y observaciones ficticias; el responsable se fija desde la sesión, no se puede declarar desde el navegador
+- **Dashboard**: totales, margen promedio y distribución por riesgo reflejan los registros guardados
+- **Documentos**: catálogo de guías con búsqueda textual local
+- **Seguimiento**: planes ficticios, cuotas y pagos si se crean desde la API
+
+Captura: `paso-4-historial-y-revision.png`
+
+### Pendiente de este recorrido
+
+Las capturas se tomarán sobre Docker local y se agregarán a `docs/evidencias/2026-10-28/`. Este registro documenta lo que cada paso debe mostrar; las capturas confirmarán visualmente cada resultado.
+
+---
+
 ## Instalación actualizada y regresión final — 15/10/2026
 
 247 backend/PostgreSQL y 168 frontend aprobadas, sin omisiones; recorrido integral con ENIF, revisión, seguimiento y pagos. Respaldo/restauración de doce tablas comprobados antes de actualizar sólo API/web; datos, cuenta y configuración privada conservados. Ensayo visual propio con cinco capturas, revisión humana y abonos exactos por API; temporales retirados. [Evidencia, primer intento del test y límites](../evidencias/2026-10-15/actualizacion-local.md). Sin push, CI remota, control de ventanas o validación crediticia empresarial.

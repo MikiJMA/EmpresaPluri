@@ -1,5 +1,19 @@
 # Modelo mexicano experimental · ENIF 2024
 
+## El modelo en 5 minutos
+
+**¿Qué predice?** Si una persona que ya tiene un crédito formal declaró haberse atrasado en algún pago durante el último año. No predice impagos futuros ni calcula una probabilidad de incumplimiento.
+
+**¿De dónde salen los datos?** De la [Encuesta Nacional de Inclusión Financiera 2024](https://www.inegi.org.mx/programas/enif/2024/) (ENIF) del INEGI: 3,906 personas mayores de edad con ingreso laboral y al menos un crédito formal. Son datos públicos de encuesta, no expedientes crediticios.
+
+**¿Qué variables usa?** 15 respuestas del encuestado: ingreso laboral y su periodicidad, si el ingreso es fijo o variable, si lleva presupuesto, si le alcanza para los gastos, cuánto tiempo cubriría con ahorros, y cuáles productos de crédito tiene (tarjeta bancaria, automotriz, hipotecario, etc.). **No usa** el score, RFC, edad, sexo ni los datos en pesos del formulario principal.
+
+**¿Qué tan bien funciona?** El AUC de prueba es **0.605** (un clasificador al azar tendría 0.5 y uno perfecto 1.0). Detecta al 72 % de quienes sí se atrasaron, pero de cada 4 alertas sólo 1 es correcta. Esto significa que el modelo **distingue patrones asociados con el atraso mejor que el azar, pero con capacidad limitada**. No debe usarse como único criterio para aprobar o rechazar un crédito.
+
+**¿Por qué aparece como segunda opinión?** Porque complementa las reglas de negocio (score + margen) con una perspectiva estadística independiente. Las reglas dicen si el perfil financiero capturado cae en una zona de riesgo; el modelo dice si el patrón de la persona se parece al de quienes declararon atrasos en la encuesta. Ambos se muestran juntos para que un analista los considere, no para que uno sustituya al otro.
+
+---
+
 Uso vigente: componente de un **piloto empresarial en sombra**. Hay una comparación adicional de tres modelos, calibración interna e intervalos de incertidumbre; no se demostró una mejora consistente y se conserva este artefacto v1 sin promoverlo como apto para decisiones reales. [Resultados y condiciones empresariales pendientes](../../docs/desarrollo/PILOTO_EMPRESARIAL.md).
 
 Modelo **entrenado y conectado al POST principal `/api/v1/evaluar`**, no una carpeta preparada ni una respuesta de Ollama. Clasifica patrones asociados con algún atraso reportado en una encuesta mexicana. **No es un predictor validado de incumplimiento futuro** y no se promueve como motor de aprobación.
